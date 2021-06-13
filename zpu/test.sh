@@ -6,6 +6,8 @@ A_OPTS=
 E_OPTS=
 R_OPTS="--stop-time=4910us"
 
+cd $(dirname $0)
+
 _nvc () {
   echo ${NVC:-nvc} $*
   ${NVC:-nvc} $*
