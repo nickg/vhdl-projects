@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd $(dirname $0)
-
 _nvc () {
   echo ${NVC:-nvc} $*
   ${NVC:-nvc} $*

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. $(git rev-parse --show-toplevel)/functions.sh
+cd $(dirname $0)
+. ../functions.sh
 
 STD=1993
 TOP=fpga_top
@@ -20,5 +21,3 @@ analyse example_medium/zpu_config_trace.vhd \
 
 elaborate
 run
-
-

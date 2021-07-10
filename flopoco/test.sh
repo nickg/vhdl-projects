@@ -2,7 +2,8 @@
 
 # Generated with flopoco FPLog we=16 wf=46 TestBench n=10000
 
-. $(git rev-parse --show-toplevel)/functions.sh
+cd $(dirname $0)
+. ../functions.sh
 
 STD=1993
 TOP=TestBench_FPLog_16_46_0_F400_uid2_F400_uid220
