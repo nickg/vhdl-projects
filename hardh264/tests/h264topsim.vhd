@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 -- H264 top level (simulation) - VHDL
--- 
+--
 -- Written by Andy Henson
 -- Copyright (c) 2008 Zexia Access Ltd
 -- All rights reserved.
@@ -83,9 +83,11 @@ entity h264top is
 end h264top;
 
 architecture sim of h264top is
-	constant verbose : boolean := false;	--dump all output bits and states
-	constant verbose2 : boolean := false;	--dump residuals, coeffs, etc
-	constant verbose3 : boolean := false;	--dc checks; dump dc coeffs
+	alias swrite is write [line, string, side, width];
+
+	constant verbose : boolean := true;	--dump all output bits and states
+	constant verbose2 : boolean := true;	--dump residuals, coeffs, etc
+	constant verbose3 : boolean := true;	--dc checks; dump dc coeffs
 	constant verbosep : boolean := true;	--progress indicator "newline pulsed"
 	constant dumprecon : boolean := true;	--dump reconstructed image to file
 	constant computesnr : boolean := true;	--compute and print SNR figures
@@ -132,7 +134,7 @@ architecture sim of h264top is
 	signal intra4x4_READYO : std_logic := '0';				--when ready for out
 	signal intra4x4_DATAO : std_logic_vector(35 downto 0) := (others => '0');
 	signal intra4x4_BASEO : std_logic_vector(31 downto 0) := (others => '0');
-	signal intra4x4_MSTROBEO : std_logic := '0';			--mode transfered only when this is 1	
+	signal intra4x4_MSTROBEO : std_logic := '0';			--mode transfered only when this is 1
 	signal intra4x4_MODEO : std_logic_vector(3 downto 0) := (others => '0');	--0..8 prediction type
 	signal intra4x4_PMODEO : std_logic := '0';	--prediction type same
 	signal intra4x4_RMODEO : std_logic_vector(2 downto 0) := (others => '0');	--prediction type rem
@@ -359,7 +361,7 @@ begin
 	port map (
 		CLK2 => clk2,
 		RESET => top_newslice,
-		--READYI => 
+		--READYI =>
 		ENABLE => intra8x8cc_dcstrobeo,
 		XXIN => intra8x8cc_dcdatao,
 		VALID => dctransform_valid,
@@ -371,7 +373,7 @@ begin
 	quantise : h264quantise
 	port map (
 		CLK => clk2,
-		ENABLE => quantise_ENABLE, 
+		ENABLE => quantise_ENABLE,
 		QP => qp,
 		DCCI => dctransform_VALID,
 		YNIN => quantise_YNIN,
@@ -386,7 +388,7 @@ begin
 	port map (
 		CLK2 => clk2,
 		RESET => top_newslice,
-		--READYI => 
+		--READYI =>
 		ENABLE => invdctransform_enable,
 		XXIN => invdctransform_zin,
 		VALID => invdctransform_valid,
@@ -579,8 +581,8 @@ begin
 		if QP /= MAXQP and framenum>0 then
 			QP <= QP + 1;
 			wait until rising_edge(CLK2);
-			write(sout,"Reusing framenum: ");write(sout,framenum);
-			write(sout,".  Using QP: ");write(sout,conv_integer(QP));
+			swrite(sout,"Reusing framenum: ");write(sout,framenum);
+			swrite(sout,".  Using QP: ");write(sout,conv_integer(QP));
 			writeline(output,sout);
 		else
 			--a .yuv file has the y first (w x h) followed by the u (w/2 x h/2) then v (ditto).
@@ -621,8 +623,8 @@ begin
 			--ok: read in image ok
 			wait until rising_edge(CLK2);
 			framenum := framenum+1;
-			write(sout,"Framenum: ");write(sout,framenum);write(sout," read in ok");
-			write(sout,".  Using QP: ");write(sout,conv_integer(QP));
+			swrite(sout,"Framenum: ");write(sout,framenum);swrite(sout," read in ok");
+			swrite(sout,".  Using QP: ");write(sout,conv_integer(QP));
 			writeline(output,sout);
 		end if;
 		--
@@ -673,8 +675,8 @@ begin
 						if xbuffer_DONE='0' then wait until xbuffer_DONE='1'; end if;
 						top_NEWLINE <= '1';
 						if verbosep then
-							write(sout,"Newline pulsed, line ");write(sout,y);
-							write(sout," (");write(sout,y*100/IMGHEIGHT);write(sout,"%)");
+							swrite(sout,"Newline pulsed, line ");write(sout,y);
+							swrite(sout," (");write(sout,y*100/IMGHEIGHT);swrite(sout,"%)");
 							writeline(output,sout);
 						end if;
 					end if;
@@ -686,13 +688,13 @@ begin
 				for j in 0 to 3 loop
 					for i in 0 to 1 loop
 						if cuv=0 then
-							intra8x8cc_DATAI <= 
+							intra8x8cc_DATAI <=
 								CONV_STD_LOGIC_VECTOR(character'POS(uvideo(cx+i*4+3,cy)),8) &
 								CONV_STD_LOGIC_VECTOR(character'POS(uvideo(cx+i*4+2,cy)),8) &
 								CONV_STD_LOGIC_VECTOR(character'POS(uvideo(cx+i*4+1,cy)),8) &
 								CONV_STD_LOGIC_VECTOR(character'POS(uvideo(cx+i*4,cy)),8);
 						else
-							intra8x8cc_DATAI <= 
+							intra8x8cc_DATAI <=
 								CONV_STD_LOGIC_VECTOR(character'POS(vvideo(cx+i*4+3,cy)),8) &
 								CONV_STD_LOGIC_VECTOR(character'POS(vvideo(cx+i*4+2,cy)),8) &
 								CONV_STD_LOGIC_VECTOR(character'POS(vvideo(cx+i*4+1,cy)),8) &
@@ -723,7 +725,7 @@ begin
 			wait until rising_edge(CLK2);
 		end loop;
 		if verbosep then
-			write(sout,"Done push of data into intra4x4 and intra8x8cc");
+			swrite(sout,"Done push of data into intra4x4 and intra8x8cc");
 			writeline(output,sout);
 		end if;
 		if xbuffer_DONE='0' then
@@ -738,19 +740,19 @@ begin
 		align_VALID <= '0';
 		wait until rising_edge(CLK);
 		if verbosep then
-			write(sout,"Done align at end of NAL");
+			swrite(sout,"Done align at end of NAL");
 			writeline(output,sout);
 		end if;
 		if tobytes_DONE='0' then
 			wait until tobytes_DONE='1';
 		end if;
 		wait until rising_edge(CLK);
-		--write(sout,"Got DONE flag");
+		--swrite(sout,"Got DONE flag");
 		--writeline(output,sout);
 		wait until rising_edge(CLK);
 		--
 	end loop;
-	write(sout,framenum);write(sout," frames processed.");
+	write(sout,framenum);swrite(sout," frames processed.");
 	writeline(output,sout);
 	assert FALSE report "DONE" severity FAILURE;
 end process;
@@ -787,50 +789,50 @@ begin
 		if tobytes_VALID='1' or cavlc_XSTATE/=CAVLCSTATE_IDLE or delayed_XSTATE/=CAVLCSTATE_IDLE then
 			if header_VALID='1' then
 				if blocknumber > 0 then
-					write(sout,"**** Macroblock ");
+					swrite(sout,"**** Macroblock ");
 					write(sout,mbnumber);
 					writeline(output,sout);
 					blocknumber := 0;
 					mbnumber := mbnumber + 1;
 				end if;
-				write(sout,"<HEAD>");
+				swrite(sout,"<HEAD>");
 			elsif delayed_XSTATE = CAVLCSTATE_IDLE then	--DEBUG OUTPUT INTERNAL delayed_XSTATES
-				write(sout,"IDLE  ");
+				swrite(sout,"IDLE  ");
 			elsif delayed_XSTATE = CAVLCSTATE_CTOKEN then
-				write(sout,"Block ");
+				swrite(sout,"Block ");
 				write(sout,blocknumber);
 				writeline(output,sout);
 				blocknumber := blocknumber + 1;
-				write(sout,"CTOKEN");
+				swrite(sout,"CTOKEN");
 --				if conv_integer(tobytes_vl)=6 and conv_integer(tobytes_ve)=10 then
 --					tmatch := true;
 --				else
 --					tmatch := false;
 --				end if;
 			elsif delayed_XSTATE = CAVLCSTATE_T1SIGN then
-				write(sout,"T1SIGN");
+				swrite(sout,"T1SIGN");
 			elsif delayed_XSTATE = CAVLCSTATE_COEFFS then
-				write(sout,"COEFFS");
+				swrite(sout,"COEFFS");
 			elsif delayed_XSTATE = CAVLCSTATE_TZEROS then
-				write(sout,"TZEROS");
+				swrite(sout,"TZEROS");
 --				if conv_integer(tobytes_vl)=5 and conv_integer(tobytes_ve)=1 then
 --					zmatch := true;
 --				else
 --					zmatch := false;
 --				end if;
 			elsif delayed_XSTATE = CAVLCSTATE_RUNBF then
-				write(sout,"RUNBF ");
+				swrite(sout,"RUNBF ");
 			else
-				write(sout,"????  ");
+				swrite(sout,"????  ");
 			end if;
 		end if;
 		if tobytes_VALID='1' then
 			--output on VL/VE
-			write(sout," out ");
+			swrite(sout," out ");
 			n := conv_integer(tobytes_vl);
-			if n<10 then write(sout," "); end if;
+			if n<10 then swrite(sout," "); end if;
 			write(sout,n);
-			write(sout," ");
+			swrite(sout," ");
 			for i in n-1 downto 0 loop
 				if i > n then
 					write(sout,'.');
@@ -911,26 +913,26 @@ begin
 		if intra4x4_strobeo='1' then
 			if not binit then
 				if blockn=0 then
-					write(bout,"MB ");
+					swrite(bout,"MB ");
 					write(bout,macroblockn);
-					write(bout,"; ");
+					swrite(bout,"; ");
 					macroblockn := macroblockn+1;
 				end if;
 				write(bout,blockn);
 				blockn := blockn+1;
-				write(bout,". qp=");
+				swrite(bout,". qp=");
 				n := conv_integer(qp);
 				write(bout,n);
 				writeline(output,bout);
-				write(bout,"base");
+				swrite(bout,"base");
 				binit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer(intra4x4_baseo(b*8+7 downto b*8));
-				write(bout," ");
+				swrite(bout," ");
 				write(bout,n);
 			end loop;
-			write(bout,";");
+			swrite(bout,";");
 		elsif binit then
 			writeline(output,bout);
 			binit := false;
@@ -938,15 +940,15 @@ begin
 		--
 		if intra4x4_strobeo='1' then
 			if not rinit then
-				write(rout,"residual");
+				swrite(rout,"residual");
 				rinit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer_signed(intra4x4_datao(b*9+8 downto b*9));
-				write(rout," ");
+				swrite(rout," ");
 				write(rout,n);
 			end loop;
-			write(rout,";");
+			swrite(rout,";");
 			bcc := false;	--luma
 		elsif rinit then
 			writeline(output,rout);
@@ -958,20 +960,20 @@ begin
 		--
 		if intra8x8cc_strobeo='1' then
 			if not bcinit then
-				write(bcout,"C");
+				swrite(bcout,"C");
 				write(bcout,cblockn);
-				write(bcout,".");
+				swrite(bcout,".");
 				cblockn := cblockn+1;
 				writeline(output,bcout);
-				write(bcout,"ccbase");
+				swrite(bcout,"ccbase");
 				bcinit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer(intra8x8cc_baseo(b*8+7 downto b*8));
-				write(bcout," ");
+				swrite(bcout," ");
 				write(bcout,n);
 			end loop;
-			write(bcout,";");
+			swrite(bcout,";");
 			bcc := true;	--chroma
 		elsif bcinit then
 			writeline(output,bcout);
@@ -983,15 +985,15 @@ begin
 		--
 		if intra8x8cc_strobeo='1' then
 			if not rcinit then
-				write(rcout,"ccresidual");
+				swrite(rcout,"ccresidual");
 				rcinit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer_signed(intra8x8cc_datao(b*9+8 downto b*9));
-				write(rcout," ");
+				swrite(rcout," ");
 				write(rcout,n);
 			end loop;
-			write(rcout,";");
+			swrite(rcout,";");
 		elsif rcinit then
 			writeline(output,rcout);
 			rcinit := false;
@@ -1000,12 +1002,12 @@ begin
 		if coretransform_valid='1' then
 			if not cinit then
 				ccc := bcc;
-				if ccc then write(cout,"cc"); end if;
-				write(cout,"coeff");
+				if ccc then swrite(cout,"cc"); end if;
+				swrite(cout,"coeff");
 				cinit := true;
 			end if;
 			n := conv_integer_signed(coretransform_ynout);
-			write(cout," ");
+			swrite(cout," ");
 			write(cout,n);
 		elsif cinit then
 			writeline(output,cout);
@@ -1015,27 +1017,27 @@ begin
 		if quantise_valid='1' then
 			if not qinit then
 				qcc := ccc;
-				if qcc then write(qout,"cc"); end if;
-				write(qout,"quant");
+				if qcc then swrite(qout,"cc"); end if;
+				swrite(qout,"quant");
 				qinit := true;
 			end if;
 			n := conv_integer_signed(quantise_zout);	--12bit
-			write(qout," ");
+			swrite(qout," ");
 			write(qout,n);
 		elsif qinit then
 			writeline(output,qout);
 			qinit := false;
-		end if;		
+		end if;
 		--
 		if dequantise_valid='1' then
 			if not dqinit then
 				dqcc := qcc;
-				if dqcc then write(dqout,"cc"); end if;
-				write(dqout,"coeff'");
+				if dqcc then swrite(dqout,"cc"); end if;
+				swrite(dqout,"coeff'");
 				dqinit := true;
 			end if;
 			n := conv_integer_signed(dequantise_wout);
-			write(dqout," ");
+			swrite(dqout," ");
 			write(dqout,n);
 		elsif dqinit then
 			writeline(output,dqout);
@@ -1045,16 +1047,16 @@ begin
 		if invtransform_valid='1' then
 			if not iinit then
 				icc := dqcc;
-				if icc then write(iout,"cc"); end if;
-				write(iout,"residual'");
+				if icc then swrite(iout,"cc"); end if;
+				swrite(iout,"residual'");
 				iinit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer_signed(invtransform_xout(b*9+8 downto b*9));
-				write(iout," ");
+				swrite(iout," ");
 				write(iout,n);
 			end loop;
-			write(iout,";");
+			swrite(iout,";");
 		elsif iinit then
 			writeline(output,iout);
 			iinit := false;
@@ -1062,15 +1064,15 @@ begin
 		--
 		if recon_FBSTROBE='1' then
 			if not finit then
-				write(fout,"recon");
+				swrite(fout,"recon");
 				finit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer(recon_FEEDB(b*8+7 downto b*8));
-				write(fout," ");
+				swrite(fout," ");
 				write(fout,n);
 			end loop;
-			write(fout,";");
+			swrite(fout,";");
 		elsif finit then
 			writeline(output,fout);
 			finit := false;
@@ -1078,15 +1080,15 @@ begin
 		--
 		if recon_FBCSTROBE='1' then
 			if not fcinit then
-				write(fout,"ccrecon");
+				swrite(fout,"ccrecon");
 				fcinit := true;
 			end if;
 			for b in 0 to 3 loop
 				n := conv_integer(recon_FEEDB(b*8+7 downto b*8));
-				write(fout," ");
+				swrite(fout," ");
 				write(fout,n);
 			end loop;
-			write(fout,";");
+			swrite(fout,";");
 		elsif fcinit then
 			writeline(output,fout);
 			fcinit := false;
@@ -1131,7 +1133,7 @@ begin
 				tmp := conv_integer_signed(coretransform_ynout);
 				if tmp /= dctmp(dco) then
 					assert false report "DC MISMATCH" severity failure;
-					write(iout,"**DC MISMATCH**");
+					swrite(iout,"**DC MISMATCH**");
 					writeline(output,iout);
 				end if;
 				dco := dco+1;
@@ -1251,7 +1253,7 @@ begin
 					end loop;
 				end loop;
 				write(sout,IMGHEIGHT*IMGWIDTH*3/2);
-				write(sout," bytes written to test_rec.yuv");
+				swrite(sout," bytes written to test_rec.yuv");
 				writeline(output,sout);
 			end if;
 			--done frame
@@ -1274,9 +1276,9 @@ begin
 				fsnr := integer(round(snr*10.0));	--centibels
 				isnr := fsnr/10;			--decibels
 				fsnr := fsnr - isnr*10;		--tenths of dB digit
-				write(sout,"SNR Y: ");write(sout,isnr);write(sout,".");write(sout,fsnr);write(sout," dB; ");
+				swrite(sout,"SNR Y: ");write(sout,isnr);swrite(sout,".");write(sout,fsnr);swrite(sout," dB; ");
 			else
-				write(sout,"SNR Y: oo dB; ");
+				swrite(sout,"SNR Y: oo dB; ");
 			end if;
 			--writeline(output,sout);
 			ssqdiff := 0.0;
@@ -1292,9 +1294,9 @@ begin
 				fsnr := integer(round(snr*10.0));	--centibels
 				isnr := fsnr/10;			--decibels
 				fsnr := fsnr - isnr*10;		--tenths of dB digit
-				write(sout,"U: ");write(sout,isnr);write(sout,".");write(sout,fsnr);write(sout," dB; ");
+				swrite(sout,"U: ");write(sout,isnr);swrite(sout,".");write(sout,fsnr);swrite(sout," dB; ");
 			else
-				write(sout,"U: oo dB; ");
+				swrite(sout,"U: oo dB; ");
 			end if;
 			--writeline(output,sout);
 			ssqdiff := 0.0;
@@ -1310,9 +1312,9 @@ begin
 				fsnr := integer(round(snr*10.0));	--centibels
 				isnr := fsnr/10;			--decibels
 				fsnr := fsnr - isnr*10;		--tenths of dB digit
-				write(sout,"V: ");write(sout,isnr);write(sout,".");write(sout,fsnr);write(sout," dB");
+				swrite(sout,"V: ");write(sout,isnr);swrite(sout,".");write(sout,fsnr);swrite(sout," dB");
 			else
-				write(sout,"V: oo dB");
+				swrite(sout,"V: oo dB");
 			end if;
 			writeline(output,sout);
 		end if;--y
@@ -1342,8 +1344,8 @@ begin
 			count := count + 1;
 		end if;
 		if tobytes_DONE='1' then
-			write(sout,count);write(sout," bytes in NAL (");
-			write(sout,IMGHEIGHT*IMGWIDTH*3/2/count);write(sout,":1 compression) using QP: ");write(sout,conv_integer(QP));
+			write(sout,count);swrite(sout," bytes in NAL (");
+			write(sout,IMGHEIGHT*IMGWIDTH*3/2/count);swrite(sout,":1 compression) using QP: ");write(sout,conv_integer(QP));
 			writeline(output,sout);
 			count := 0;
 			write(outb, character'VAL(0));

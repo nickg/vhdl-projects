@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 -- Test2 for H264 CAVLC - VHDL
--- 
+--
 -- Written by Andy Henson
 -- Copyright (c) 2008 Zexia Access Ltd
 -- All rights reserved.
@@ -46,6 +46,7 @@ entity test2 is
 end test2;
 
 architecture cavlc_test2 of test2 is
+	alias swrite is write [line, string, side, width];
 	--
 	constant STATE_IDLE   : std_logic_vector(2 downto 0) := b"000";
 	constant STATE_READ   : std_logic_vector(2 downto 0) := b"001";
@@ -112,7 +113,7 @@ process	--data input
 	variable n : integer;
 begin
 	enable <= '0';
-	write(sout,"# Test output from VHDL CAVLC_TEST2");
+	swrite(sout,"# Test output from VHDL CAVLC_TEST2");
 	writeline(output,sout);
 	--
 	cmd: while not endfile(input) loop
@@ -126,7 +127,7 @@ begin
 			next cmd;
 		end if;
 		if c /= 'c' then
-			write(sout,"ERROR EXPECTING coeff:");
+			swrite(sout,"ERROR EXPECTING coeff:");
 			--//write(sout,s);
 			writeline(output,sout);
 			next cmd;
@@ -135,12 +136,12 @@ begin
 		read(s,c);--e
 		read(s,c);--f
 		read(s,c);--f
-		write(sout,"coeff ");
+		swrite(sout,"coeff ");
 		for i in 0 to 15 loop
 			read(s,vali);	--first coeff
 			data(i) := vali;
 			write(sout,vali);
-			write(sout," ");
+			swrite(sout," ");
 		end loop;
 		writeline(output,sout);
 		--
@@ -180,7 +181,7 @@ begin
 			wait for 400 ns;	--to output all before next read
 		end loop; --nintype
 	end loop;	--all input lines
-	write(sout,"#end of input");
+	swrite(sout,"#end of input");
 	writeline(output,sout);
 	wait for 1 ms;
 	assert false report "DONE" severity ERROR;
@@ -206,63 +207,63 @@ begin
 		if verbose and (en1='1' or en2='1' or VALID='1' or state/=STATE_IDLE) then
 		if en1='1' or en2='1' then
 			if SIN='0' then
-				write(sout,"IN");
+				swrite(sout,"IN");
 			else
-				write(sout,"in");
+				swrite(sout,"in");
 			end if;
 			if en1='1' then
 				if vin1(11)='0' then
-					write(sout," ");
+					swrite(sout," ");
 					write(sout,conv_integer(vin1));	--probably single digit
 				else
-					write(sout,"-");
+					swrite(sout,"-");
 					write(sout,conv_integer(x"000"-vin1));	--probably single digit
 				end if;
 			else
-				write(sout,"  ");
+				swrite(sout,"  ");
 			end if;
 			if en2='1' then
 				if vin2(11)='0' then
-					write(sout," ");
+					swrite(sout," ");
 					write(sout,conv_integer(vin2));	--probably single digit
 				else
-					write(sout,"-");
+					swrite(sout,"-");
 					write(sout,conv_integer(x"000"-vin2));	--probably single digit
 				end if;
 			else
-				write(sout,"  ");
+				swrite(sout,"  ");
 			end if;
-			write(sout,"  ");
+			swrite(sout,"  ");
 		else
-			write(sout,"--      ");
+			swrite(sout,"--      ");
 		end if;
 		--DEBUG OUTPUT INTERNAL STATES
 		if state = STATE_IDLE then
-			write(sout,"IDLE  ");
+			swrite(sout,"IDLE  ");
 		elsif state = STATE_CTOKEN then
-			write(sout,"CTOKEN");
+			swrite(sout,"CTOKEN");
 		elsif state = STATE_T1SIGN then
-			write(sout,"T1SIGN");
+			swrite(sout,"T1SIGN");
 		elsif state = STATE_COEFFS then
-			write(sout,"COEFFS");
+			swrite(sout,"COEFFS");
 		elsif state = STATE_TZEROS then
-			write(sout,"TZEROS");
+			swrite(sout,"TZEROS");
 		elsif state = STATE_RUNBF then
-			write(sout,"RUNBF ");
+			swrite(sout,"RUNBF ");
 		else
-			write(sout,"????  ");
+			swrite(sout,"????  ");
 		end if;
 		if VALID='1' then
 			--output on VL/VE
 			if VS='0' then
-				write(sout," OUT ");
+				swrite(sout," OUT ");
 			else
-				write(sout," out ");
+				swrite(sout," out ");
 			end if;
 			n := conv_integer(vl);
-			if n<10 then write(sout," "); end if;
+			if n<10 then swrite(sout," "); end if;
 			write(sout,n);
-			write(sout," ");
+			swrite(sout," ");
 			for i in n-1 downto 0 loop
 				if i > n then
 					write(sout,'.');
@@ -288,7 +289,7 @@ begin
 					write(soutb,conv_integer(ve(i)));
 				end if;
 				bb := bb - 1;
-				if bb=0 then write(soutb," "); bb:= 8; end if;
+				if bb=0 then swrite(soutb," "); bb:= 8; end if;
 			end loop;
 		end if;
 		if state = STATE_RUNBF and xstate /= STATE_RUNBF then

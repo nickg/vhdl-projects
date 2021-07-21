@@ -1,7 +1,8 @@
 #!/bin/bash
 
 _nvc () {
-  local _opts="--std=${STD:-1993} ${WORK+--work=.nvc/$WORK} -L.nvc"
+  local _work=${WORK:-work}
+  local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc"
   mkdir -p .nvc
   echo ${NVC:-nvc} $_opts $*
   ${NVC:-nvc} $_opts  $*
@@ -29,7 +30,7 @@ analyse () {
 elaborate () {
   local _top=${TOP:-$1}
   case ${SIM:-nvc} in
-    ghdl) _ghdl -e --std=${STD: -2} $GHDL_OPTS $_top ;;
+    ghdl) _ghdl -e $GHDL_OPTS $_top ;;
     nvc)  _nvc --std=${STD:-1993} -e $E_OPTS $_top ;;
   esac
 }

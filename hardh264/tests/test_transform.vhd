@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 -- Test for H264 transforms - VHDL
--- 
+--
 -- Written by Andy Henson
 -- Copyright (c) 2008 Zexia Access Ltd
 -- All rights reserved.
@@ -47,6 +47,7 @@ entity test is
 end test;
 
 architecture test_transform of test is
+	alias swrite is write [line, string, side, width];
 	--
 	signal CLK : std_logic := '0';			--clock
 	signal CLK2 : std_logic;				--2x clock
@@ -91,13 +92,13 @@ process	--data input
 	--
 begin
 	enable <= '0';
-	write(sout,"# Test output from VHDL TEST_TRANSFORM");
+	swrite(sout,"# Test output from VHDL TEST_TRANSFORM");
 	writeline(output,sout);
 	--
 	cmd: while not endfile(input) loop
 		readline(input,s);
 		write(s,' ');	--add space to end
-		--write(sout,"READ:");
+		--swrite(sout,"READ:");
 		--//write(sout,s);
 		--writeline(output,sout);
 		read(s,c);
@@ -105,7 +106,7 @@ begin
 			next cmd;
 		end if;
 		if c /= 'r' then
-			write(sout,"ERROR EXPECTING residual");
+			swrite(sout,"ERROR EXPECTING residual");
 			--//write(sout,s);
 			writeline(output,sout);
 			next cmd;
@@ -117,12 +118,12 @@ begin
 		read(s,c);--u
 		read(s,c);--a
 		read(s,c);--l
-		write(sout,"residual ");
+		swrite(sout,"residual ");
 		for i in 0 to 15 loop
 			read(s,vali);	--first coeff
 			data(i) := vali;
 			write(sout,vali);
-			write(sout," ");
+			swrite(sout," ");
 			assert vali <= 255 and vali >= -255 report "residual value out of range" severity ERROR;
 		end loop;
 		--
@@ -141,7 +142,7 @@ begin
 				CONV_STD_LOGIC_VECTOR(data(i*4),9);
 			wait until rising_edge(clk2);
 		end loop;
-		enable <= '0';		
+		enable <= '0';
 		wait until rising_edge(clk2);
 		wait until rising_edge(clk2);
 		writeline(output,sout);		--write input line now (quite late so after previous output)
@@ -150,7 +151,7 @@ begin
 		end if;
 	end loop;	--all input lines
 	wait for 400 ns;
-	write(sout,"#end of input");
+	swrite(sout,"#end of input");
 	writeline(output,sout);
 	wait for 1 ms;
 	assert false severity ERROR;
@@ -165,7 +166,7 @@ begin
 	if rising_edge(CLK2) then
 		if VALID='1' then
 			if not wasvalid then
-				write(sout,"=> coeff");
+				swrite(sout,"=> coeff");
 				wasvalid := true;
 			end if;
 			if YNOUT(13)='0' then
@@ -173,7 +174,7 @@ begin
 			else
 				n := conv_integer(YNOUT)-16384;
 			end if;
-			write(sout," ");
+			swrite(sout," ");
 			write(sout,n);
 		elsif wasvalid then -- and not VALID
 			writeline(output,sout);
@@ -183,7 +184,3 @@ begin
 end process;
 	--
 end test_transform;
-
-
-
-

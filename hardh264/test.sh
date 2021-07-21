@@ -4,8 +4,7 @@ cd $(dirname $0)
 . ../functions.sh
 
 STD=1993
-TOP=
-STOP_TIME=
+TOP=h264top
 
 A_OPTS="--relax=prefer-explicit"
 E_OPTS=
@@ -31,7 +30,6 @@ analyse src/h264buffer.vhd \
 
 analyse tests/cavlc_test2.vhd \
         tests/h264topsim.vhd \
-        tests/test_pred.vhd \
         tests/test_transform.vhd \
         tests/cavlc_test.vhd \
         tests/test_header.vhd \
