@@ -1,3 +1,2 @@
-work/
-*-obj*.cf
-*.o
+.ghdl/
+.nvc/

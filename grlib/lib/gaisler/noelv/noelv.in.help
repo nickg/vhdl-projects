@@ -1,0 +1,20 @@
+
+Number of processors
+CONFIG_PROC_NUM
+  The number of processor cores.
+
+Select standard configuration
+CONFIG_NOELV_TIN
+  Tiny: RV32im
+  MIN: RV64/32ima
+  GPP: RV64/32imafd (signle or dual issue)
+  HPP: RV64/32imafd (target for ASIC)
+
+IU assembly printing
+CONFIG_IU_DISAS
+  Enable printing of executed instructions to the console.
+
+NOEL-V subsystem GPL settings
+CONFIG_PROC_NODBUS
+  Remove IPs not included in the GPL release.
+

@@ -1,0 +1,22 @@
+#tech/dware
+synplify
+techmap           vhdlstd=93
+spw
+spfi
+eth
+opencores
+ihp
+actel/core1553bbc
+actel/core1553brt
+actel/core1553brm
+actel/corePCIF
+gr1553
+gaisler
+esa
+#nasa
+fmf
+spansion
+gsi
+
+
+
