@@ -72,7 +72,7 @@ begin
                 --<JK> extend compare to avoid waring messages
                 if ("1" & addr & lowAddrBits) = x"80a000c" then
                     -- Write to UART
-                    report "Write to UART[0]" & " :0x" & hstr(write);
+                    --report "Write to UART[0]" & " :0x" & hstr(write);
                     -- pragma translate_off
                     char := character'val(to_integer(unsigned(write)));
                     if char = lf then
@@ -86,20 +86,20 @@ begin
                     report "Write to TIMER" & " :0x" & hstr(write);
 
                 else
-                    
+
                     report "Illegal IO write @" & "0x" & hstr(taddr) severity warning;
                 end if;
-                
+
             end if;
             read <= (others => '0');
             if (readEnable = '1') then
                 --<JK> extend compare to avoid waring messages
                 if ("1" & addr & lowAddrBits) = x"80a000c" then
-                    report "Read UART[0]";
+                    --report "Read UART[0]";
                     read(8) <= not tx_full;            -- output fifo not full
                     read(9) <= not rx_empty;           -- receiver not empty
                 elsif ("1" & addr & lowAddrBits) = x"80a0010" then
-                    report "Read UART[1]";
+                    --report "Read UART[1]";
                     read(8)          <= not rx_empty;  -- receiver not empty
                     read(7 downto 0) <= (others => '0');
                 elsif addr(12) = '1' then
