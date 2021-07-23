@@ -85,9 +85,9 @@ end h264top;
 architecture sim of h264top is
 	alias swrite is write [line, string, side, width];
 
-	constant verbose : boolean := true;	--dump all output bits and states
-	constant verbose2 : boolean := true;	--dump residuals, coeffs, etc
-	constant verbose3 : boolean := true;	--dc checks; dump dc coeffs
+	constant verbose : boolean := false;	--dump all output bits and states
+	constant verbose2 : boolean := false;	--dump residuals, coeffs, etc
+	constant verbose3 : boolean := false;	--dc checks; dump dc coeffs
 	constant verbosep : boolean := true;	--progress indicator "newline pulsed"
 	constant dumprecon : boolean := true;	--dump reconstructed image to file
 	constant computesnr : boolean := true;	--compute and print SNR figures
@@ -120,6 +120,7 @@ architecture sim of h264top is
 	--
 	signal CLK : std_logic := '0';			--clock
 	signal CLK2 : std_logic;				--2x clock
+	signal running : boolean := true;
 	--
 	-- THIS SECTION IS SKELETON FOR HARDWARE SYNTH...
 	--
@@ -559,6 +560,7 @@ end process;
 	--
 process		--generate CLK2, 100MHz will do for this sim, and CLK at 50MHz
 begin
+	if not running then wait; end if;
 	CLK2 <= '0';
 	wait for 5 ns;
 	CLK2 <= '1';
@@ -754,7 +756,9 @@ begin
 	end loop;
 	write(sout,framenum);swrite(sout," frames processed.");
 	writeline(output,sout);
-	assert FALSE report "DONE" severity FAILURE;
+	assert FALSE report "DONE" severity note;
+	running <= false;
+	wait;
 end process;
 	--
 process(CLK2)		--asserts

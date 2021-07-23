@@ -28,12 +28,18 @@ analyse src/h264buffer.vhd \
         src/misc.vhd \
         src/h264topskeleton.vhd
 
-analyse tests/cavlc_test2.vhd \
-        tests/h264topsim.vhd \
-        tests/test_transform.vhd \
-        tests/cavlc_test.vhd \
-        tests/test_header.vhd \
-        tests/test_transform2.vhd
+analyse tests/h264topsim.vhd
+
+if [ "$SIM" != ghdl ]; then
+  analyse tests/cavlc_test2.vhd \
+          tests/test_transform.vhd \
+          tests/cavlc_test.vhd \
+          tests/test_header.vhd \
+          tests/test_transform2.vhd
+fi
+
+[ -f sample_int.yuv ] \
+  || wget https://github.com/QUSIR/x264_demo/raw/master/test/sample_int.yuv
 
 elaborate
 run

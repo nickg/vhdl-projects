@@ -1,2 +1,6 @@
 .ghdl/
 .nvc/
+hardh264/*.yuv
+hardh264/*.264
+perf.data
+perf.data.old
