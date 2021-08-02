@@ -13,7 +13,7 @@ A_OPTS="--relax=prefer-explicit"
 E_OPTS=
 R_OPTS="--exit-severity=failure"
 
-GHDL_OPTS="-fexplicit -fsynopsys"
+GHDL_OPTS="-fexplicit -fsynopsys -frelaxed"
 
 analyse flopoco.vhdl
 

@@ -5,9 +5,13 @@ cd $(dirname $0)
 
 STD=1993
 TOP=fpga_top
+STOP_TIME=4910us
+
 A_OPTS=
 E_OPTS=
-R_OPTS="--stop-time=4910us"
+R_OPTS=
+
+GHDL_OPTS="-frelaxed"
 
 analyse example_medium/zpu_config_trace.vhd \
 	zpu4/core/zpupkg.vhd \

@@ -13,7 +13,7 @@ _ghdl () {
   local _cmd=$1
   shift
   mkdir -p .ghdl
-  local _opts="--workdir=.ghdl ${WORK+--work=$WORK} --std=${STD: -2}"
+  local _opts="--workdir=.ghdl ${WORK+--work=$WORK} --std=${STD: -2} -O2"
   echo ${GHDL:-ghdl} $_cmd $_opts $*
   ${GHDL:-ghdl} $_cmd $_opts $*
   [ $? = 0 ] || exit 1
