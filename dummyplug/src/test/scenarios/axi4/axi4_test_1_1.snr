@@ -1,0 +1,659 @@
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.1
+#
+#----------------------------------------------------------------------------------
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 START
+  -  TIMEOUT: ON
+  -  WAIT: 10
+  -  SAY: "DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 8"
+  -  SAY: 'DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 7'
+- ? MARCHAL
+  : - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 6
+- ? MARCHAL
+  : - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 5
+    - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 4
+- MARCHAL: 
+    SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 3
+- MARCHAL: 
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 2
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 1
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 COUNT DOWN 0
+- - MARCHAL
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 DONE
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2
+#
+#----------------------------------------------------------------------------------
+---
+- MASTER:
+  - DEBUG: 0
+  - AW : [{DEBUG : 0}]
+  - AR : [{DEBUG : 0}]
+  - R  : [{DEBUG : 0}]
+  - W  : [{DEBUG : 0}]
+  - B  : [{DEBUG : 0}]
+- SLAVE:
+  - DEBUG: 0
+  - AW : [{DEBUG : 0}]
+  - AR : [{DEBUG : 0}]
+  - R  : [{DEBUG : 0}]
+  - W  : [{DEBUG : 0}]
+  - B  : [{DEBUG : 0}]
+---
+- - [MARCHAL,MASTER,SLAVE]
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2 START
+- - [MASTER,SLAVE]
+  - AW:
+    - VALID : 0
+      READY : 0
+    - WAIT  : 10
+    - ADDR  : 0x00000010
+      SIZE  : 4
+      LEN   : 2
+      CACHE : 3
+      AUSER : 1
+      VALID : 1
+      READY : 1
+    - WAIT  : {VALID: 1, READY: 1}
+    - VALID : 0
+      READY : 0
+  - AR:
+    - VALID : 0
+      READY : 0
+    - WAIT  : {BVALID: 1, BREADY: 1, TIMEOUT: 100}
+    - ADDR  : 0x00000012
+      SIZE  : 2
+      LEN   : 2
+      CACHE : 3
+      AUSER : 1
+      VALID : 1
+      READY : 1
+    - WAIT  : {VALID : 1, READY : 1}
+    - VALID : 0
+      READY : 0
+  - W:
+    - WAIT  : {AWVALID: 1, AWREADY: 1}
+    - DATA  : 0x76543210
+      LAST  : 0
+      VALID : 1
+      READY : 1
+    - WAIT  : {VALID: 1, READY : 1}
+    - DATA  : 0xFEDCBA89
+      LAST  : 1
+      VALID : 1
+      READY : 1
+    - WAIT  : {VALID: 1, READY : 1}
+    - DATA  : 0
+      LAST  : 0
+      VALID : 0
+      READY : 0
+  - B:
+    - RESP  : OKAY
+      VALID : 0
+      READY : 0
+    - WAIT  : {WVALID: 1, WREADY: 1, WLAST: 1}
+    - VALID : 1
+      READY : 1
+    - WAIT  : {BVALID: 1, BREADY: 1}
+    - VALID : 0
+      READY : 0
+  - R:
+    - VALID : 0
+      READY : 0
+    - WAIT  : {ARVALID: 1, ARREADY: 1}
+    - DATA  : 0x00010203
+      LAST  : 0
+      RESP  : OKAY
+      VALID : 1
+      READY : 1
+    - WAIT  : {RVALID: 1, RREADY: 1}
+    - DATA  : 0x04050607
+      LAST  : 1
+      RESP  : OKAY
+      VALID : 1
+      READY : 1
+    - WAIT   : {RVALID: 1, RREADY: 1}
+    - VALID : 0
+      READY : 0
+      DATA  : 0
+      ID    : 0
+      LAST  : 0
+      RESP  : OKAY
+---
+- - [MARCHAL,MASTER,SLAVE]
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2 DONE
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.3
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: |
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.3 START
+- MASTER:                                 # マスター用ダミープラグの名前. 
+  - AW:                                   # アドレスチャネルの挙動.
+    - AWVALID : 0                         # AWVALID <= 'b0
+      AWADDR  : "32'h00000000"            # AWADDR  <= 'h00000000
+      AWSIZE  : 1                         # AWSIZE  <= 'b000
+      AWLEN   : 1                         # AWLEN   <= 'b00000000
+      AWBURST : FIXED                     # AWBURST <= 'b00
+      AWLOCK  : 0                         # AWLOCK  <= 'b0
+      AWPROT  : 0                         # AWPROT  <= 'b000
+      AWQOS   : 0                         # AWQOS   <= 'b0000
+      AWID    : 0                         # AWID    <= 0
+    - WAIT    : 10                        # 10クロック待つ.
+    - AWADDR  : "32'h00000010"            # AWADDR  <= 'h00000010
+      AWSIZE  : 4                         # AWSIZE  <= 'b010
+      AWLEN   : 2                         # AWLEN   <= 'b001
+      AWBURST : INCR                      # AWBURST <= 'b01
+      AWLOCK  : 1                         # AWLOCK  <= 'b1
+      AWPROT  : 3                         # AWPROT  <= 'b011
+      AWQOS   : 3                         # AWQOS   <= 'b0011
+      AWID    : 7                         # AWID    <= 7
+      AWUSER  : 1                         # AWUSER  <= 1
+      AWVALID : 1                         # AWVALID <= 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1まで待つ.
+    - AWVALID : 0                         # AWVALID <= 0
+    - WAIT    : {BVALID:  1, BREADY:  1}  # BVALID = 1 and BREADY = 1まで待つ.
+  - W:                                    # ライトチャネルの挙動.
+    - WDATA   : 0                         # WDATA   <= 0x00000000
+      WSTRB   : 0                         # WSTRB   <= 0000
+      WLAST   : 0                         # WLAST   <= 0
+      WID     : 0                         # WID     <= 0
+      WVALID  : 0                         # WVALID  <= 0;
+    - WAIT    : {AWVALID: 1}              # AWVALID = 1 まで待つ.
+    - WDATA   : "32'h76543210"            # WDATA   <= 0x76543210
+      WSTRB   : "4'b1111"                 # WSTRB   <= 1111
+      WLAST   : 1                         # WLAST   <= 1
+      WID     : 7                         # WID     <= 7
+      WVALID  : 1                         # WVALID  <= 1
+    - WAIT    : {WVALID: 1, WREADY: 1}    # WVALID = 1 and WREADY = 1まで待つ.
+    - WDATA   : "32'h00000000"            # WDATA   <= 0x00000000
+      WSTRB   : "4'b0000"                 # WSTRB   <= 0000
+      WLAST   : 0                         # WLAST   <= 0
+      WID     : 0                         # WID     <= 0
+      WVALID  : 0                         # WVALID  <= 0
+  - B:                                    # ライト応答チャネルの挙動.
+    - BREADY  : 0                         # BVALID <= 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1まで待つ.
+    - BREADY  : 1                         # BVALID <= 1
+    - WAIT    : {BVALID: 1, BREADY: 1}    # BVALID = 1 and BREADY = 1まで待つ.
+    - CHECK   :                           # BRESP, BID が
+        BRESP  : EXOKAY                   # 指定された値になっているか調べる.
+        BID    : 7                        #
+    - BREADY  : 0                         # BVALID <= 0
+- SLAVE:                                  # スレーブ用ダミープラグの名前. 
+  - AW:                                   # アドレスチャネルの挙動.
+    - AWREADY : 0                         # AWREADY <= 0
+    - WAIT    : {AWVALID: 1, WVALID:  1, 
+                 TIMEOUT: 12, ON: on}     # AWVALID = 1 and WVALID = 1 まで待つ.ただし12クロック以内.
+    - AWREADY : 1                         # AWREADY <= 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1 まで待つ.
+    - CHECK   :                           # AWADDR, AWSIZE, AWID が
+        AWADDR  : "32'h00000010"          # 指定した値になっているか調べる.
+        AWSIZE  : 4                       #
+        AWID    : 7                       #
+        AWLEN   : 2                       # 
+        AWBURST : INCR                    # 
+        AWLOCK  : 1                       # 
+        AWPROT  : 3                       # 
+        AWQOS   : 3                       # 
+        AWUSER  : 1                       #
+    - AWREADY : 0                         # AWREADY <= 0
+  - W:                                    # ライトチャネルの挙動.
+    - WREADY  : 0                         # WREADY <= 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1 まで待つ.
+    - WREADY  : 1                         # WREADY <= '1'
+    - WAIT    : {WVALID : 1, WREADY : 1}  # WVALID = 1 and WREADY = 1 まで待つ.
+    - CHECK   :                           # WDATA, WSTRB, WLAST, WID　が
+        WDATA  : "32'h76543210"           # 指定された値になっているか調べる.
+        WSTRB  : "4'b1111"                #
+        WLAST  : 1                        #
+        WID    : 7                        #
+    - WREADY  : 0                         # WREADY <= 0
+    - WAIT    : 1                         # 1クロック待つ.
+    - CHECK   :                           # WDATA, WSTRB, WLAST, WID　が
+        WDATA  : "32'h00000000"           # 指定された値になっているか調べる.
+        WSTRB  : "4'b0000"                #
+        WLAST  : 0                        #
+        WID    : 0                        #
+        WVALID : 0                        #
+  - B:                                    # ライト応答チャネルの挙動.
+    - BVALID  : 0                         # BVALID <= 0
+    - WAIT    : {WVALID: 1, WREADY: 1}    # WVALID = 1 and WREADY = 1まで待つ.
+    - BVALID  : 1                         # BVALID <= 1
+      BRESP   : EXOKAY                    # BRESP  <= 'b01
+      BID     : 7                         # BID    <= 7
+    - WAIT    : {BVALID: 1, BREADY: 1}    # BVALID = 1 and BREADY = 1まで待つ.
+    - BVALID  : 0                         # BVALID <= 1
+      BRESP   : OKAY                      # BRESP  <= 00
+---                                       # これで全てのダミープラグが同期.
+- - MARCHAL                               # ダミープラグの名前. 
+  - SAY: >                                # SAYコマンド. 文字列をコンソールに出力.
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.3 DONE
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.4
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.4 START
+- MASTER:                                 # マスター用ダミープラグの名前. 
+  - AR:                                   # アドレスチャネルの挙動.
+    - ARVALID : 0                         # ARVALID <= 0
+      ARADDR  : "32'h00000000"            # ARADDR  <= 'h00000000
+      ARSIZE  : 1                         # ARSIZE  <= 'b000
+      ARLEN   : 1                         # ARLEN   <= 'b00000000
+      ARBURST : FIXED                     # ARBURST <= 'b00
+      ARLOCK  : 0                         # ARLOCK  <= 'b0
+      ARPROT  : 0                         # ARPROT  <= 'b000
+      ARQOS   : 0                         # ARQOS   <= 'b0000
+      ARID    : 0                         # ARID    <= 0
+    - WAIT    : 10                        # 10クロック待つ.
+    - ARADDR  : "32'h00043210"            # ARADDR  <= 'h00043210
+      ARSIZE  : 4                         # ARSIZE  <= 'b010
+      ARLEN   : 2                         # ARLEN   <= 'b00000001
+      ARBURST : INCR                      # ARBURST <= 'b01
+      ARLOCK  : 1                         # ARLOCK  <= 'b1
+      ARPROT  : 2                         # ARPROT  <= 'b010
+      ARQOS   : 1                         # ARQOS   <= 'b0001
+      ARID    : 7                         # ARID    <= 7
+      ARVALID : 1                         # ARVALID <= 1
+    - WAIT    : {ARVALID: 1, ARREADY: 1}  # ARVALID = 1 and ARREADY = 1まで待つ.
+    - ARVALID : 0                         # ARVALID <= 0
+    - WAIT    : {RVALID:  1, RREADY: 1, RLAST: 1, TIMEOUT: 100}
+  - R:
+    - RREADY  : 0
+    - WAIT    : {ARVALID: 1, TIMEOUT: 100}
+    - RREADY  : 1
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - CHECK   :
+        RDATA   : "32'hFEDCBA98"
+        RLAST   : 0
+        RRESP   : OKAY
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - CHECK   :
+        RDATA   : "32'h01234567"
+        RLAST   : 1
+        RRESP   : EXOKAY
+    - RREADY  : 0
+- SLAVE:                                  # スレーブ用ダミープラグの名前. 
+  - AR:                                   # アドレスチャネルの挙動.
+    - ARREADY : 0                         # ARREADY <= 0
+    - WAIT    : {ARVALID: 1, TIMEOUT: 10} # ARVALID = 1 まで待つ.ただし10クロック以内.
+    - ARREADY : 1                         # ARREADY <= 1
+    - WAIT    : {ARVALID: 1, ARREADY: 1}  # ARVALID = 1 and ARREADY = 1 まで待つ.
+    - CHECK   :                           # AWADDR, AWSIZE, AWID が
+        ARADDR  : "32'h00043210"          # 指定した値になっているか調べる.
+        ARSIZE  : 4                       #
+        ARLEN   : 2                       # 
+        ARBURST : INCR                    # 
+        ARLOCK  : 1                       # 
+        ARPROT  : 2                       # 
+        ARQOS   : 1                       # 
+        ARID    : 7                       #
+    - ARREADY : 0                         # ARREADY <= 0
+  - R:                                    # リードチャネルの挙動.
+    - RVALID  : 0
+      RDATA   : "32'h00000000"
+      RLAST   : 0
+      RRESP   : OKAY
+    - WAIT    : {ARVALID: 1, TIMEOUT: 100}
+    - WAIT    : 5
+    - RVALID  : 1
+      RDATA   : "32'hFEDCBA98"
+      RLAST   : 0
+      RRESP   : OKAY
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - RVALID  : 0
+      RDATA   : "32'h00000000"
+    - WAIT    : 2
+    - RVALID  : 1
+      RDATA   : "32'h01234567"
+      RLAST   : 1
+      RRESP   : EXOKAY
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - RVALID  : 0
+      RDATA   : "32'h00000000"
+      RLAST   : 0
+      RRESP   : OKAY
+---
+- MARCHAL:
+  - DEBUG : 0
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.4 DONE
+- MASTER :
+  - DEBUG : 0
+- SLAVE  :
+  - DEBUG : 0
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.5
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.5 START
+  - SYNC  : {PORT: 0, WAIT: 100}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.5 DONE
+- MASTER:                                 # マスター用ダミープラグの名前. 
+  - DEBUG : 0
+  - REPORT: {DEBUG: ON, MISMATCH: ON}
+  - WAIT  : {GPI(8)  : 0, TIMEOUT: 100}   #
+  - SAY   : "Expected mismatch! GPI(8) 0 /= 1 !"
+  - CHECK : {GPI(8)  : 1, GPI(9)  : 0, GPI(10) : 0, GPI(11) : 0,
+             GPI(12) : 1, GPI(13) : 0, GPI(14) : 1, GPI(15) : 1}
+  - WAIT  : 10
+  - OUT   : {GPO(0)  : 0, GPO(1)  : 1, GPO(2)  : 0, GPO(3)  : 1}
+  - DEBUG : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - AW:                                   # アドレスチャネルの挙動.
+    - AWVALID : 0                         # AWVALID <= 0
+      AWADDR  : "32'h00000000"            # AWADDR  <= 'h00000000
+      AWSIZE  : 1                         # AWSIZE  <= 'b000
+      AWLEN   : 1                         # AWLEN   <= 'b00000000
+      AWBURST : FIXED                     # AWBURST <= 'b00
+      AWLOCK  : 0                         # AWLOCK  <= 'b0
+      AWPROT  : 0                         # AWPROT  <= 'b000
+      AWQOS   : 0                         # AWQOS   <= 'b0000
+      AWID    : 0                         # AWID    <= 0
+    - WAIT    : 10                        # 10クロック待つ.
+    - AWADDR  : "32'h00000010"            # AWADDR  <= 'h00000010
+      AWSIZE  : 4                         # AWSIZE  <= 'b010
+      AWLEN   : 2                         # AWLEN   <= 'b00000001
+      AWBURST : INCR                      # AWBURST <= 'b01
+      AWLOCK  : 1                         # AWLOCK  <= 1
+      AWPROT  : 3                         # AWPROT  <= 3
+      AWQOS   : 3                         # AWQOS   <= 3
+      AWID    : 7                         # AWID    <= 7
+      AWUSER  : 1                         # AWID    <= 1
+      AWVALID : 1                         # AWVALID <= 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1まで待つ.
+    - AWVALID : 0                         # AWVALID <= 0
+    - WAIT    : {BVALID:  1, BREADY:  1}  # BVALID = 1 and BREADY = 1まで待つ.
+  - W:                                    # ライトチャネルの挙動.
+    - WDATA   : 0                         # WDATA   <= 0x00000000
+      WSTRB   : 0                         # WSTRB   <= 0000
+      WLAST   : 0                         # WLAST   <= 0
+      WID     : 0                         # WID     <= 0
+      WVALID  : 0                         # WVALID  <= 0;
+    - WAIT    : {AWVALID: 1}              # AWVALID = 1 まで待つ.
+    - WDATA   : "32'h76543210"            # WDATA   <= 0x76543210
+      WSTRB   : "4'b1111"                 # WSTRB   <= 1111
+      WLAST   : 1                         # WLAST   <= 1
+      WID     : 7                         # WID     <= 7
+      WVALID  : 1                         # WVALID  <= 1
+    - WAIT    : {WVALID: 1, WREADY: 1}    # WVALID = 1 and WREADY = 1まで待つ.
+    - WDATA   : "32'h00000000"            # WDATA   <= 0x00000000
+      WSTRB   : "4'b0000"                 # WSTRB   <= 0000
+      WLAST   : 0                         # WLAST   <= 0
+      WID     : 0                         # WID     <= 0
+      WVALID  : 0                         # WVALID  <= 0
+  - B:                                    # ライト応答チャネルの挙動.
+    - BREADY  : 0                         # BVALID <= 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1まで待つ.
+    - BREADY  : 1                         # BVALID <= 1
+    - WAIT    : {BVALID: 1, BREADY: 1}    # BVALID = 1 and BREADY = 1まで待つ.
+    - SAY     : "Expected mismatch ! BRESP, BID!"
+    - CHECK   :                           # BRESP, BID が
+        BRESP  : OKAY                     # 指定された値になっていないことを調べる.
+        BID    : 3                        #
+    - BREADY  : 0                         # BVALID <= 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - AR:                                   # アドレスチャネルの挙動.
+    - ARVALID : 0                         # ARVALID <= 0
+      ARADDR  : "32'h00000000"            # ARADDR  <= 'h00000000
+      ARSIZE  : 1                         # ARSIZE  <= 'b000
+      ARLEN   : 1                         # ARLEN   <= 'b00000000
+      ARBURST : FIXED                     # ARBURST <= 'b00
+      ARLOCK  : 0                         # ARLOCK  <= 'b0
+      ARPROT  : 0                         # ARPROT  <= 'b000
+      ARQOS   : 0                         # ARQOS   <= 'b0000
+      ARID    : 0                         # ARID    <= 0
+    - WAIT    : 10                        # 10クロック待つ.
+    - ARADDR  : "32'h00043210"            # ARADDR  <= 'b00043210
+      ARSIZE  : 4                         # ARSIZE  <= 'b010
+      ARID    : 7                         # ARID    <= 7
+      ARLEN   : 2                         # ARLEN   <= 'b00000001
+      ARBURST : INCR                      # ARBURST <= 'b01
+      ARLOCK  : 1                         # ARLOCK  <= 'b1
+      ARPROT  : 2                         # ARPROT  <= 'b010
+      ARQOS   : 1                         # ARQOS   <= 'b0001
+      ARID    : 7                         # ARID    <= 7
+      ARVALID : 1                         # ARVALID <= 1
+    - WAIT    : {ARVALID: 1, ARREADY: 1}  # ARVALID = 1 and ARREADY = 1まで待つ.
+    - ARVALID : 0                         # ARVALID <= 0
+    - WAIT    : {RVALID:  1, RREADY: 1, RLAST: 1, TIMEOUT: 100}
+  - R:
+    - RREADY  : 0
+    - WAIT    : {ARVALID: 1, TIMEOUT: 100}
+    - RREADY  : 1
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - SAY     : "Expected mismatch ! RDATA, RLAST, RRESP, RID!"
+    - CHECK   :
+        RDATA   : "32'h01234567"
+        RLAST   : 1
+        RRESP   : EXOKAY
+        RID     : 4
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - SAY     : "Expected mismatch ! RDATA, RLAST, RRESP, RID!"
+    - CHECK   :
+        RDATA   : "32'hFEDCBA98"
+        RLAST   : 0
+        RRESP   : OKAY
+        RID     : 1
+    - RREADY  : 0
+  - SYNC  : {PORT : 0, WAIT: 3}
+  - REPORT: {DEBUG: OFF}
+- SLAVE:                                  # スレーブ用ダミープラグの名前. 
+  - DEBUG : 0
+  - REPORT: {DEBUG: ON, MISMATCH: ON}
+  - OUT   : {GPO(0) : 0, GPO(1) : 0, GPO(2) : 0, GPO(3) : 0,
+             GPO(4) : 1, GPO(5) : 0, GPO(6) : 1, GPO(7) : 1}
+  - DEBUG : 0
+  - AW:                                   # アドレスチャネルの挙動.
+    - AWREADY : 0                         # AWREADY <= 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50} # AWVALID = 1 まで待つ.ただし50クロック以内.
+    - AWREADY : 1                         # AWREADY <= 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1 まで待つ.
+    - SAY     : "Expected mismatch! AWADDR, AWSIZE, AWID, AWLEN, AWBURST, AWLOCK, AWPROT, AWQOS ...!"
+    - CHECK   :                           # AWADDR, AWSIZE, AWID, AWUSER が
+        AWADDR  : "32'h00000012"          # 指定した値になっていないことを調べる.
+        AWSIZE  : 8                       #
+        AWID    : 5                       #
+        AWLEN   : 3                       # 
+        AWBURST : FIXED                   # 
+        AWLOCK  : 0                       # 
+        AWPROT  : 1                       # 
+        AWQOS   : 1                       # 
+        AWUSER  : 0                       # 
+    - AWREADY : 0                         # AWREADY <= 0
+  - W:                                    # ライトチャネルの挙動.
+    - WREADY  : 0                         # WREADY <= 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1}  # AWVALID = 1 and AWREADY = 1 まで待つ.
+    - WREADY  : 1                         # WREADY <= '1'
+    - WAIT    : {WVALID : 1, WREADY : 1}  # WVALID = 1 and WREADY = 1 まで待つ.
+    - SAY     : "Expected mismatch ! WDATA, WSTRB, WLAST, WID ...!"
+    - CHECK   :                           # WDATA, WSTRB, WLAST, WID　が
+        WDATA  : "32'h01234567"           # 指定された値になっていないことを調べる.
+        WSTRB  : "4'b0111"                #
+        WLAST  : 0                        #
+        WID    : 5                        #
+    - WREADY  : 0                         # WREADY <= 0
+    - WAIT    : 1                         # 1クロック待つ.
+    - CHECK   :                           # WDATA, WSTRB, WLAST, WID　が
+        WDATA  : "32'h00000000"           # 指定された値になっているか調べる.
+        WSTRB  : "4'b0000"                #
+        WLAST  : 0                        #
+        WID    : 0                        #
+        WVALID : 0                        #
+  - B:                                    # ライト応答チャネルの挙動.
+    - BVALID  : 0                         # BVALID <= 0
+    - WAIT    : {WVALID: 1, WREADY: 1}    # WVALID = 1 and WREADY = 1まで待つ.
+    - BVALID  : 1                         # BVALID <= 1
+      BRESP   : EXOKAY                    # BRESP  <= 01
+      BID     : 7                         # BID    <= 7
+    - WAIT    : {BVALID: 1, BREADY: 1}    # BVALID = 1 and BREADY = 1まで待つ.
+    - BVALID  : 0                         # BVALID <= 1
+      BRESP   : OKAY                      # BRESP  <= 00
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - AR:                                   # アドレスチャネルの挙動.
+    - ARREADY : 0                         # ARREADY <= 0
+    - WAIT    : {ARVALID: 1, TIMEOUT: 10} # ARVALID = 1 まで待つ.ただし10クロック以内.
+    - ARREADY : 1                         # ARREADY <= 1
+    - WAIT    : {ARVALID: 1, ARREADY: 1}  # ARVALID = 1 and ARREADY = 1 まで待つ.
+    - SAY     : "Expected mismatch ! ARADDR, ARSIZE, ARLEN, ARBURST, ARLOCK, ARPORT,ARQOS, ARID!"
+    - CHECK   :                           # AWADDR, AWSIZE, AWID が
+        ARADDR  : "32'h00432100"          # 指定した値になっていないことを調べる.
+        ARSIZE  : 2                       #
+        ARLEN   : 3                       # 
+        ARBURST : FIXED                   # 
+        ARLOCK  : 0                       # 
+        ARPROT  : 1                       # 
+        ARQOS   : 2                       # 
+        ARID    : 1                       #
+    - ARREADY : 0                         # ARREADY <= 0
+  - R:                                    # リードチャネルの挙動.
+    - RVALID  : 0
+      RDATA   : "32'h00000000"
+      RLAST   : 0
+      RRESP   : OKAY
+      RID     : 8
+    - WAIT    : {ARVALID: 1, TIMEOUT: 100}
+    - WAIT    : 5
+    - RVALID  : 1
+      RDATA   : "32'hFEDCBA98"
+      RLAST   : 0
+      RRESP   : OKAY
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - RVALID  : 0
+      RDATA   : "32'h00000000"
+    - WAIT    : 2
+    - RVALID  : 1
+      RDATA   : "32'h01234567"
+      RLAST   : 1
+      RRESP   : EXOKAY
+      RID     : 8
+    - WAIT    : {RVALID: 1, RREADY: 1, TIMEOUT: 100}
+    - RVALID  : 0
+      RDATA   : "32'h00000000"
+      RLAST   : 0
+      RRESP   : OKAY
+  - SYNC  : {PORT : 0, WAIT: 3}
+  - REPORT: {DEBUG: OFF}
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.6
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.6 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.6 DONE
+- MASTER:
+  - WRITE : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 10, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - WRITE : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 10, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.7
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.7 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.7 DONE
+- MASTER:
+  - WRITE : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 5, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - WRITE : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR,        DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- MASTER:
+  - READ  : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 6, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - READ  : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR,        DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.8
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.8 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.8 DONE
+- MASTER:
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - WAIT  : 10
+  - WRITE : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 5, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY, SYNC: no}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - WRITE : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR,        DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY, TIMEOUT: 20, SYNC: no}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- MASTER:
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - WAIT  : 10
+  - READ  : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 6, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY, SYNC: no}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - READ  : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR,        DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY, TIMEOUT: 20, SYNC: no}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1 ALL DONE
+#
+#----------------------------------------------------------------------------------
+---                                       # これで全てのダミープラグが同期.
+- - [MARCHAL,MASTER,SLAVE]
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1 ALL DONE
+---

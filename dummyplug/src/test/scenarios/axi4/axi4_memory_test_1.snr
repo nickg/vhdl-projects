@@ -1,0 +1,1586 @@
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG MEMORY Test Bench Scenario 1.1
+#
+#----------------------------------------------------------------------------------
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.1
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - ORG   : 0x0000
+  - SET
+  - DATA  : ["64'h0706050403020100", "64'h0F0E0D0C0B0A0908"]
+  - DATA  : ["64'h1716151413121110", "64'h1F1E1D1C1B1A1918"]
+  - DATA  : ["64'h2726252423222120", "64'h2F2E2D2C2B2A2928"]
+  - DATA  : ["64'h3736353433323130", "64'h3F3E3D3C3B3A3938"]
+  - ORG   : 0x0100
+  - DB    : [0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F]
+  - DH    : [0x1110   ,0x1312   ,0x1514   ,0x1716   ,0x1918   ,0x1B1A   ,0x1D1C   ,0x1F1E   ]
+  - DW    : [0x23222120         ,0x27262524         ,0x2B2A2928         ,0x2F2E2D2C         ]
+  - DD    : [0x3736353433323130                     ,0x3F3E3D3C3B3A3938                     ]
+  - ORG   : 0x0000
+  - CHECK
+  - DATA  : ["64'h0706050403020100", "64'h0F0E0D0C0B0A0908"]
+  - DATA  : ["64'h1716151413121110", "64'h1F1E1D1C1B1A1918"]
+  - DATA  : ["64'h2726252423222120", "64'h2F2E2D2C2B2A2928"]
+  - DATA  : ["64'h3736353433323130", "64'h3F3E3D3C3B3A3938"]
+  - ORG   : 0x0100
+  - DB    : [0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F]
+  - DH    : [0x1110   ,0x1312   ,0x1514   ,0x1716   ,0x1918   ,0x1B1A   ,0x1D1C   ,0x1F1E   ]
+  - DW    : [0x23222120         ,0x27262524         ,0x2B2A2928         ,0x2F2E2D2C         ]
+  - DD    : [0x3736353433323130                     ,0x3F3E3D3C3B3A3938                     ]
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.2
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.2
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - DOMAIN: 
+      INDEX      : 0
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : true
+      ADDR       : 0x00000000
+      LAST       : 0xFFFFFFFF
+      ASIZE      : "3'b---"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b----"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : DECERR
+      LATENCY    : 8
+      TIMEOUT    : 10000
+  - DOMAIN: 
+      INDEX      : 1
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : true
+      ADDR       : 0x7B000000
+      SIZE       : 0x100
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b0"
+      ACACHE     : "4'b----"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 8
+      TIMEOUT    : 10000
+  - DOMAIN: 
+      INDEX      : 2
+      MAP        : 0x0100
+      READ       : true
+      WRITE      : true
+      ADDR       : 0x7C000000
+      SIZE       : 0x100
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b0"
+      ACACHE     : "4'b----"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 8
+      TIMEOUT    : 10000
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  - READ  : {ADDR: 0x7B000000, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h03020100, 32'h07060504, 32'h0B0A0908, 32'h0F0E0D0C], RESP: OKAY}
+  - READ  : {ADDR: 0x7B000010, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h13121110, 32'h17161514, 32'h1B1A1918, 32'h1F1E1D1C], RESP: OKAY}
+  - READ  : {ADDR: 0x7B000020, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h23222120, 32'h27262524, 32'h2B2A2928, 32'h2F2E2D2C], RESP: OKAY}
+  - READ  : {ADDR: 0x7B000030, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h33323130, 32'h37363534, 32'h3B3A3938, 32'h3F3E3D3C], RESP: OKAY}
+  - READ  : {ADDR: 0x7C000000, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h03020100, 32'h07060504, 32'h0B0A0908, 32'h0F0E0D0C], RESP: OKAY}
+  - READ  : {ADDR: 0x7C000010, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h13121110, 32'h17161514, 32'h1B1A1918, 32'h1F1E1D1C], RESP: OKAY}
+  - READ  : {ADDR: 0x7C000020, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h23222120, 32'h27262524, 32'h2B2A2928, 32'h2F2E2D2C], RESP: OKAY}
+  - READ  : {ADDR: 0x7C000030, SIZE: 4, BURST: INCR, ID: 10, DATA: [32'h33323130, 32'h37363534, 32'h3B3A3938, 32'h3F3E3D3C], RESP: OKAY}
+  - WRITE : {ADDR: 0x7B000013, SIZE: 4, BURST: INCR, ID: 10, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - READ  : {ADDR: 0x7B000013, SIZE: 4, BURST: INCR, ID: 10, DATA: [0x01,0x02,0x03,0x04,0x05,0x06], RESP: OKAY}
+  - READ  : {ADDR: 0x7B000010, SIZE: 4, BURST: INCR, ID: 10, DATA: [0x10,0x11,0x12,
+                                                                    0x01,0x02,0x03,0x04,0x05,0x06,
+								    0x19,0x1A,0x1B,0x1C,0x1D,0x1E], RESP: OKAY}
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0}
+  - SAY   : STOP
+  - STOP
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.3
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.3
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = FALSE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - ORG   : 0x0000
+  - SET
+  - DATA  : ["64'h0706050403020100", "64'h0F0E0D0C0B0A0908"]
+  - DATA  : ["64'h1716151413121110", "64'h1F1E1D1C1B1A1918"]
+  - DATA  : ["64'h2726252423222120", "64'h2F2E2D2C2B2A2928"]
+  - DATA  : ["64'h3736353433323130", "64'h3F3E3D3C3B3A3938"]
+  - DATA  : ["64'h4746454443424140", "64'h4F4E4D4C4B4A4948"]
+  - DATA  : ["64'h5756555453525150", "64'h5F5E5D5C5B5A5958"]
+  - DATA  : ["64'h6766656463626160", "64'h6F6E6D6C6B6A6968"]
+  - DATA  : ["64'h7776757473727170", "64'h7F7E7D7C7B7A7978"]
+  - DATA  : ["64'h8786858483828180", "64'h8F8E8D8C8B8A8988"]
+  - DATA  : ["64'h9796959493929190", "64'h9F9E9D9C9B9A9998"]
+  - DATA  : ["64'hA7A6A5A4A3A2A1A0", "64'hAFAEADACABAAA9A8"]
+  - DATA  : ["64'hB7B6B5B4B3B2B1B0", "64'hBFBEBDBCBBBAB9B8"]
+  - DATA  : ["64'hC7C6C5C4C3C2C1C0", "64'hCFCECDCCCBCAC9C8"]
+  - DATA  : ["64'hD7D6D5D4D3D2D1D0", "64'hDFDEDDDCDBDAD9D8"]
+  - DATA  : ["64'hE7E6E5E4E3E2E1E0", "64'hEFEEEDECEBEAE9E8"]
+  - DATA  : ["64'hF7F6F5F4F3F2F1F0", "64'hFFFEFDFCFBFAF9F8"]
+  - ORG   : 0x0100
+  - DATA  : ["64'h0706050403020100", "64'h0F0E0D0C0B0A0908"]
+  - DATA  : ["64'h1716151413121110", "64'h1F1E1D1C1B1A1918"]
+  - DATA  : ["64'h2726252423222120", "64'h2F2E2D2C2B2A2928"]
+  - DATA  : ["64'h3736353433323130", "64'h3F3E3D3C3B3A3938"]
+  - DATA  : ["64'h4746454443424140", "64'h4F4E4D4C4B4A4948"]
+  - DATA  : ["64'h5756555453525150", "64'h5F5E5D5C5B5A5958"]
+  - DATA  : ["64'h6766656463626160", "64'h6F6E6D6C6B6A6968"]
+  - DATA  : ["64'h7776757473727170", "64'h7F7E7D7C7B7A7978"]
+  - DATA  : ["64'h8786858483828180", "64'h8F8E8D8C8B8A8988"]
+  - DATA  : ["64'h9796959493929190", "64'h9F9E9D9C9B9A9998"]
+  - DATA  : ["64'hA7A6A5A4A3A2A1A0", "64'hAFAEADACABAAA9A8"]
+  - DATA  : ["64'hB7B6B5B4B3B2B1B0", "64'hBFBEBDBCBBBAB9B8"]
+  - DATA  : ["64'hC7C6C5C4C3C2C1C0", "64'hCFCECDCCCBCAC9C8"]
+  - DATA  : ["64'hD7D6D5D4D3D2D1D0", "64'hDFDEDDDCDBDAD9D8"]
+  - DATA  : ["64'hE7E6E5E4E3E2E1E0", "64'hEFEEEDECEBEAE9E8"]
+  - DATA  : ["64'hF7F6F5F4F3F2F1F0", "64'hFFFEFDFCFBFAF9F8"]
+  - DOMAIN: 
+      INDEX      : 0
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : false
+      ADDR       : 0xA0000000
+      SIZE       : 0x200
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b0000"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 3
+      TIMEOUT    : 10000
+  - DOMAIN: 
+      INDEX      : 1
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : false
+      ADDR       : 0xA0000000
+      SIZE       : 0x200
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b1111"
+      APROT      : "3'b010"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 8
+      BLEN       : 4
+      BINTER     : 2
+      TIMEOUT    : 10000
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  #--------------------------------------------------------------------------------
+  # DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.3.1
+  #--------------------------------------------------------------------------------
+  - AR:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000000
+      SIZE   : 4
+      LEN    : 1
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000004
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000008
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA000000C
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000010
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000014
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000018
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA000001C
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - R:
+    - READY  : 0
+    - WAIT   : {ARVALID: 1, ARREADY: 1}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h03020100", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h07060504", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0B0A0908", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0F0E0D0C", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h13121110", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h17161514", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1B1A1918", LAST: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1F1E1D1C", LAST: 1}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  #--------------------------------------------------------------------------------
+  # DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.3.2
+  #--------------------------------------------------------------------------------
+  - AR:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000000
+      SIZE   : 4
+      LEN    : 16
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000040
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000080
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00000C0
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000100
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000140
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000180
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00001C0
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000000
+      VALID  : 0
+  - R:
+    - READY  : 0
+    - WAIT   : {ARVALID: 1, ARREADY: 1}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h03020100", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h07060504", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0B0A0908", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0F0E0D0C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h13121110", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h17161514", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1B1A1918", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1F1E1D1C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h23222120", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h27262524", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2B2A2928", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2F2E2D2C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h33323130", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h37363534", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3B3A3938", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3F3E3D3C", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h43424140", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h47464544", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4B4A4948", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4F4E4D4C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h53525150", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h57565554", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5B5A5958", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5F5E5D5C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h63626160", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h67666564", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6B6A6968", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6F6E6D6C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h73727170", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h77767574", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7B7A7978", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7F7E7D7C", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h83828180", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h87868584", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8B8A8988", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8F8E8D8C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h93929190", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h97969594", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9B9A9998", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9F9E9D9C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA3A2A1A0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA7A6A5A4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hABAAA9A8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hAFAEADAC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB3B2B1B0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB7B6B5B4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBBBAB9B8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBFBEBDBC", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC3C2C1C0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC7C6C5C4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCBCAC9C8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCFCECDCC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD3D2D1D0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD7D6D5D4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDBDAD9D8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDFDEDDDC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE3E2E1E0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE7E6E5E4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEBEAE9E8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEFEEEDEC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF3F2F1F0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF7F6F5F4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFBFAF9F8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFFFEFDFC", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h03020100", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h07060504", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0B0A0908", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0F0E0D0C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h13121110", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h17161514", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1B1A1918", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1F1E1D1C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h23222120", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h27262524", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2B2A2928", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2F2E2D2C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h33323130", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h37363534", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3B3A3938", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3F3E3D3C", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h43424140", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h47464544", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4B4A4948", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4F4E4D4C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h53525150", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h57565554", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5B5A5958", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5F5E5D5C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h63626160", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h67666564", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6B6A6968", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6F6E6D6C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h73727170", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h77767574", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7B7A7978", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7F7E7D7C", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h83828180", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h87868584", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8B8A8988", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8F8E8D8C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h93929190", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h97969594", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9B9A9998", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9F9E9D9C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA3A2A1A0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA7A6A5A4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hABAAA9A8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hAFAEADAC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB3B2B1B0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB7B6B5B4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBBBAB9B8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBFBEBDBC", LAST: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC3C2C1C0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC7C6C5C4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCBCAC9C8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCFCECDCC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD3D2D1D0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD7D6D5D4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDBDAD9D8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDFDEDDDC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE3E2E1E0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE7E6E5E4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEBEAE9E8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEFEEEDEC", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF3F2F1F0", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF7F6F5F4", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFBFAF9F8", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFFFEFDFC", LAST: 1}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  #--------------------------------------------------------------------------------
+  # DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.3.3
+  #--------------------------------------------------------------------------------
+  - AR:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000000
+      SIZE   : 4
+      LEN    : 16
+      ID     : 1
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b1111"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000040
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000080
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00000C0
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000100
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000140
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000180
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00001C0
+      LEN    : 16
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000000
+      VALID  : 0
+  - R:
+    - READY  : 0
+    - WAIT   : {ARVALID: 1, ARREADY: 1}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h03020100", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h07060504", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0B0A0908", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0F0E0D0C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h13121110", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h17161514", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1B1A1918", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1F1E1D1C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h23222120", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h27262524", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2B2A2928", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2F2E2D2C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h33323130", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h37363534", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3B3A3938", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3F3E3D3C", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h43424140", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h47464544", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4B4A4948", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4F4E4D4C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h53525150", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h57565554", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5B5A5958", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5F5E5D5C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h63626160", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h67666564", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6B6A6968", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6F6E6D6C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h73727170", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h77767574", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7B7A7978", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7F7E7D7C", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h83828180", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h87868584", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8B8A8988", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8F8E8D8C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h93929190", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h97969594", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9B9A9998", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9F9E9D9C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA3A2A1A0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA7A6A5A4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hABAAA9A8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hAFAEADAC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB3B2B1B0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB7B6B5B4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBBBAB9B8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBFBEBDBC", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC3C2C1C0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC7C6C5C4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCBCAC9C8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCFCECDCC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD3D2D1D0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD7D6D5D4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDBDAD9D8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDFDEDDDC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE3E2E1E0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE7E6E5E4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEBEAE9E8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEFEEEDEC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF3F2F1F0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF7F6F5F4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFBFAF9F8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFFFEFDFC", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h03020100", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h07060504", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0B0A0908", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0F0E0D0C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h13121110", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h17161514", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1B1A1918", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1F1E1D1C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h23222120", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h27262524", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2B2A2928", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h2F2E2D2C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h33323130", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h37363534", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3B3A3938", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h3F3E3D3C", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h43424140", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h47464544", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4B4A4948", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h4F4E4D4C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h53525150", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h57565554", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5B5A5958", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h5F5E5D5C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h63626160", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h67666564", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6B6A6968", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h6F6E6D6C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h73727170", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h77767574", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7B7A7978", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h7F7E7D7C", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h83828180", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h87868584", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8B8A8988", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h8F8E8D8C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h93929190", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h97969594", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9B9A9998", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h9F9E9D9C", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA3A2A1A0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hA7A6A5A4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hABAAA9A8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hAFAEADAC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB3B2B1B0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hB7B6B5B4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBBBAB9B8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hBFBEBDBC", LAST: 1, ID: 1}
+    - READY  : 0
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC3C2C1C0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hC7C6C5C4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCBCAC9C8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hCFCECDCC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD3D2D1D0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hD7D6D5D4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDBDAD9D8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hDFDEDDDC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE3E2E1E0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hE7E6E5E4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEBEAE9E8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hEFEEEDEC", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF3F2F1F0", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hF7F6F5F4", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFBFAF9F8", LAST: 0, ID: 1}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'hFFFEFDFC", LAST: 1, ID: 1}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  #--------------------------------------------------------------------------------
+  # DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.3 DONE
+  #--------------------------------------------------------------------------------
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0}
+  - SAY   : STOP
+  - STOP
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.4
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.4
+       READ_ENABLE  = FALSE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - FILL  : 0x0200
+  - ORG   : 0x0000
+  - DB    : 0x00
+  - DOMAIN: 
+      INDEX      : 0
+      MAP        : 0x0000
+      READ       : false
+      WRITE      : true
+      ADDR       : 0xA0000000
+      SIZE       : 0x200
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b0000"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 0
+      RDELAY     : 8
+      TIMEOUT    : 10000
+  - DOMAIN: 
+      INDEX      : 1
+      MAP        : 0x0000
+      READ       : false
+      WRITE      : true
+      ADDR       : 0xA0000000
+      SIZE       : 0x200
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b1111"
+      APROT      : "3'b010"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 0
+      BLEN       : 4
+      BINTER     : 2
+      RDELAY     : 8
+      TIMEOUT    : 10000
+  #--------------------------------------------------------------------------------
+  # DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.4.1
+  #--------------------------------------------------------------------------------
+---
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  - AW:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000010
+      SIZE   : 4
+      LEN    : 1
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000014
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000018
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA000001C
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000020
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000024
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000028
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA000002C
+      LEN    : 1
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - W:
+    - VALID  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h07060504"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h0B0A0908"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h0F0E0D0C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h13121110"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h17161514"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h1B1A1918"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h1F1E1D1C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+  - B:
+    - READY  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1, TIMEOUT: 100}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0, TIMEOUT: 100000}
+  - SAY   : STOP
+  - STOP
+  - CHECK
+  - ORG   : 0x0000
+  - DATA  : ["64'h0000000000000000", "64'h0000000000000000"]
+  - DATA  : ["64'h0706050403020100", "64'h0F0E0D0C0B0A0908"]
+  - DATA  : ["64'h1716151413121110", "64'h1F1E1D1C1B1A1918"]
+  - DATA  : ["64'h0000000000000000", "64'h0000000000000000"]
+---
+  #--------------------------------------------------------------------------------
+  # DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1.4.2
+  #--------------------------------------------------------------------------------
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  - AW:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000000
+      SIZE   : 4
+      LEN    : 8
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000020
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000040
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000060
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA0000080
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00000A0
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00000C0
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0xA00000E0
+      LEN    : 8
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - W:
+    - VALID  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h07060504"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h0B0A0908"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h0F0E0D0C"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h13121110"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h17161514"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h1B1A1918"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h1F1E1D1C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'h23222120"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h27262524"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h2B2A2928"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h2F2E2D2C"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h33323130"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h37363534"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h3B3A3938"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h3F3E3D3C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'h43424140"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h47464544"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h4B4A4948"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h4F4E4D4C"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h53525150"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h57565554"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h5B5A5958"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h5F5E5D5C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'h63626160"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h67666564"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h6B6A6968"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h6F6E6D6C"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h73727170"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h77767574"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h7B7A7978"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h7F7E7D7C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'h83828180"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h87868584"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h8B8A8988"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h8F8E8D8C"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h93929190"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h97969594"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h9B9A9998"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h9F9E9D9C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'hA3A2A1A0"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hA7A6A5A4"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hABAAA9A8"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hAFAEADAC"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hB3B2B1B0"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hB7B6B5B4"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hBBBAB9B8"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hBFBEBDBC"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'hC3C2C1C0"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hC7C6C5C4"
+      STRB   : "4'b0000"            ####### ここで STRB=0 にしてみる
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hCBCAC9C8"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hCFCECDCC"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hD3D2D1D0"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hD7D6D5D4"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hDBDAD9D8"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hDFDEDDDC"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+
+    - VALID  : 1
+      DATA   : "32'hE3E2E1E0"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hE7E6E5E4"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hEBEAE9E8"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hEFEEEDEC"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hF3F2F1F0"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hF7F6F5F4"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hFBFAF9F8"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'hFFFEFDFC"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+  - B:
+    - READY  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1, TIMEOUT: 100}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0, TIMEOUT: 100000}
+  - SAY   : STOP
+  - STOP
+  - CHECK
+  - ORG   : 0x0000
+  - DATA  : ["64'h0706050403020100", "64'h0F0E0D0C0B0A0908"]
+  - DATA  : ["64'h1716151413121110", "64'h1F1E1D1C1B1A1918"]
+  - DATA  : ["64'h2726252423222120", "64'h2F2E2D2C2B2A2928"]
+  - DATA  : ["64'h3736353433323130", "64'h3F3E3D3C3B3A3938"]
+  - DATA  : ["64'h4746454443424140", "64'h4F4E4D4C4B4A4948"]
+  - DATA  : ["64'h5756555453525150", "64'h5F5E5D5C5B5A5958"]
+  - DATA  : ["64'h6766656463626160", "64'h6F6E6D6C6B6A6968"]
+  - DATA  : ["64'h7776757473727170", "64'h7F7E7D7C7B7A7978"]
+  - DATA  : ["64'h8786858483828180", "64'h8F8E8D8C8B8A8988"]
+  - DATA  : ["64'h9796959493929190", "64'h9F9E9D9C9B9A9998"]
+  - DATA  : ["64'hA7A6A5A4A3A2A1A0", "64'hAFAEADACABAAA9A8"]
+  - DATA  : ["64'hB7B6B5B4B3B2B1B0", "64'hBFBEBDBCBBBAB9B8"]
+  - DATA  : ["64'h00000000C3C2C1C0", "64'hCFCECDCCCBCAC9C8"] # 一部 STRB=0 があるので書き込まれていないことをチェック
+  - DATA  : ["64'hD7D6D5D4D3D2D1D0", "64'hDFDEDDDCDBDAD9D8"]
+  - DATA  : ["64'hE7E6E5E4E3E2E1E0", "64'hEFEEEDECEBEAE9E8"]
+  - DATA  : ["64'hF7F6F5F4F3F2F1F0", "64'hFFFEFDFCFBFAF9F8"]
+  - DATA  : ["64'h0000000000000000", "64'h0000000000000000"]
+  - DATA  : ["64'h0000000000000000", "64'h0000000000000000"]
+  - DATA  : ["64'h0000000000000000", "64'h0000000000000000"]
+  - DATA  : ["64'h0000000000000000", "64'h0000000000000000"]
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1 ALL DONE
+#
+#----------------------------------------------------------------------------------
+---                                       # これで全てのダミープラグが同期.
+- - [MARCHAL,MASTER,MEMORY]
+  - SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 1 ALL DONE
+---

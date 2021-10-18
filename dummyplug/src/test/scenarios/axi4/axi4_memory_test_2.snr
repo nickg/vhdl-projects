@@ -1,0 +1,333 @@
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG MEMORY Test Bench Scenario 2
+#
+#----------------------------------------------------------------------------------
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 2.1
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - FILL  : 0x0200
+  - ORG   : 0x0000
+  - DB    : 0x00
+  - DOMAIN: 
+      INDEX      : 0
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : true
+      ADDR       : 0xA0000000
+      SIZE       : 0x200
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b----"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 0
+      RDELAY     : 8
+      TIMEOUT    : 10000
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  - AW:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000040
+      SIZE   : 4
+      LEN    : 4
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - W:
+    - VALID  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0                        #### ここで WLAST=0 してミスマッチが報告されることを確認する
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+  - B:
+    - READY  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0}
+  - SAY   : STOP
+  - STOP
+---
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 2.2
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - FILL  : 0x0200
+  - ORG   : 0x0000
+  - DB    : 0x00
+  - DOMAIN: 
+      INDEX      : 0
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : true
+      ADDR       : 0xA0000000
+      SIZE       : 0x200
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b----"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 0
+      RDELAY     : 8
+      TIMEOUT    : 10000
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  - AW:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000040
+      SIZE   : 4
+      LEN    : 8
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - W:
+    - VALID  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 1                        #### ここで WLAST=1 してミスマッチが報告されることを確認する
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+  - B:
+    - READY  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0}
+  - SAY   : STOP
+  - STOP
+---
+- MARCHAL:
+  -  SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 2.3
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+- MEMORY:
+  - FILL  : 0x2000
+  - ORG   : 0x0000
+  - DB    : 0x00
+  - DOMAIN: 
+      INDEX      : 0
+      MAP        : 0x0000
+      READ       : true
+      WRITE      : true
+      ADDR       : 0xA00000000
+      SIZE       : 0x2000
+      ASIZE      : "3'b010"
+      ALOCK      : "1'b-"
+      ACACHE     : "4'b----"
+      APROT      : "3'b---"
+      AQOS       : "4'b----"
+      AREGION    : "4'b----"
+      RESP       : OKAY
+      LATENCY    : 0
+      RDELAY     : 8
+      TIMEOUT    : 10000
+- MASTER:
+  - OUT   : {GPO(0): 1}
+  - AW:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000FF0
+      SIZE   : 4
+      LEN    : 8
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - W:
+    - VALID  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - VALID  : 1
+      DATA   : "32'h03020100"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h07060504"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h0B0A0908"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h0F0E0D0C"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h13121110"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h17161514"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h1B1A1918"
+      STRB   : "4'b1111"
+      LAST   : 0
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 1
+      DATA   : "32'h1F1E1D1C"
+      STRB   : "4'b1111"
+      LAST   : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - VALID  : 0
+      DATA   : "32'h00000000"
+      STRB   : "4'b0000"
+      LAST   : 0
+  - B:
+    - READY  : 0
+    - WAIT   : {AWVALID: 1, AWREADY: 1, TIMEOUT: 100}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {RESP: OKAY}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - AR:
+    - VALID  : 0
+    - WAIT   : 10
+    - ADDR   : 0xA0000FF0
+      SIZE   : 4
+      LEN    : 8
+      ID     : 0
+      BURST  : INCR
+      LOCK   : "1'b0"
+      CACHE  : "4'b0000"
+      PROT   : "3'b010"
+      VALID  : 1
+    - WAIT   : {VALID : 1, READY : 1}
+    - ADDR   : 0x00000000
+      VALID  : 0
+  - R:
+    - READY  : 0
+    - WAIT   : {ARVALID: 1, ARREADY: 1, TIMEOUT: 100}
+    - READY  : 1
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h03020100", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h07060504", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0B0A0908", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h0F0E0D0C", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h13121110", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h17161514", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1B1A1918", LAST: 0}
+    - WAIT   : {VALID: 1, READY: 1}
+    - CHECK  : {DATA: "32'h1F1E1D1C", LAST: 1}
+    - READY  : 0
+  - SYNC  : {PORT : LOCAL, WAIT: 3}
+  - OUT   : {GPO(0): 0}
+- MEMORY:
+  - SAY   : WAIT GPI(0)=1
+  - WAIT  : {GPI(0): 1}
+  - SAY   : START 
+  - START
+  - WAIT  : {GPI(0): 0}
+  - SAY   : STOP
+  - STOP
+---
+- - [MARCHAL,MASTER,MEMORY]
+  - SAY: >
+       DUMMY-PLUG AXI4 MEMORY TEST BENCH SCENARIO 2 ALL DONE
+---

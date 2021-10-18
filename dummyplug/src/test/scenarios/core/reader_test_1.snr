@@ -1,0 +1,114 @@
+############################################################################################
+#
+# @file    reader_test_1.snr
+# @brief   TEST SCENARIO FIlE for DUMMY_PLUG_READER_TEST_1
+#
+############################################################################################
+%YAML 1.2
+--- # reader_test_1 1
+- 1
+- 2
+- 3
+- A: "A" 
+- 4
+- 0x01234567
+- 0x89AB
+- 0xCDEF
+- 076543210
+- [y, Y, yes, Yes, YES, on , On , ON , true , True , TRUE ]
+- [n, N, no , No , NO , off, Off, OFF, false, False, FALSE]
+--- # reader_test_1 2
+a: 1
+b : 2
+c   : 3
+d : 4
+...
+e : 1   # out of document
+%TAG 
+--- # reader_test_1 3
+# Outside flow collection:
+- ::vector
+- ": - ()"
+- Up, up, and away!
+- -123
+- http://example.com/foo#bar
+# Inside flow collection:
+- [ ::vector,
+  ": - ()",
+  "Up, up, and away!",
+  -123,
+  http://example.com/foo#bar ]
+--- # reader_test_1 4
+  a: 1  # comment 1 4
+  b: &anchor_b
+    - 1
+    - 2
+    - 3
+  c: 3
+  d: *anchor_b
+  e: 
+  - 4
+  - 5
+--- # reader_test_1 5
+ - {a: 1,b: 2,c: 3}
+ - [4,5,6]
+ - - 7
+   - 8
+   - 9
+ - - - 10
+ - 11
+ - >
+   12
+    13
+     14
+#comment
+ - 15
+--- # reader_test_1 6
+{
+  "a"  : "A"  ,
+  'bb' : "BB" ,
+  "ccc": "CCC",
+  'd'  : 'D'  ,
+  'e'  : 'E'  ,
+  'f'  : >  # comment 1 6
+    a
+    b
+    c
+ ,g  : 'G'
+}
+--- # reader_test_1 7
+  ? A
+  : a
+  ? ? B
+    : b
+    ? C
+    : c
+  : ? - 1
+      - 2
+    : - ? D
+        : d
+      - 3
+--- # reader_test_1 8
+- BUS:
+  - A: - {ID: 1, VAL: 1, RDY: 1, ADDR: "0x00000010", WRITE: 1        }
+       - {ID: 2, VAL: 1, RDY: 1, ADDR: "0x00000020", WRITE: 0        }
+    W: - {ID: 1, VAL: 0, RDY: 0, DATA: "0x00000000",          LAST: 0} : {"A.VAL": 1, "A.RDY": 1}
+       - {ID: 1, VAL: 1, RDY: 1, DATA: "0x00000000",          LAST: 0}
+       - {ID: 1, VAL: 1, RDY: 1, DATA: "0x00000001",          LAST: 0}
+       - {ID: 1, VAL: 1, RDY: 1, DATA: "0x00000002",          LAST: 0}
+       - {ID: 1, VAL: 1, RDY: 1, DATA: "0x00000003",          LAST: 1}
+    B: - {ID: 1, VAL: 1, RDY: 1, RESP: 0}
+    R: - {ID: 2, VAL: 1, RDY: 1, DATA: "0x00000004", RESP: 0, LAST: 1}
+  - T: - {ID: 3, ADDR: "0x00000020", WRITE: 1,
+          DATA: [0x00, 0x01, 0x02, 0x03]
+         }
+       - {ID: 4, ADDR: "0x00000020", WRITE: 0,
+          DATA: [0x00, 0x01, 0x02, 0x03]
+         }
+--- # reader_test_1 9
+  - WAIT: {VALID: 0, READY: 0}
+  - WAIT: {VALID: 1, READY: 0}
+--- # reader_test_1 10
+  - JSON: {VALID:0,READY:0}
+  - JSON: {"DATA":0x12,"STRB":1}
+--- # reader_test_1 end

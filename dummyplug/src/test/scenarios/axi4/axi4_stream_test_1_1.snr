@@ -1,0 +1,130 @@
+#----------------------------------------------------------------------------------
+#
+# AXI4-Stream DUMMY-PLUG Test Bench Scenario 1.1
+#
+#----------------------------------------------------------------------------------
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1
+       READ_ENABLE  = TRUE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 32
+#----------------------------------------------------------------------------------
+#
+# AXI4-Stream DUMMY-PLUG Test Bench Scenario 1.1.1
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 START
+  - SYNC   : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.1 DONE
+- MASTER:
+  - TDATA  : 0xC3C2C1C0
+  - TSTRB  : "4'b1111"
+  - TKEEP  : "4'b1111"
+  - TID    : 5
+  - TUSER  : 2
+  - TDEST  : 3
+  - TLAST  : 0
+  - VALID  : 1
+  - WAIT   : {VALID: 1, READY: 1}
+  - TVALID : 0
+  - SYNC   : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - READY  : 1
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA: 0xC3C2C1C0, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0, TID: 5, TUSER: 2, TDEST: 3}
+  - TREADY : 0
+  - SYNC   : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4-Stream DUMMY-PLUG Test Bench Scenario 1.1.2
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2 START
+  - SYNC   : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2 DONE
+- MASTER:
+  - SAY    : "DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2 MASTER START"
+  - TDATA  : 0xC7C6C5C4
+    TSTRB  : "4'b0011"
+    TKEEP  : "4'b0001"
+    TID    : 5
+    TUSER  : 2
+    TDEST  : 3
+    TLAST  : 1
+  - VALID  : 1
+  - WAIT   : {VALID: 1, READY: 1}
+  - TVALID : 0
+  - SYNC   : {PORT:0,TIMEOUT:1000}
+- SLAVE:
+  - SAY    : "DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1.2 SLAVE START"
+  - READY  : 1
+  - WAIT   : {TVALID:1,TREADY: 1}
+  - CHECK  : {TDATA:0xC7C6C5C4,TSTRB:"4'b0011",TKEEP:"4'b0001",TLAST:1,TID:5,TUSER:2,TDEST:3}
+  - TREADY : 0
+  - SYNC   : {PORT:0,TIMEOUT:1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4-Stream DUMMY-PLUG Test Bench Scenario 1.2.1
+#
+#----------------------------------------------------------------------------------
+---
+- MARCHAL:
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.2.1 START
+  - SYNC   : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.2.1 DONE
+- MASTER:
+  - SAY    : "DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.2.1 MASTER START"
+  - WAIT   : 10
+  - XFER   : {DATA: 0x0F0E0D0C0B0A09080706050403020100}
+  - XFER   : {DATA: [0x10, 0x11, 0x12, 0x13]}
+  - XFER   : {DATA: [0x1514,0x1716]}
+  - XFER   : {DATA: [0x1B1A1918,0x1F1E1D1C]}
+  - XFER   : {DATA: [PAD, PAD, 0x22, 0x23, NULL, 0x25, PAD, 0x27], LAST:1}
+  - SYNC   : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - SAY    : "DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.2.1 SLAVE START"
+  - WAIT   : 10
+  - READY  : 1
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x03020100, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x07060504, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY :1}
+  - CHECK  : {TDATA : 0x0B0A0908, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x0F0E0D0C, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x13121110, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x17161514, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x1B1A1918, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x1F1E1D1C, TSTRB: "4'b1111", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x2322----, TSTRB: "4'b1100", TKEEP: "4'b1111", TLAST: 0}
+  - WAIT   : {TVALID: 1, TREADY: 1}
+  - CHECK  : {TDATA : 0x27--25--, TSTRB: "4'b1010", TKEEP: "4'b1110", TLAST: 1}
+  - READY  : 0
+  - SYNC   : {PORT:0,TIMEOUT:1000}
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1 ALL DONE
+#
+#----------------------------------------------------------------------------------
+---                                       # これで全てのダミープラグが同期.
+- - [MARCHAL,MASTER,SLAVE]
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.1 ALL DONE
+---

@@ -1,0 +1,2863 @@
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3
+#
+#----------------------------------------------------------------------------------
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3
+       READ_ENABLE  = FALSE
+       WRITE_ENABLE = TRUE
+       DATA_WIDTH   = 64
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.1
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.1 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.1 DONE
+- MASTER:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC88
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC80, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 0}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - WAIT    : 10
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E0", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E1--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E2----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E3------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E4--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E5----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E6------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE7--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E8", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E9--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------EA----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------EB------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------EC--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----ED----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--EE------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hEF--------------", STRB: "8'b10000000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC81, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 1}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E0--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E1----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E2------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E3--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E4----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E5------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE6--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E7", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E8--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E9----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------EA------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------EB--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----EC----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--ED------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hEE--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------EF", STRB: "8'b00000001", LAST: 1}
+    - READY   : 0
+  - B :
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC82, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 0}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E0----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E1------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E2--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E3----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E4------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE5--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E6", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E7--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E8----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E9------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------EA--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----EB----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--EC------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hED--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------EE", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------EF--", STRB: "8'b00000010", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC83, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 1}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E0------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E1--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E2----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E3------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE4--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E5", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E6--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E7----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E8------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E9--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----EA----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--EB------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hEC--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------ED", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------EE--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------EF----", STRB: "8'b00000100", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC84, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 0}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E0--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E1----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E2------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE3--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E4", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E5--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E6----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E7------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E8--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E9----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--EA------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hEB--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------EC", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------ED--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------EE----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------EF------", STRB: "8'b00001000", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC85, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 1}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E0----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E1------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE2--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E3", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E4--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E5----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E6------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E7--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E8----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E9------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hEA--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------EB", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------EC--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------ED----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------EE------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------EF--------", STRB: "8'b00010000", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC86, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 0}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E0------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE1--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E2", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E3--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E4----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E5------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E6--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E7----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E8------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE9--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------EA", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------EB--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------EC----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------ED------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------EE--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----EF----------", STRB: "8'b00100000", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC87, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 1}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE0--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E1", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E2--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E3----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E4------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E5--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E6----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E7------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE8--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E9", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------EA--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------EB----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------EC------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------ED--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----EE----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--EF------------", STRB: "8'b01000000", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW:
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC88, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER: 0}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E0", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E1--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------E2----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------E3------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------E4--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----E5----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--E6------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hE7--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------E8", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------E9--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------EA----", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------EB------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------EC--------", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----ED----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--EE------------", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hEF--------------", STRB: "8'b10000000", LAST: 1}
+    - READY   : 0
+  - B: 
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.2
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.2 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.2 DONE
+- MASTER:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC80, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C1C0", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C3C2----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C5C4--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC7C6------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C9C8", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------CBCA----", STRB: "8'b00001100", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC81, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C0--", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C2C1----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C4C3--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC6C5------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C8C7", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------CAC9----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------CB--------", STRB: "8'b00010000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC82, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C1C0----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C3C2--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC5C4------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C7C6", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C9C8----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----CBCA--------", STRB: "8'b00110000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC83, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C0------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C2C1--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC4C3------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C6C5", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C8C7----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----CAC9--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--CB------------", STRB: "8'b01000000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC84, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C1C0--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC3C2------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C5C4", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C7C6----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C9C8--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hCBCA------------", STRB: "8'b11000000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC85, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C0----------", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC2C1------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C4C3", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C6C5----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C8C7--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hCAC9------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------CB", STRB: "8'b00000001", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC86, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC1C0------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C3C2", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C5C4----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C7C6--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC9C8------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------CBCA", STRB: "8'b00000011", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC87, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC0--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------C2C1", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------C4C3----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----C6C5--------", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hC8C7------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------CAC9", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------CB----", STRB: "8'b00000100", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.3
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.3 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.3 DONE
+- MASTER:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC80, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------43424140", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h47464544--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------4B4A4948", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------4C--------", STRB: "8'b00010000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC81, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------424140--", STRB: "8'b00001110", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h46454443--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------4A494847", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----4C4B--------", STRB: "8'b00110000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC82, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------4140----", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h45444342--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------49484746", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--4C4B4A--------", STRB: "8'b01110000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------40------", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h44434241--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------48474645", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h4C4B4A49--------", STRB: "8'b11110000", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC84, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h43424140--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------47464544", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h4B4A4948--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------4C", STRB: "8'b00000001", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC85, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h424140----------", STRB: "8'b11100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------46454443", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h4A494847--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------4C4B", STRB: "8'b00000011", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC86, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h4140------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------45444342", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h49484746--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------4C4B4A", STRB: "8'b00000111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC87, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h40--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------44434241", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h48474645--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------4C4B4A49", STRB: "8'b00001111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.4
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.4 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.4 DONE
+- MASTER:
+  - WRITE : 
+        ADDR : 0x0000FC80
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+     #  SIZE : 8
+     #  BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC80, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF7F6F5F4F3F2F1F0", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hFFFEFDFCFBFAF9F8", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------0403020100", STRB: "8'b00011111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC81, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF6F5F4F3F2F1F0--", STRB: "8'b11111110", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hFEFDFCFBFAF9F8F7", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----0403020100FF", STRB: "8'b00111111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC82, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF5F4F3F2F1F0----", STRB: "8'b11111100", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hFDFCFBFAF9F8F7F6", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--0403020100FFFE", STRB: "8'b01111111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC83, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF4F3F2F1F0------", STRB: "8'b11111000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hFCFBFAF9F8F7F6F5", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h0403020100FFFEFD", STRB: "8'b11111111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC84, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF3F2F1F0--------", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hFBFAF9F8F7F6F5F4", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h03020100FFFEFDFC", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------------04", STRB: "8'b00000001", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC85, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF2F1F0----------", STRB: "8'b11100000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hFAF9F8F7F6F5F4F3", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h020100FFFEFDFCFB", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h------------0403", STRB: "8'b00000011", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC86, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF1F0------------", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF9F8F7F6F5F4F3F2", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h0100FFFEFDFCFBFA", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h----------040302", STRB: "8'b00000111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - AW : 
+    - READY   : 0                        
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - CHECK   : {ADDR: 0x0000FC87, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - READY   : 0
+  - W :
+    - READY   : 0
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - READY   : 1
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF0--------------", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'hF8F7F6F5F4F3F2F1", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h00FFFEFDFCFBFAF9", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, TIMEOUT: 50}
+    - CHECK   : {DATA: "64'h--------04030201", STRB: "8'b00001111", LAST: 1}
+    - READY   : 0
+  - B:
+    - VALID   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - VALID   : 1
+      RESP    : OKAY
+      ID      : 10
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - VALID   : 0
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.5
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.5 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.5 DONE
+- MASTER:
+  - AW : 
+    - {VALID  : 1, ADDR: 0x0000FC80, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:0}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h00000000000000E0", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E100", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E20000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E3000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E400000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E50000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E6000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE700000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E8", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E900", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000EA0000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000EB000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000EC00000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000ED0000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00EE000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hEF00000000000000", STRB: "8'b10000000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID: 1, ADDR: 0x0000FC81, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:1}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h000000000000E000", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E10000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E2000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E300000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E40000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E5000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE600000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E7", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E800", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E90000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000EA000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000EB00000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000EC0000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00ED000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hEE00000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000EF", STRB: "8'b00000001", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC82, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:0}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000000000E00000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E1000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E200000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E30000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E4000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE500000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E6", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E700", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E80000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E9000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000EA00000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000EB0000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00EC000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hED00000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000EE", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000EF00", STRB: "8'b00000010", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC83, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:1}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h00000000E0000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E100000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E20000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E3000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE400000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E5", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E600", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E70000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E8000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E900000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000EA0000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00EB000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hEC00000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000ED", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000EE00", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000EF0000", STRB: "8'b00000100", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC84, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:0}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h000000E000000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E10000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E2000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE300000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E4", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E500", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E60000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E7000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E800000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E90000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00EA000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hEB00000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000EC", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000ED00", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000EE0000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000EF000000", STRB: "8'b00001000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC85, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:1}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000E00000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E1000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE200000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E3", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E400", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E50000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E6000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E700000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E80000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E9000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hEA00000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000EB", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000EC00", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000ED0000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000EE000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000EF00000000", STRB: "8'b00010000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC86, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:0}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h00E0000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE100000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E2", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E300", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E40000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E5000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E600000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E70000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E8000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE900000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000EA", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000EB00", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000EC0000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000ED000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000EE00000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000EF0000000000", STRB: "8'b00100000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC87, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:1}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hE000000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E1", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E200", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E30000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E4000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E500000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E60000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E7000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE800000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E9", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000EA00", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000EB0000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000EC000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000ED00000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000EE0000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00EF000000000000", STRB: "8'b01000000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - AW:
+    - {VALID  : 1, ADDR: 0x0000FC88, SIZE: 1, BURST: INCR, ID: 10, LEN: 16, USER:0}
+    - WAIT    : {AWVALID: 1, AWREADY: 1, TIMEOUT: 50}
+    - VALID   : 0
+  - W :
+    - {VALID  : 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h00000000000000E0", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E100", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000E20000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000E3000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000E400000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000E50000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00E6000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hE700000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000E8", STRB: "8'b00000001", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000E900", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000EA0000", STRB: "8'b00000100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000EB000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000EC00000000", STRB: "8'b00010000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000ED0000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00EE000000000000", STRB: "8'b01000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hEF00000000000000", STRB: "8'b10000000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - READY   : 0
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - READY   : 1
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP : OKAY, ID: 10}
+    - READY   : 0
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 1
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC88
+        SIZE : 1
+        BURST: INCR
+        ID   : 10
+        AUSER: 0
+        DATA : [0xE0,0xE1,0xE2,0xE3,
+                0xE4,0xE5,0xE6,0xE7,
+                0xE8,0xE9,0xEA,0xEB,
+                0xEC,0xED,0xEE,0xEF]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.6
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.6 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.6 DONE
+- MASTER:
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC80, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h000000000000C1C0", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C3C20000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C5C400000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC7C6000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C9C8", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000CBCA0000", STRB: "8'b00001100", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC81, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h000000000000C000", STRB: "8'b00000010", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C2C10000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C4C300000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC6C5000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C8C7", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000CAC90000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000CB00000000", STRB: "8'b00010000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC82, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h00000000C1C00000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C3C200000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC5C4000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C7C6", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C9C80000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000CBCA00000000", STRB: "8'b00110000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC83, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h00000000C0000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C2C100000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC4C3000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C6C5", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C8C70000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000CAC900000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00CB000000000000", STRB: "8'b01000000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC84, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000C1C000000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC3C2000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C5C4", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C7C60000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C9C800000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hCBCA000000000000", STRB: "8'b11000000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC85, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000C00000000000", STRB: "8'b00100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC2C1000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C4C3", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C6C50000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C8C700000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hCAC9000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000000000CB", STRB: "8'b00000001", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC86, SIZE: 2, BURST: INCR, ID: 10, LEN: 6}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hC1C0000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C3C2", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C5C40000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C7C600000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC9C8000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000CBCA", STRB: "8'b00000011", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC87, SIZE: 2, BURST: INCR, ID: 10, LEN: 7}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hC000000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000C2C1", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000C4C30000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000C6C500000000", STRB: "8'b00110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hC8C7000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000CAC9", STRB: "8'b00000011", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000CB0000", STRB: "8'b00000100", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 2
+        BURST: INCR
+        ID   : 10
+        DATA : [0xC3C2C1C0, 0xC7C6C5C4, 0xCBCAC9C8]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.7
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.7 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.7 DONE
+- MASTER:
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC80, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000000043424140", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4746454400000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000004B4A4948", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000004C00000000", STRB: "8'b00010000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC81, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000000042414000", STRB: "8'b00001110", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4645444300000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000004A494847", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00004C4B00000000", STRB: "8'b00110000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC82, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000000041400000", STRB: "8'b00001100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4544434200000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000049484746", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h004C4B4A00000000", STRB: "8'b01110000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC83, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h0000000040000000", STRB: "8'b00001000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4443424100000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000048474645", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4C4B4A4900000000", STRB: "8'b11110000", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC84, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h4342414000000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000047464544", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4B4A494800000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000000000004C", STRB: "8'b00000001", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC85, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h4241400000000000", STRB: "8'b11100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000046454443", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4A49484700000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000004C4B", STRB: "8'b00000011", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC86, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h4140000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000045444342", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4948474600000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000000004C4B4A", STRB: "8'b00000111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC87, SIZE: 4, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'h4000000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000044434241", STRB: "8'b00001111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h4847464500000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000000004C4B4A49", STRB: "8'b00001111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 4
+        BURST: INCR
+        ID   : 10
+        DATA : [0x43424140, 0x47464544, 0x4B4A4948, 0x4C]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# AXI4 DUMMY-PLUG Test Bench Scenario 1.3.8
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL]
+  -  SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.8 START
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3.8 DONE
+- MASTER:
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC80, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF7F6F5F4F3F2F1F0", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hFFFEFDFCFBFAF9F8", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000403020100", STRB: "8'b00011111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC81, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF6F5F4F3F2F1F000", STRB: "8'b11111110", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hFEFDFCFBFAF9F8F7", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00000403020100FF", STRB: "8'b00111111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC82, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF5F4F3F2F1F00000", STRB: "8'b11111100", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hFDFCFBFAF9F8F7F6", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h000403020100FFFE", STRB: "8'b01111111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC83, SIZE: 8, BURST: INCR, ID: 10, LEN: 3}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF4F3F2F1F0000000", STRB: "8'b11111000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hFCFBFAF9F8F7F6F5", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0403020100FFFEFD", STRB: "8'b11111111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC84, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF3F2F1F000000000", STRB: "8'b11110000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hFBFAF9F8F7F6F5F4", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h03020100FFFEFDFC", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000000004", STRB: "8'b00000001", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC85, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF2F1F00000000000", STRB: "8'b11100000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hFAF9F8F7F6F5F4F3", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h020100FFFEFDFCFB", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000000403", STRB: "8'b00000011", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC86, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF1F0000000000000", STRB: "8'b11000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hF9F8F7F6F5F4F3F2", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0100FFFEFDFCFBFA", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000000040302", STRB: "8'b00000111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - AW : 
+    - {VALID: 1, ADDR: 0x0000FC87, SIZE: 8, BURST: INCR, ID: 10, LEN: 4}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0}
+  - W :
+    - {VALID: 0}
+    - WAIT    : {AWVALID: 1, TIMEOUT: 50, ON: on}
+    - {VALID: 1, DATA: "64'hF000000000000000", STRB: "8'b10000000", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'hF8F7F6F5F4F3F2F1", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h00FFFEFDFCFBFAF9", STRB: "8'b11111111", LAST: 0}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 1, DATA: "64'h0000000004030201", STRB: "8'b00001111", LAST: 1}
+    - WAIT    : {VALID: 1, READY: 1, TIMEOUT: 50}
+    - {VALID: 0, DATA: "64'h0000000000000000", STRB: "8'b00000000", LAST: 0}
+  - B:
+    - {READY: 0}
+    - WAIT    : {WVALID: 1, WREADY: 1, WLAST: 1, TIMEOUT: 1000}
+    - {READY: 1}
+    - WAIT    : {VALID: 1, READY : 1, TIMEOUT: 10}
+    - CHECK   : {RESP: OKAY, ID: 10}
+    - {VALID: 0}
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+- SLAVE:
+  - WRITE : 
+        ADDR : 0x0000FC80
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC81
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC82
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC83
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC84
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC85
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC86
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - WRITE : 
+        ADDR : 0x0000FC87
+        SIZE : 8
+        BURST: INCR
+        ID   : 10
+        DATA : [0xF7F6F5F4F3F2F1F0, 0xFFFEFDFCFBFAF9F8, 0x0403020100]
+        RESP : OKAY
+  - SYNC  : {PORT: 0, TIMEOUT: 1000}
+#----------------------------------------------------------------------------------
+#
+# DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3 ALL DONE
+#
+#----------------------------------------------------------------------------------
+---
+- - [MARCHAL,MASTER,SLAVE]
+  - SAY: >
+       DUMMY-PLUG AXI4 TEST BENCH SCENARIO 1.3 ALL DONE
+---
