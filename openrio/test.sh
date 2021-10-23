@@ -7,7 +7,7 @@
 cd $(dirname $0)
 . ../functions.sh
 
-STD=1993
+STD=2008
 
 A_OPTS="--relax=prefer-explicit"
 E_OPTS=

@@ -756,10 +756,11 @@ package body rio_common is
   ---------------------------------------------------------------------------
   procedure TestEnd is
   begin
-    assert false report "Test complete." severity failure;
+    --assert false report "Test complete." severity failure;
+    std.env.stop;
     wait;
   end TestEnd;
-  
+
 end rio_common;
 
 
