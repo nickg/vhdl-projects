@@ -11,7 +11,7 @@ STOP_TIME=100240ns
 
 A_OPTS="--relax=prefer-explicit"
 E_OPTS=
-R_OPTS="--exit-severity=failure"
+R_OPTS="--exit-severity=failure --ieee-warnings=off"
 
 GHDL_OPTS="-fexplicit -fsynopsys -frelaxed"
 

@@ -4,8 +4,8 @@ _nvc () {
   local _work=${WORK:-work}
   local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc"
   mkdir -p .nvc
-  echo ${NVC:-nvc} $_opts $*
-  ${NVC:-nvc} $_opts  $*
+  echo ${PERF+perf stat --} ${NVC:-nvc} $_opts $*
+  ${PERF+perf stat --} ${NVC:-nvc} $_opts  $*
   [ $? = 0 ] || exit 1
 }
 

@@ -8,7 +8,7 @@ TOP=bigram
 
 A_OPTS=
 E_OPTS=
-R_OPTS=
+R_OPTS="--ieee-warnings=off"
 
 GHDL_OPTS="-frelaxed"
 
