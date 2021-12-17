@@ -8,7 +8,7 @@ TOP=
 WORK=ieee_proposed
 
 A_OPTS=
-E_OPTS=
+E_OPTS=-gQUIET=TRUE
 R_OPTS=
 GHDL_OPTS=-frelaxed
 
@@ -50,20 +50,20 @@ analyse test_logical.vhdl \
         test_nbuns.vhdl \
         test_nuns_su.vhdl \
         test_nuns.vhdl \
-        test_realstring.vhdl \
         test_reduce_pack.vhdl \
         test_reduce.vhdl \
-        test_shift.vhdl \
-        test_std_textio_add.vhdl \
-        test_string.vhdl
+        test_string.vhdl \
+        test_shift.vhdl
 
-exit # Tests below here not working yet
-
-for TOP in test_logical test_minmax; do
+for TOP in test_logical test_minmax test_nbuns test_nuns_su test_nuns \
+           test_reduce_pack test_reduce test_string test_shift; do
   elaborate
   run
 done
 
+#  test_std_textio_add.vhdl
+#
+# test_realstring.vhdl
 # test_standard_additions.vhdl
 # test_std_logic_textio.vhdl
 # test_new1164.vhdl
@@ -87,4 +87,3 @@ done
 # test_fixed.vhdl
 #test_float_synth.vhdl
 #test_fp32.vhdl
-  
