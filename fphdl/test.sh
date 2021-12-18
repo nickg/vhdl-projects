@@ -53,17 +53,20 @@ analyse test_logical.vhdl \
         test_reduce_pack.vhdl \
         test_reduce.vhdl \
         test_string.vhdl \
-        test_shift.vhdl
+        test_shift.vhdl \
+        test_std_textio_add.vhdl \
+        test_realstring.vhdl
 
 for TOP in test_logical test_minmax test_nbuns test_nuns_su test_nuns \
-           test_reduce_pack test_reduce test_string test_shift; do
+           test_reduce_pack test_reduce test_string test_shift \
+           test_realstring test_std_textio_add; do
   elaborate
   run
 done
 
-#  test_std_textio_add.vhdl
 #
-# test_realstring.vhdl
+#
+#
 # test_standard_additions.vhdl
 # test_std_logic_textio.vhdl
 # test_new1164.vhdl
