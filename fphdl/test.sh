@@ -55,38 +55,37 @@ analyse test_logical.vhdl \
         test_string.vhdl \
         test_shift.vhdl \
         test_std_textio_add.vhdl \
-        test_realstring.vhdl
+        test_realstring.vhdl \
+        test_standard_additions.vhdl \
+        test_std_logic_textio.vhdl \
+        test_new1164.vhdl \
+        test_bstring.vhdl \
+        test_bminmax.vhdl \
+        test_breduce_pack.vhdl
 
 for TOP in test_logical test_minmax test_nbuns test_nuns_su test_nuns \
            test_reduce_pack test_reduce test_string test_shift \
-           test_realstring test_std_textio_add; do
+           test_realstring test_std_textio_add test_standard_additions \
+           test_std_logic_textio test_new1164 test_bstring test_bminmax \
+           test_breduce_pack; do
   elaborate
   run
 done
 
-#
-#
-#
-# test_standard_additions.vhdl
-# test_std_logic_textio.vhdl
-# test_new1164.vhdl
 # test_fpfixed.vhdl
 # test_fphdl128.vhdl
 # test_fphdl16.vhdl
 # test_fphdl64.vhdl
 # test_fphdlbase.vhdl
 # test_fphdl.vhdl
-#fixed_noround_pkg.vhdl
-#fixed_synth.vhdl
+# fixed_noround_pkg.vhdl
+# fixed_synth.vhdl
 # float_noround_pkg.vhdl
-#float_roundneg_pkg.vhdl
-#  test_bminmax.vhdl
-#test_breduce_pack.vhdl
-# test_bstring.vhdl
-#test_fixed2.vhdl
+# float_roundneg_pkg.vhdl
+# test_fixed2.vhdl
 # test_fixed3.vhdl
-#test_fixed_nr.vhdl
+# test_fixed_nr.vhdl
 # test_fixed_synth.vhdl
 # test_fixed.vhdl
-#test_float_synth.vhdl
-#test_fp32.vhdl
+# test_float_synth.vhdl
+# test_fp32.vhdl
