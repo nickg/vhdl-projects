@@ -10,7 +10,7 @@ A_OPTS=
 E_OPTS=
 R_OPTS="--ieee-warnings=off"
 
-GHDL_OPTS="-frelaxed"
+GHDL_OPTS="-frelaxed --ieee-asserts=disable"
 
 analyse bigram.vhd
 
