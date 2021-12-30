@@ -5,7 +5,7 @@ cd $(dirname $0)
 
 STD=1993
 
-A_OPTS=
+A_OPTS="--relax=prefer-explicit"
 E_OPTS=
 R_OPTS="--ieee-warnings=off"
 
@@ -45,6 +45,8 @@ analyse components/ring_bus/ring_bus_pkg.vhd \
 
 analyse tools/tests/tap/test_pkg.vhd
 
+analyse components/cpu/cpu2j0_pkg.vhd
+
 analyse components/gps_if2/rbus_pkg.vhd \
         components/gps_if2/rbus_adp.vhd \
         components/gps_if2/gpsif_sub_pkg.vhd \
@@ -60,31 +62,32 @@ analyse components/gps_if2/rbus_pkg.vhd \
 analyse components/uartlite/uart_pkg.vhd \
         components/uartlite/uart.vhd
         
-# Crashes
-#analyse components/misc/gpio_pkg.vhd \
-#        components/misc/gpio.vhd \
-#        components/misc/bus_mux_pkg.vhd \
-#        components/misc/spi2.vhd
+analyse components/misc/gpio_pkg.vhd \
+        components/misc/gpio.vhd \
+        components/misc/bus_mux_pkg.vhd \
+        components/misc/multi_master_bus_mux.vhd \
+        components/misc/spi2.vhd
 
 # Crashes
-# analyse components/cpu/core/components_pkg.vhd \
-#         components/cpu/core/mult_pkg.vhd \
-#         components/cpu/core/register_file.vhd \
-#         components/cpu/core/register_file_flops.vhd \
-#         components/cpu/core/register_file_two_bank.vhd \
-#         components/cpu/decode/decode_pkg.vhd \
-#         components/cpu/decode/decode_body.vhd \
-#         components/cpu/decode/decode.vhd \
-#         components/cpu/decode/decode_core.vhd \
-#         components/cpu/decode/decode_table.vhd \
-#         components/cpu/decode/decode_table_direct.vhd \
-#         components/cpu/decode/decode_table_rom.vhd \
-#         components/cpu/decode/decode_table_direct_config.vhd \
-#         components/cpu/decode/decode_table_rom_config.vhd \
-#         components/cpu/core/datapath_pkg.vhd \
-#         components/cpu/core/datapath.vhd \
-#         components/cpu/core/cpu.vhd \
-#         components/cpu/core/cpu_config.vhd
+analyse components/cpu/core/components_pkg.vhd \
+        components/cpu/core/mult_pkg.vhd \
+        components/cpu/core/mult.vhd \
+        components/cpu/core/register_file.vhd \
+        components/cpu/core/register_file_flops.vhd \
+        components/cpu/core/register_file_two_bank.vhd \
+        components/cpu/decode/decode_pkg.vhd \
+        components/cpu/decode/decode_body.vhd \
+        components/cpu/decode/decode.vhd \
+        components/cpu/decode/decode_core.vhd \
+        components/cpu/decode/decode_table.vhd \
+        components/cpu/decode/decode_table_direct.vhd \
+        components/cpu/decode/decode_table_rom.vhd \
+        components/cpu/decode/decode_table_direct_config.vhd \
+        components/cpu/decode/decode_table_rom_config.vhd \
+        components/cpu/core/datapath_pkg.vhd \
+        components/cpu/core/datapath.vhd \
+        components/cpu/core/cpu.vhd \
+        components/cpu/core/cpu_config.vhd
         
 ################################################################################
 # lib/hwutils/tests
@@ -135,35 +138,31 @@ done
 ################################################################################
 # components/misc/tests
 
-# Crash compiling sources
+analyse components/misc/tests/gpio_tap.vhd \
+        components/misc/tests/multi_master_bus_mux_tap.vhd \
+        components/misc/tests/spi_tb.vhd
 
-# analyse components/misc/tests/gpio_tap.vhd \
-#         components/misc/tests/multi_master_bus_mux_tap.vhd \
-#         components/misc/tests/spi_tb.vhd
-
-# for TOP in gpio_tap multi_master_bus_mux_tap spi_tb; do
-#   elaborate
-#   run
-# done
+for TOP in gpio_tap multi_master_bus_mux_tap spi_tb; do
+  elaborate
+  run
+done
 
 ################################################################################
 # components/cpu/tests
 
-# Crash compiling sources
+analyse components/cpu/tests/arith_tap.vhd \
+        components/cpu/tests/manip_tap.vhd \
+        components/cpu/tests/bshift_tap.vhd \
+        components/cpu/tests/mult_tap.vhd \
+        components/cpu/tests/divider_tap.vhd \
+        components/cpu/tests/register_tap.vhd \
+        components/cpu/tests/logic_tap.vhd
 
-# analyse components/cpu/tests/arith_tap.vhd \
-#         components/cpu/tests/manip_tap.vhd \
-#         components/cpu/tests/bshift_tap.vhd \
-#         components/cpu/tests/mult_tap.vhd \
-#         components/cpu/tests/divider_tap.vhd \
-#         components/cpu/tests/register_tap.vhd \
-#         components/cpu/tests/logic_tap.vhd
-
-# for TOP in arith_tap manip_tap bshift_tap mult_tap divider_tap \
-#            register_tap logic_tap; do
-#   elaborate
-#   run
-# done
+for TOP in arith_tap manip_tap bshift_tap mult_tap divider_tap \
+           register_tap logic_tap; do
+  elaborate
+  run
+done
 
 ################################################################################
 # components/gps_if2/tests
@@ -179,16 +178,19 @@ done
 ################################################################################
 # components/cpu/sim
 
-# analyse components/cpu/sim/monitor_pkg.vhd \
-#         components/cpu/sim/data_bus_pkg.vhd \
-#         components/cpu/sim/mem/asymmetric_ram.vhd \
-#         components/cpu/sim/mem/cpu_sram.vhd \
-#         components/cpu/sim/cpusim_miniaic2.vhd \
-#         components/cpu/sim/cpu_pure_tb.vhd
+analyse components/cpu/sim/monitor_pkg.vhd \
+        components/cpu/sim/data_bus_pkg.vhd \
+        components/cpu/sim/bus_monitor.vhd \
+        components/cpu/sim/timeout_cnt.vhd \
+        components/cpu/sim/mem/asymmetric_ram.vhd \
+        components/cpu/sim/mem/cpu_sram.vhd \
+        components/cpu/sim/cpusim_miniaic2.vhd \
+        components/cpu/sim/cpu_pure_tb.vhd
 
 # TODO: cpu_tb.vhd
 
-# for TOP in cpu_pure_tb; do
-#   elaborate
-#   run
-# done
+# Out of memory during elaboration
+#for TOP in cpu_pure_tb; do
+#  elaborate
+#  run
+#done

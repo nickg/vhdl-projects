@@ -50,7 +50,7 @@ architecture behavioral of asymmetric_ram is
     return mem;
   end;
 
-  signal ram : ram_type := load_binary("ram.img");
+  signal ram : ram_type := load_binary("components/cpu/sim/ram.img");
 begin
 
   process (clkA)

@@ -8,7 +8,7 @@ use work.cpu2j0_components_pack.all;
 use work.test_pkg.all;
 
 entity divider_tap is
-  
+
 end divider_tap;
 
 architecture tb  of divider_tap is
@@ -147,7 +147,7 @@ architecture tb  of divider_tap is
     writeline(output, l);
   end;
 
-  function div_step(state : div_state)
+  impure function div_step(state : div_state)
   return div_state is
     variable state2 : div_state;
     variable l : line;
@@ -189,8 +189,8 @@ architecture tb  of divider_tap is
   end;
 
   -- 32bit / 16 bit unsigned
-  function div_32_16_u(dividend : std_logic_vector(31 downto 0);
-                       divisor : std_logic_vector(15 downto 0))
+  impure function div_32_16_u(dividend : std_logic_vector(31 downto 0);
+                              divisor : std_logic_vector(15 downto 0))
   return std_logic_vector is
     variable state : div_state := div_init_u(dividend, divisor & x"0000");
     variable l : line;
@@ -208,8 +208,8 @@ architecture tb  of divider_tap is
   end;
 
   -- 64bit / 32 bit unsigned
-  function div_64_32_u(dividend : std_logic_vector(63 downto 0);
-                       divisor : std_logic_vector(31 downto 0))
+  impure function div_64_32_u(dividend : std_logic_vector(63 downto 0);
+                              divisor : std_logic_vector(31 downto 0))
   return std_logic_vector is
     variable state : div_state := div_init_u(dividend(63 downto 32),
                                              divisor);
@@ -236,8 +236,8 @@ architecture tb  of divider_tap is
   end;
 
   -- 32bit / 16 bit signed
-  function div_32_16_s(dividend : std_logic_vector(31 downto 0);
-                       divisor : std_logic_vector(15 downto 0))
+  impure function div_32_16_s(dividend : std_logic_vector(31 downto 0);
+                              divisor : std_logic_vector(15 downto 0))
   return std_logic_vector is
     variable state : div_state;
     variable l : line;

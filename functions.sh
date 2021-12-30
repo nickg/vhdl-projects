@@ -39,7 +39,9 @@ run () {
   local _top=${TOP:-$1}
   case ${SIM:-nvc} in
     ghdl)
-      time _ghdl -r $GHDL_OPTS $_top ${STOP_TIME+--stop-time=$STOP_TIME}
+      time _ghdl -r $GHDL_OPTS $_top \
+	   ${STOP_TIME+--stop-time=$STOP_TIME} \
+	   --max-stack-alloc=1024
       ;;
     nvc)
       _nvc -r $_top --stats $R_OPTS \
