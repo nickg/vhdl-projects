@@ -1,0 +1,9 @@
+v 4
+file "/home/nick/src/microwatt/" "sim-unisim/unisim_vcomponents.vhdl" "917ee7a8dc19536a72a1b70ebd3a36b8d76af2d8" "20220104075613.603":
+  package vcomponents at 1( 0) + 0 on 4;
+file "/home/nick/src/microwatt/" "sim-unisim/BUFG.vhdl" "6e19508c796a8fded15f2e3068675dbd302e9da1" "20220104075613.603":
+  entity bufg at 1( 0) + 0 on 4;
+  architecture behaviour of bufg at 9( 121) + 0 on 4;
+file "/home/nick/src/microwatt/" "sim-unisim/BSCANE2.vhdl" "05310f6fb5017fb11aa2bf46e8ae2db937570aa6" "20220104075613.603":
+  entity bscane2 at 1( 0) + 0 on 4;
+  architecture behaviour of bscane2 at 24( 469) + 0 on 4;

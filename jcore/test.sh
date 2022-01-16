@@ -68,7 +68,6 @@ analyse components/misc/gpio_pkg.vhd \
         components/misc/multi_master_bus_mux.vhd \
         components/misc/spi2.vhd
 
-# Crashes
 analyse components/cpu/core/components_pkg.vhd \
         components/cpu/core/mult_pkg.vhd \
         components/cpu/core/mult.vhd \
@@ -189,7 +188,6 @@ analyse components/cpu/sim/monitor_pkg.vhd \
 
 # TODO: cpu_tb.vhd
 
-# Out of memory during elaboration
 #for TOP in cpu_pure_tb; do
 #  elaborate
 #  run
