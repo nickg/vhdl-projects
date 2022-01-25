@@ -188,7 +188,7 @@ analyse components/cpu/sim/monitor_pkg.vhd \
 
 # TODO: cpu_tb.vhd
 
-#for TOP in cpu_pure_tb; do
-#  elaborate
-#  run
-#done
+for TOP in cpu_pure_tb; do
+  elaborate
+  run
+done

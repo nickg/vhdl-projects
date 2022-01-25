@@ -140,6 +140,9 @@ begin
           write(uart_line, c);
           if c = ';' then
             -- hack to better display the gdb remote protocol messages
+            if uart_line.all = "16:00000001;" then
+              endsim := true;
+            end if;
             writeline(output, uart_line);
           end if;
         end if;

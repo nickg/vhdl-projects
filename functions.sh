@@ -31,7 +31,7 @@ elaborate () {
   local _top=${TOP:-$1}
   case ${SIM:-nvc} in
     ghdl) _ghdl -e $GHDL_OPTS $_top ;;
-    nvc)  _nvc -e $E_OPTS $_top ;;
+    nvc)  _nvc -e -V $E_OPTS $_top ;;
   esac
 }
 
