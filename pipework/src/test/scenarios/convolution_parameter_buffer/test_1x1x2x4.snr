@@ -1,0 +1,196 @@
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1 ELEM_BITS=8, K=>1x1, UNROLL=>(D=>2,C=>4)
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.00 SHAPE=>(H=>1,W=>1,D=>1,C=>1)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'hDE"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'hDE", "8'h--", "8'h--", "8'h--"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [7,4,4,4], D: [7,4], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.01 SHAPE=>(H=>1,W=>1,D=>1,C=>2)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000002}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h20", "8'h21"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h20", "8'h21", "8'h--", "8'h--"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [3,5,4,4], D: [7,4], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.02 SHAPE=>(H=>1,W=>1,D=>1,C=>3)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000003}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h30", "8'h31", "8'h32"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h30", "8'h31", "8'h32", "8'h--"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [3,1,5,4], D: [7,4], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.03 SHAPE=>(H=>1,W=>1,D=>1,C=>4)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000004}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h40", "8'h41", "8'h42", "8'h43"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h40", "8'h41", "8'h42", "8'h43"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [3,1,1,5], D: [7,4], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.04 SHAPE=>(H=>1,W=>1,D=>1,C=>8)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000008}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h50", "8'h51", "8'h52", "8'h53", "8'h54", "8'h55", "8'h56", "8'h57"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h50", "8'h51", "8'h52", "8'h53"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [3,1,1,1], D: [7,4], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h54", "8'h55", "8'h56", "8'h57"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [1,1,1,5], D: [7,4], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.05 SHAPE=>(H=>1,W=>1,D=>2,C=>8)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000008}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000002}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h60", "8'h61", "8'h62", "8'h63", "8'h64", "8'h65", "8'h66", "8'h67"]}
+  - XFER : {DATA : ["8'h68", "8'h69", "8'h6A", "8'h6B", "8'h6C", "8'h6D", "8'h6E", "8'h6F"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h60", "8'h61", "8'h62", "8'h63"],["8'h68", "8'h69", "8'h6A", "8'h6B"]]]], ATRB : {C: [3,1,1,1], D: [3,5], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h64", "8'h65", "8'h66", "8'h67"],["8'h6C", "8'h6D", "8'h6E", "8'h6F"]]]], ATRB : {C: [1,1,1,5], D: [3,5], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.06 SHAPE=>(H=>1,W=>1,D=>3,C=>8)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000008}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000003}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h70", "8'h71", "8'h72", "8'h73", "8'h74", "8'h75", "8'h76", "8'h77"]}
+  - XFER : {DATA : ["8'h78", "8'h79", "8'h7A", "8'h7B", "8'h7C", "8'h7D", "8'h7E", "8'h7F"]}
+  - XFER : {DATA : ["8'h80", "8'h81", "8'h82", "8'h83", "8'h84", "8'h85", "8'h86", "8'h87"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h70", "8'h71", "8'h72", "8'h73"],["8'h78", "8'h79", "8'h7A", "8'h7B"]]]], ATRB : {C: [3,1,1,1], D: [3,1], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h74", "8'h75", "8'h76", "8'h77"],["8'h7C", "8'h7D", "8'h7E", "8'h7F"]]]], ATRB : {C: [1,1,1,5], D: [3,1], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h80", "8'h81", "8'h82", "8'h83"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [3,1,1,1], D: [5,4], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h84", "8'h85", "8'h86", "8'h87"],["8'h--", "8'h--", "8'h--", "8'h--"]]]], ATRB : {C: [1,1,1,5], D: [5,4], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1.07 SHAPE=>(H=>1,W=>1,D=>4,C=>8)
+- CSR :
+  - WRITE: {ADDR: 32'h00000000, DATA: 32'h00000008}
+  - WRITE: {ADDR: 32'h00000004, DATA: 32'h00000004}
+  - WRITE: {ADDR: 32'h00000008, DATA: 32'h00000001}
+  - WRITE: {ADDR: 32'h0000000C, DATA: 32'h00000001}
+  - OUT  : {GPO(0) : 1}
+  - WAIT : {GPI(0) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(0) : 0}
+  - OUT  : {GPO(1) : 1}
+  - WAIT : {GPI(1) : 1, TIMEOUT: 10000}
+  - OUT  : {GPO(1) : 0}
+- I :
+  - XFER : {DATA : ["8'h90", "8'h91", "8'h92", "8'h93", "8'h94", "8'h95", "8'h96", "8'h97"]}
+  - XFER : {DATA : ["8'h98", "8'h99", "8'h9A", "8'h9B", "8'h9C", "8'h9D", "8'h9E", "8'h9F"]}
+  - XFER : {DATA : ["8'hA0", "8'hA1", "8'hA2", "8'hA3", "8'hA4", "8'hA5", "8'hA6", "8'hA7"]}
+  - XFER : {DATA : ["8'hA8", "8'hA9", "8'hAA", "8'hAB", "8'hAC", "8'hAD", "8'hAE", "8'hAF"]}
+- O :
+  - READY: 1
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h90", "8'h91", "8'h92", "8'h93"],["8'h98", "8'h99", "8'h9A", "8'h9B"]]]], ATRB : {C: [3,1,1,1], D: [3,1], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'h94", "8'h95", "8'h96", "8'h97"],["8'h9C", "8'h9D", "8'h9E", "8'h9F"]]]], ATRB : {C: [1,1,1,5], D: [3,1], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'hA0", "8'hA1", "8'hA2", "8'hA3"],["8'hA8", "8'hA9", "8'hAA", "8'hAB"]]]], ATRB : {C: [3,1,1,1], D: [1,5], X: [7], Y: [7]}}
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM : [[[["8'hA4", "8'hA5", "8'hA6", "8'hA7"],["8'hAC", "8'hAD", "8'hAE", "8'hAF"]]]], ATRB : {C: [1,1,1,5], D: [1,5], X: [7], Y: [7]}}
+  - READY: 0
+---
+- MARCHAL : 
+  - SAY : CONV_WEIGHT_BUFFER_TEST 1 DONE

@@ -1,0 +1,30 @@
+---
+- MARCHAL : 
+  - SAY : IMAGE_WINDOW_TEST ELEM_BITS=8 CHANNEL=1 X=1 Y=1
+---
+- M :
+  - ELEM : [[[1]]]
+  - ATRB : {C: [1], X: [3], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+- S :
+  - WAIT : {VALID: 1}
+  - CHECK: {ELEM: [[[1]]], ATRB : {C: [1], X: [3], Y: [3]}, ATRB : {C: [1], X: [3], Y: [3]}}
+  - WAIT : 5
+  - READY: 1
+  - WAIT : 1
+  - READY: 0
+---
+- M :
+  - DATA : 12
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+- S :
+  - WAIT : {VALID: 1}
+  - CHECK: {DATA: 12}
+  - READY: 1
+  - WAIT : 1
+  - READY: 0
+---

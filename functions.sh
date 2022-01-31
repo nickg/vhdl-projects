@@ -2,7 +2,7 @@
 
 _nvc () {
   local _work=${WORK:-work}
-  local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc"
+  local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc $NVC_OPTS"
   mkdir -p .nvc
   echo ${PERF+perf stat --} ${NVC:-nvc} $_opts $*
   ${PERF+perf stat --} ${NVC:-nvc} $_opts  $*
@@ -22,7 +22,7 @@ _ghdl () {
 analyse () {
   local _files=$*
   case ${SIM:-nvc} in
-    ghdl) _ghdl -a $GHDL_OPTS $_files ;;
+    ghdl) _ghdl -a -P.ghdl/ $GHDL_OPTS $_files ;;
     nvc)  _nvc -a $A_OPTS $_files ;;
   esac
 }
@@ -30,7 +30,7 @@ analyse () {
 elaborate () {
   local _top=${TOP:-$1}
   case ${SIM:-nvc} in
-    ghdl) _ghdl -e $GHDL_OPTS $_top ;;
+    ghdl) _ghdl -e -P.ghdl/ $GHDL_OPTS $_top ;;
     nvc)  _nvc -e -V $E_OPTS $_top ;;
   esac
 }
@@ -39,7 +39,7 @@ run () {
   local _top=${TOP:-$1}
   case ${SIM:-nvc} in
     ghdl)
-      time _ghdl -r $GHDL_OPTS $_top \
+      time _ghdl -r -P.ghdl/ $GHDL_OPTS $_top \
 	   ${STOP_TIME+--stop-time=$STOP_TIME} \
 	   --max-stack-alloc=1024
       ;;

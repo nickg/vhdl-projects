@@ -1,0 +1,116 @@
+---
+- MARCHAL : 
+  - SAY : IMAGE_WINDOW_FAST_SCAN_BUFER_TEST ELEM_BITS=8bit, CHANNEL_SIZE=0, C=4, I.X=1, O.X=1, Y=1
+---
+- I :
+  - OUT  : {GPO(0): 1}
+  - ELEM : [[[0x00,0x01,0x02,0x03]]]
+  - ATRB : {C: [3,1,1,1], X: [3], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x04,0x05,0x06,0x07]]]
+  - ATRB : {C: [1,1,1,1], X: [3], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x08,0x09,0x0A,0x0B]]]
+  - ATRB : {C: [1,1,1,1], X: [3], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x0C,0x0D,0x0E,0x0F]]]
+  - ATRB : {C: [1,1,1,5], X: [3], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x10,0x11,0x12,0x13]]]
+  - ATRB : {C: [3,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x14,0x15,0x16,0x17]]]
+  - ATRB : {C: [1,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x18,0x19,0x1A,0x1B]]]
+  - ATRB : {C: [1,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x1C,0x1D,0x1E,0x1F]]]
+  - ATRB : {C: [1,1,1,5], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x20,0x21,0x22,0x23]]]
+  - ATRB : {C: [3,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x24,0x25,0x26,0x27]]]
+  - ATRB : {C: [1,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x28,0x29,0x2A,0x2B]]]
+  - ATRB : {C: [1,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x2C,0x2D,0x2E,0x2F]]]
+  - ATRB : {C: [1,1,1,5], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x30,0x31,0x32,0x33]]]
+  - ATRB : {C: [3,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x34,0x35,0x36,0x37]]]
+  - ATRB : {C: [1,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x38,0x39,0x3A,0x3B]]]
+  - ATRB : {C: [1,1,1,1], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x3C,0x3D,0x3E,0x3F]]]
+  - ATRB : {C: [1,1,1,5], X: [1], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x40,0x41,0x42,0x43]]]
+  - ATRB : {C: [3,1,1,1], X: [5], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x44,0x45,0x46,0x47]]]
+  - ATRB : {C: [1,1,1,1], X: [5], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x48,0x49,0x4A,0x4B]]]
+  - ATRB : {C: [1,1,1,1], X: [5], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - ELEM : [[[0x4C,0x4D,0x4E,043F]]]
+  - ATRB : {C: [1,1,1,5], X: [5], Y: [3]}
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+  - OUT  : {GPO(0): 0}
+- O :
+  - OUT  : {GPO(0): 1}
+  - WAIT : {VALID: 1}
+  - WAIT : 5
+  - READY: 1
+  - WAIT : 1
+  - READY: 0
+  - OUT  : {GPO(0): 0}
+---

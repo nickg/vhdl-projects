@@ -1,0 +1,32 @@
+---
+- MARCHAL : 
+  - SAY : TEST MIN_NUM=0 MAX_NUM=7 NODE_NUM=4
+---
+- [REQ0,REQ1,REQ2,REQ3,REQ4,REQ5,REQ6,REQ7] :
+  - OUT  : {GPO(0): 0}
+  - VALID: 0
+  - WAIT : {GPI(0): 1}
+  - WAIT : 10
+  - OUT  : {GPO(0): 1}
+- [REQ0,REQ1] :
+  - VALID: 1
+  - WAIT : {READY: 1}
+  - VALID: 0
+- OUT    :
+  - READY: 0
+  - WAIT : 10
+  - OUT  : {GPO(0): 1}
+  - OUT  : {GPO(1): 1}
+  - WAIT : {VALID: 1}
+  - CHECK: {DATA: "8'b00000010"}
+  - WAIT : 1
+  - READY: 1
+  - WAIT : 1
+  - READY: 0
+  - WAIT : {VALID: 1}
+  - CHECK: {DATA: "8'b00000001"}
+  - WAIT : 1
+  - READY: 1
+  - WAIT : 1
+  - READY: 0
+---
