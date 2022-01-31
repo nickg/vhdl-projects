@@ -28,8 +28,17 @@ fi
 
 WORK=dummy_plug
 
-analyse ../dummyplug/src/main/vhdl/axi4/axi4_channel_player.vhd \
+analyse ../dummyplug/src/main/vhdl/core/util.vhd \
+        ../dummyplug/src/main/vhdl/core/reader.vhd \
+        ../dummyplug/src/main/vhdl/core/vocal.vhd \
+        ../dummyplug/src/main/vhdl/core/sync.vhd \
+        ../dummyplug/src/main/vhdl/core/core.vhd \
+        ../dummyplug/src/main/vhdl/core/marchal.vhd \
+        ../dummyplug/src/main/vhdl/core/mt19937ar.vhd \
+        ../dummyplug/src/main/vhdl/core/tinymt32.vhd \
+        ../dummyplug/src/main/vhdl/axi4/axi4_types.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_core.vhd \
+        ../dummyplug/src/main/vhdl/axi4/axi4_channel_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_master_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_models.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_signal_printer.vhd \
@@ -37,31 +46,10 @@ analyse ../dummyplug/src/main/vhdl/axi4/axi4_channel_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_stream_master_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_stream_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_stream_slave_player.vhd \
-        ../dummyplug/src/main/vhdl/axi4/axi4_types.vhd \
-        ../dummyplug/src/main/vhdl/core/core.vhd \
-        ../dummyplug/src/main/vhdl/core/marchal.vhd \
-        ../dummyplug/src/main/vhdl/core/mt19937ar.vhd \
-        ../dummyplug/src/main/vhdl/core/reader.vhd \
-        ../dummyplug/src/main/vhdl/core/sync.vhd \
-        ../dummyplug/src/main/vhdl/core/util.vhd \
-        ../dummyplug/src/main/vhdl/core/vocal.vhd \
-        ../dummyplug/src/main/vhdl/core/tinymt32.vhd
 
 WORK=pipework
 
-analyse src/axi4/axi4_components.vhd \
-        src/axi4/axi4_data_port.vhd \
-        src/axi4/axi4_master_address_channel_controller.vhd \
-        src/axi4/axi4_master_read_interface.vhd \
-        src/axi4/axi4_master_transfer_queue.vhd \
-        src/axi4/axi4_master_write_interface.vhd \
-        src/axi4/axi4_register_interface.vhd \
-        src/axi4/axi4_register_read_interface.vhd \
-        src/axi4/axi4_register_write_interface.vhd \
-        src/axi4/axi4_slave_read_interface.vhd \
-        src/axi4/axi4_slave_write_interface.vhd \
-        src/axi4/axi4_types.vhd \
-        src/components/chopper.vhd \
+analyse src/components/chopper.vhd \
         src/components/components.vhd \
         src/components/count_down_register.vhd \
         src/components/count_up_register.vhd \
@@ -90,21 +78,33 @@ analyse src/axi4/axi4_components.vhd \
         src/components/syncronizer.vhd \
         src/components/syncronizer_input_pending_register.vhd \
         src/components/unrolled_loop_counter.vhd \
+        src/image/image_types.vhd \
+        src/convolution/convolution_types.vhd \
         src/convolution/convolution_components.vhd \
         src/convolution/convolution_parameter_buffer.vhd \
         src/convolution/convolution_parameter_buffer_reader.vhd \
         src/convolution/convolution_parameter_buffer_writer.vhd \
-        src/convolution/convolution_types.vhd \
-        src/image/image_types.vhd \
+        src/pump/pump_components.vhd \
         src/pump/pipe_controller.vhd \
         src/pump/pipe_requester_interface.vhd \
         src/pump/pipe_responder_interface.vhd \
-        src/pump/pump_components.vhd \
         src/pump/pump_control_register.vhd \
         src/pump/pump_controller_intake_side.vhd \
         src/pump/pump_flow_syncronizer.vhd \
         src/pump/pump_request_controller.vhd \
         src/pump/pump_stream_intake_controller.vhd \
+        src/axi4/axi4_types.vhd \
+        src/axi4/axi4_components.vhd \
+        src/axi4/axi4_data_port.vhd \
+        src/axi4/axi4_master_address_channel_controller.vhd \
+        src/axi4/axi4_master_read_interface.vhd \
+        src/axi4/axi4_master_transfer_queue.vhd \
+        src/axi4/axi4_master_write_interface.vhd \
+        src/axi4/axi4_register_interface.vhd \
+        src/axi4/axi4_register_read_interface.vhd \
+        src/axi4/axi4_register_write_interface.vhd \
+        src/axi4/axi4_slave_read_interface.vhd \
+        src/axi4/axi4_slave_write_interface.vhd \
         src/axi4/axi4_data_outlet_port.vhd
 
 WORK=work
