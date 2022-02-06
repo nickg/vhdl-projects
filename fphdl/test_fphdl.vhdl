@@ -26,7 +26,7 @@
 
 entity test_fphdl is
   generic (
-    quiet : BOOLEAN := false);          -- run quietly 
+    quiet : BOOLEAN := false);          -- run quietly
 end entity test_fphdl;
 
 library ieee;
@@ -151,15 +151,15 @@ begin  -- architecture testbench
     checkreal := to_real (ck7);
     assert (checkreal = 6.5)
       report "fp7 6.5 miscompare " & real'image (checkreal) severity error;
-    ck7       := "0000100";             -- 
+    ck7       := "0000100";             --
     checkreal := to_real (ck7);
     assert (checkreal = 0.1875)
       report "fp7 0.1875 miscompare " & real'image (checkreal) severity error;
-    ck7       := "0000001";             -- 
+    ck7       := "0000001";             --
     checkreal := to_real (ck7);
     assert (checkreal = 0.140625)
       report "fp7 0.03125 miscompare " & real'image (checkreal) severity error;
-    ck7       := "0110111";             -- 
+    ck7       := "0110111";             --
     checkreal := to_real (ck7);
     assert (checkreal = 15.0)
       report "fp7 15 miscompare " & real'image (checkreal) severity error;
@@ -513,7 +513,7 @@ begin  -- architecture testbench
       report "Error real(X) = X miscompare" severity error;
     assert not(1.0 = checknum2)         -- false
       report "Error real(X) = Y miscompare" severity error;
-    
+
     assert not(checknum /= checknum)    -- false
       report "Error X /= X miscompare" severity error;
     assert (checknum /= checknum2)      -- true
@@ -532,7 +532,7 @@ begin  -- architecture testbench
       report "Error real(X) /= X miscompare" severity error;
     assert (1.0 /= checknum2)           -- true
       report "Error real(X) /= Y miscompare" severity error;
-    
+
     assert (checknum >= checknum)       -- true
       report "Error X >= X miscompare" severity error;
     assert (checknum2 >= checknum)      -- true
@@ -570,7 +570,7 @@ begin  -- architecture testbench
       report "Error real(X) <= X miscompare" severity error;
     assert (1.0 <= checknum2)           -- false
       report "Error real(X) <= Y miscompare" severity error;
-    
+
     assert not (checknum > checknum)    -- false
       report "Error X > X miscompare" severity error;
     assert (checknum2 > checknum)       -- true
@@ -633,7 +633,7 @@ begin  -- architecture testbench
       report "Error Class of zero incorrect" severity error;
     checknum := to_float(-1.0*(2.0**(-149)));
     assert (ClassFP(checknum) = neg_zero)
-      report "Error Class of zero incorrect" severity error; 
+      report "Error Class of zero incorrect" severity error;
      -- check the copy sign command
     checknum := Copysign (inf, negzero);
     assert (checknum = neginf)
@@ -811,143 +811,143 @@ begin  -- architecture testbench
     -- Start with an "or" test
     ---------------------------------------------------------------------------
     slv16 := "0000000000000000";
-    if (or_reduce (slv16) /= '0') then
+    if (or (slv16) /= '0') then
       report_error ("or reduce", slv16, '0');
     end if;
     slv16 := "0000000000000001";
-    if (or_reduce (slv16) /= '1') then
+    if (or (slv16) /= '1') then
       report_error ("or reduce", slv16, '1');
     end if;
     uns16 := "1111111111111111";
-    if (or_reduce (uns16) /= '1') then
+    if (or (uns16) /= '1') then
       report_error ("or reduce", uns16, '1');
     end if;
     uns16 := "1000000000000001";
-    if (or_reduce (uns16) /= '1') then
+    if (or (uns16) /= '1') then
       report_error ("or reduce", uns16, '1');
     end if;
     slv13 := "0000000";
-    if (or_reduce (slv13) /= '0') then
+    if (or (slv13) /= '0') then
       report_error ("or reduce", slv13, '0');
     end if;
     slv13 := "0000001";
-    if (or_reduce (slv13) /= '1') then
+    if (or (slv13) /= '1') then
       report_error ("or reduce", slv13, '1');
     end if;
     slv13 := "1111111";
-    if (or_reduce (slv13) /= '1') then
+    if (or (slv13) /= '1') then
       report_error ("or reduce", slv13, '1');
     end if;
     slv13 := "HLLLLLH";
-    if (or_reduce (slv13) /= '1') then
+    if (or (slv13) /= '1') then
       report_error ("or reduce", slv13, '1');
     end if;
     -- x test
     slv16 := "00000000000ZX000";
-    if (or_reduce (slv16) /= 'X') then
+    if (or (slv16) /= 'X') then
       report_error ("or reduce", slv16, 'X');
     end if;
     slv16 := "00000000000ZXWU-";
-    if (or_reduce (slv16) /= 'U') then
+    if (or (slv16) /= 'U') then
       report_error ("or reduce", slv16, 'U');
     end if;
     slv16 := "10000000000ZXWU-";
-    if (or_reduce (slv16) /= '1') then
+    if (or (slv16) /= '1') then
       report_error ("or reduce", slv16, '1');
     end if;
     ---------------------------------------------------------------------------
     -- "and" test
     ---------------------------------------------------------------------------
     slv16 := "0000000000000000";
-    if (and_reduce (slv16) /= '0') then
+    if (and (slv16) /= '0') then
       report_error ("and reduce", slv16, '0');
     end if;
     slv16 := "0000000000000001";
-    if (and_reduce (slv16) /= '0') then
+    if (and (slv16) /= '0') then
       report_error ("and reduce", slv16, '0');
     end if;
     uns16 := "1111111111111111";
-    if (and_reduce (uns16) /= '1') then
+    if (and (uns16) /= '1') then
       report_error ("and reduce", uns16, '1');
     end if;
     uns16 := "1000000000000001";
-    if (and_reduce (uns16) /= '0') then
+    if (and (uns16) /= '0') then
       report_error ("and reduce", uns16, '0');
     end if;
     slv13 := "0000000";
-    if (and_reduce (slv13) /= '0') then
+    if (and (slv13) /= '0') then
       report_error ("and reduce", slv13, '0');
     end if;
     slv13 := "0000001";
-    if (and_reduce (slv13) /= '0') then
+    if (and (slv13) /= '0') then
       report_error ("and reduce", slv13, '0');
     end if;
     slv13 := "1111111";
-    if (and_reduce (slv13) /= '1') then
+    if (and (slv13) /= '1') then
       report_error ("and reduce", slv13, '1');
     end if;
     slv13 := "HLLLLLH";
-    if (and_reduce (slv13) /= '0') then
+    if (and (slv13) /= '0') then
       report_error ("and reduce", slv13, '0');
     end if;
     -- x test
     slv16 := "11111111111ZX111";
-    if (and_reduce (slv16) /= 'X') then
+    if (and (slv16) /= 'X') then
       report_error ("and reduce", slv16, 'X');
     end if;
     slv16 := "11111111111ZXWU-";
-    if (and_reduce (slv16) /= 'U') then
+    if (and (slv16) /= 'U') then
       report_error ("and reduce", slv16, 'U');
     end if;
     slv16 := "00000110000ZXWU-";
-    if (and_reduce (slv16) /= '0') then
+    if (and (slv16) /= '0') then
       report_error ("and reduce", slv16, '0');
     end if;
     ---------------------------------------------------------------------------
     -- xor test
     ---------------------------------------------------------------------------
     slv16 := "0000000000000000";
-    if (xor_reduce (slv16) /= '0') then
+    if (xor (slv16) /= '0') then
       report_error ("xor reduce", slv16, '0');
     end if;
     slv16 := "0000000000000001";
-    if (xor_reduce (slv16) /= '1') then
+    if (xor (slv16) /= '1') then
       report_error ("xor reduce", slv16, '1');
     end if;
     uns16 := "1111111111111111";
-    if (xor_reduce (uns16) /= '0') then
+    if (xor (uns16) /= '0') then
       report_error ("xor reduce", uns16, '0');
     end if;
     uns16 := "1000000000000001";
-    if (xor_reduce (uns16) /= '0') then
+    if (xor (uns16) /= '0') then
       report_error ("xor reduce", uns16, '0');
     end if;
     slv13 := "0000000";
-    if (xor_reduce (slv13) /= '0') then
+    if (xor (slv13) /= '0') then
       report_error ("xor reduce", slv13, '0');
     end if;
     slv13 := "0000001";
-    if (xor_reduce (slv13) /= '1') then
+    if (xor (slv13) /= '1') then
       report_error ("xor reduce", slv13, '1');
     end if;
     slv13 := "1111111";
-    if (xor_reduce (slv13) /= '1') then
+    if (xor (slv13) /= '1') then
       report_error ("xor reduce", slv13, '1');
     end if;
     slv13 := "HLLLLLH";
-    if (xor_reduce (slv13) /= '0') then
+    if (xor (slv13) /= '0') then
       report_error ("xor reduce", slv13, '0');
     end if;
     slv16 := "11111111111ZX111";
-    if (xor_reduce (slv16) /= 'X') then
+    if (xor (slv16) /= 'X') then
       report_error ("xor reduce", slv16, 'X');
     end if;
     slv16 := "11111111111ZXWU-";
-    if (xor_reduce (slv16) /= 'U') then
+    if (xor (slv16) /= 'U') then
       report_error ("xor reduce", slv16, 'U');
     end if;
     slv16 := "00000110000ZXWU-";
-    s     := xor_reduce (slv16);
+    s     := xor (slv16);
     if (s /= 'U') then
       report_error ("xor reduce", slv16, s);
     end if;
@@ -955,142 +955,142 @@ begin  -- architecture testbench
     -- "nor" test
     ---------------------------------------------------------------------------
     slv16 := "0000000000000000";
-    if (nor_reduce (slv16) /= '1') then
+    if (nor (slv16) /= '1') then
       report_error ("nor reduce", slv16, '1');
     end if;
     slv16 := "0000000000000001";
-    if (nor_reduce (slv16) /= '0') then
+    if (nor (slv16) /= '0') then
       report_error ("nor reduce", slv16, '0');
     end if;
     uns16 := "1111111111111111";
-    if (nor_reduce (uns16) /= '0') then
+    if (nor (uns16) /= '0') then
       report_error ("nor reduce", uns16, '0');
     end if;
     uns16 := "1000000000000001";
-    if (nor_reduce (uns16) /= '0') then
+    if (nor (uns16) /= '0') then
       report_error ("nor reduce", uns16, '0');
     end if;
     slv13 := "0000000";
-    if (nor_reduce (slv13) /= '1') then
+    if (nor (slv13) /= '1') then
       report_error ("nor reduce", slv13, '1');
     end if;
     slv13 := "0000001";
-    if (nor_reduce (slv13) /= '0') then
+    if (nor (slv13) /= '0') then
       report_error ("nor reduce", slv13, '0');
     end if;
     slv13 := "1111111";
-    if (nor_reduce (slv13) /= '0') then
+    if (nor (slv13) /= '0') then
       report_error ("nor reduce", slv13, '0');
     end if;
     slv13 := "HLLLLLH";
-    if (nor_reduce (slv13) /= '0') then
+    if (nor (slv13) /= '0') then
       report_error ("nor reduce", slv13, '0');
     end if;
     -- x test
     slv16 := "00000000000ZX000";
-    if (nor_reduce (slv16) /= 'X') then
+    if (nor (slv16) /= 'X') then
       report_error ("nor reduce", slv16, 'X');
     end if;
     slv16 := "00000000000ZXWU-";
-    if (nor_reduce (slv16) /= 'U') then
+    if (nor (slv16) /= 'U') then
       report_error ("nor reduce", slv16, 'U');
     end if;
     slv16 := "10000000000ZXWU-";
-    if (nor_reduce (slv16) /= '0') then
+    if (nor (slv16) /= '0') then
       report_error ("nor reduce", slv16, '0');
     end if;
     ---------------------------------------------------------------------------
     -- "nand" test
     ---------------------------------------------------------------------------
     slv16 := "0000000000000000";
-    if (nand_reduce (slv16) /= '1') then
+    if (nand (slv16) /= '1') then
       report_error ("nand reduce", slv16, '1');
     end if;
     slv16 := "0000000000000001";
-    if (nand_reduce (slv16) /= '1') then
+    if (nand (slv16) /= '1') then
       report_error ("nand reduce", slv16, '1');
     end if;
     uns16 := "1111111111111111";
-    if (nand_reduce (uns16) /= '0') then
+    if (nand (uns16) /= '0') then
       report_error ("nand reduce", uns16, '0');
     end if;
     uns16 := "1000000000000001";
-    if (nand_reduce (uns16) /= '1') then
+    if (nand (uns16) /= '1') then
       report_error ("nand reduce", uns16, '1');
     end if;
     slv13 := "0000000";
-    if (nand_reduce (slv13) /= '1') then
+    if (nand (slv13) /= '1') then
       report_error ("nand reduce", slv13, '1');
     end if;
     slv13 := "0000001";
-    if (nand_reduce (slv13) /= '1') then
+    if (nand (slv13) /= '1') then
       report_error ("nand reduce", slv13, '1');
     end if;
     slv13 := "1111111";
-    if (nand_reduce (slv13) /= '0') then
+    if (nand (slv13) /= '0') then
       report_error ("nand reduce", slv13, '0');
     end if;
     slv13 := "HLLLLLH";
-    if (nand_reduce (slv13) /= '1') then
+    if (nand (slv13) /= '1') then
       report_error ("nand reduce", slv13, '1');
     end if;
     slv16 := "11111111111ZX111";
-    if (nand_reduce (slv16) /= 'X') then
+    if (nand (slv16) /= 'X') then
       report_error ("nand reduce", slv16, 'X');
     end if;
     slv16 := "11111111111ZXWU-";
-    if (nand_reduce (slv16) /= 'U') then
+    if (nand (slv16) /= 'U') then
       report_error ("nand reduce", slv16, 'U');
     end if;
     slv16 := "00000110000ZXWU-";
-    if (nand_reduce (slv16) /= '1') then
+    if (nand (slv16) /= '1') then
       report_error ("nand reduce", slv16, '1');
     end if;
     ---------------------------------------------------------------------------
     -- xnor test
     ---------------------------------------------------------------------------
     slv16 := "0000000000000000";
-    if (xnor_reduce (slv16) /= '1') then
+    if (xnor (slv16) /= '1') then
       report_error ("xnor reduce", slv16, '1');
     end if;
     slv16 := "0000000000000001";
-    if (xnor_reduce (slv16) /= '0') then
+    if (xnor (slv16) /= '0') then
       report_error ("xnor reduce", slv16, '0');
     end if;
     uns16 := "1111111111111111";
-    if (xnor_reduce (uns16) /= '1') then
+    if (xnor (uns16) /= '1') then
       report_error ("xnor reduce", uns16, '1');
     end if;
     uns16 := "1000000000000001";
-    if (xnor_reduce (uns16) /= '1') then
+    if (xnor (uns16) /= '1') then
       report_error ("xnor reduce", uns16, '1');
     end if;
     slv13 := "0000000";
-    if (xnor_reduce (slv13) /= '1') then
+    if (xnor (slv13) /= '1') then
       report_error ("xnor reduce", slv13, '1');
     end if;
     slv13 := "0000001";
-    if (xnor_reduce (slv13) /= '0') then
+    if (xnor (slv13) /= '0') then
       report_error ("xnor reduce", slv13, '0');
     end if;
     slv13 := "1111111";
-    if (xnor_reduce (slv13) /= '0') then
+    if (xnor (slv13) /= '0') then
       report_error ("xnor reduce", slv13, '0');
     end if;
     slv13 := "HLLLLLH";
-    if (xnor_reduce (slv13) /= '1') then
+    if (xnor (slv13) /= '1') then
       report_error ("xnor reduce", slv13, '1');
     end if;
     slv16 := "11111111111ZX111";
-    if (xnor_reduce (slv16) /= 'X') then
+    if (xnor (slv16) /= 'X') then
       report_error ("xnor reduce", slv16, 'X');
     end if;
     slv16 := "11111111111ZXWU-";
-    if (xnor_reduce (slv16) /= 'U') then
+    if (xnor (slv16) /= 'U') then
       report_error ("xnor reduce", slv16, 'U');
     end if;
     slv16 := "00000110000ZXWU-";
-    s     := xnor_reduce (slv16);
+    s     := xnor (slv16);
     if (s /= 'U') then
       report_error ("xnor reduce", slv16, s);
     end if;
@@ -1388,7 +1388,7 @@ begin  -- architecture testbench
     a2 := resize (c1, a2);
     a3 := to_float (0.1875, a3);
     report_error ("small denormal treated as normal resize", a2, a3);
-    
+
     a1 := reverse("00000000000000000000000001111100");  -- 0.125
     a2 := c1 / a1;
     a3 := to_float (0.1875/ 0.125, a3);
@@ -1426,7 +1426,7 @@ begin  -- architecture testbench
     a2 := a1 mod c1;
     a3 := to_float (42 mod (-5), a3);
     report_error ("large mod -small", a2, a3);
-    
+
     assert (quiet) report "Mixed size math test completed" severity note;
     mixedmath_done <= true;
     wait;

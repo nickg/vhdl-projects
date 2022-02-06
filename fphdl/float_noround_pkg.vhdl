@@ -14,5 +14,6 @@ package float_noround_pkg is new ieee.float_generic_pkg
       float_denormalize    => false,    -- Turn off Denormal numbers
       float_check_error    => false,    -- Turn off NAN and overflow processing
       float_guard_bits     => 0,        -- no guard bits
-      no_warning           => true      -- do not show warnings
+      no_warning           => true,     -- do not show warnings
+      fixed_pkg            => ieee.fixed_pkg
       );
