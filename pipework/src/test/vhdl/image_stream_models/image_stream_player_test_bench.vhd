@@ -29,7 +29,7 @@
 --      SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 --      LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 --      DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
---      THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+--      THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 --      (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 --      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
@@ -80,7 +80,7 @@ architecture MODEL of IMAGE_STREAM_PLAYER_TEST_BENCH is
     signal    RESET             :  std_logic;
     signal    CLK               :  std_logic;
     -------------------------------------------------------------------------------
-    -- 
+    --
     -------------------------------------------------------------------------------
     signal    WIN_DATA          :  std_logic_vector(PARAM.DATA.SIZE-1 downto 0);
     signal    WIN_VALID         :  std_logic;
@@ -106,7 +106,7 @@ architecture MODEL of IMAGE_STREAM_PLAYER_TEST_BENCH is
     signal    M_FINISH          :  std_logic;
     signal    S_FINISH          :  std_logic;
     -------------------------------------------------------------------------------
-    -- 
+    --
     -------------------------------------------------------------------------------
     procedure DEBUG_IMAGE_STREAM_PARAM(NAME:string; PARAM:IMAGE_STREAM_PARAM_TYPE)
     is
@@ -164,40 +164,40 @@ architecture MODEL of IMAGE_STREAM_PLAYER_TEST_BENCH is
     end procedure;
 begin
     -------------------------------------------------------------------------------
-    -- 
+    --
     -------------------------------------------------------------------------------
-    N: MARCHAL                                       -- 
-        generic map(                                 -- 
-            SCENARIO_FILE       => SCENARIO_FILE   , -- 
+    N: MARCHAL                                       --
+        generic map(                                 --
+            SCENARIO_FILE       => SCENARIO_FILE   , --
             NAME                => "MARCHAL"       , --
             SYNC_PLUG_NUM       => 1               , --
-            SYNC_WIDTH          => SYNC_WIDTH      , -- 
-            FINISH_ABORT        => FALSE             -- 
-        )                                            -- 
-        port map(                                    -- 
+            SYNC_WIDTH          => SYNC_WIDTH      , --
+            FINISH_ABORT        => FALSE             --
+        )                                            --
+        port map(                                    --
             CLK                 => CLK             , -- In  :
             RESET               => RESET           , -- Out :
             SYNC(0)             => SYNC(0)         , -- I/O :
             SYNC(1)             => SYNC(1)         , -- I/O :
             REPORT_STATUS       => N_REPORT        , -- Out :
             FINISH              => N_FINISH          -- Out :
-        );                                           -- 
+        );                                           --
     -------------------------------------------------------------------------------
     --
     -------------------------------------------------------------------------------
-    M: IMAGE_STREAM_MASTER_PLAYER                    -- 
-        generic map (                                -- 
-            SCENARIO_FILE       => SCENARIO_FILE   , -- 
-            NAME                => "M"             , --   
-            PARAM               => PARAM           , --   
-            OUTPUT_DELAY        => DELAY           , --   
-            SYNC_PLUG_NUM       => 2               , --   
-            SYNC_WIDTH          => SYNC_WIDTH      , --   
-            GPI_WIDTH           => GPI_WIDTH       , --   
-            GPO_WIDTH           => GPO_WIDTH       , --   
-            FINISH_ABORT        => FALSE             --   
-        )                                            -- 
-        port map (                                   -- 
+    M: IMAGE_STREAM_MASTER_PLAYER                    --
+        generic map (                                --
+            SCENARIO_FILE       => SCENARIO_FILE   , --
+            NAME                => "M"             , --
+            PARAM               => PARAM           , --
+            OUTPUT_DELAY        => DELAY           , --
+            SYNC_PLUG_NUM       => 2               , --
+            SYNC_WIDTH          => SYNC_WIDTH      , --
+            GPI_WIDTH           => GPI_WIDTH       , --
+            GPO_WIDTH           => GPO_WIDTH       , --
+            FINISH_ABORT        => FALSE             --
+        )                                            --
+        port map (                                   --
             CLK                 => CLK             , -- In  :
             RST                 => RESET           , -- In  :
             DATA                => WIN_DATA        , -- I/O :
@@ -209,23 +209,23 @@ begin
             GPO                 => M_GPO           , -- Out :
             REPORT_STATUS       => M_REPORT        , -- Out :
             FINISH              => M_FINISH          -- Out :
-        );                                           -- 
+        );                                           --
     -------------------------------------------------------------------------------
     --
     -------------------------------------------------------------------------------
-    S: IMAGE_STREAM_SLAVE_PLAYER                     -- 
-        generic map (                                -- 
-            SCENARIO_FILE       => SCENARIO_FILE   , -- 
-            NAME                => "S"             , --   
-            PARAM               => PARAM           , --   
-            OUTPUT_DELAY        => DELAY           , --   
-            SYNC_PLUG_NUM       => 3               , --   
-            SYNC_WIDTH          => SYNC_WIDTH      , --   
-            GPI_WIDTH           => GPI_WIDTH       , --   
-            GPO_WIDTH           => GPO_WIDTH       , --   
-            FINISH_ABORT        => FALSE             --   
-        )                                            -- 
-        port map (                                   -- 
+    S: IMAGE_STREAM_SLAVE_PLAYER                     --
+        generic map (                                --
+            SCENARIO_FILE       => SCENARIO_FILE   , --
+            NAME                => "S"             , --
+            PARAM               => PARAM           , --
+            OUTPUT_DELAY        => DELAY           , --
+            SYNC_PLUG_NUM       => 3               , --
+            SYNC_WIDTH          => SYNC_WIDTH      , --
+            GPI_WIDTH           => GPI_WIDTH       , --
+            GPO_WIDTH           => GPO_WIDTH       , --
+            FINISH_ABORT        => FALSE             --
+        )                                            --
+        port map (                                   --
             CLK                 => CLK             , -- In  :
             RST                 => RESET           , -- In  :
             DATA                => WIN_DATA        , -- In  :
@@ -237,9 +237,9 @@ begin
             GPO                 => S_GPO           , -- Out :
             REPORT_STATUS       => S_REPORT        , -- Out :
             FINISH              => S_FINISH          -- Out :
-        );                                           -- 
+        );                                           --
     -------------------------------------------------------------------------------
-    -- 
+    --
     -------------------------------------------------------------------------------
     process begin
         loop
@@ -251,12 +251,12 @@ begin
         wait;
     end process;
     -------------------------------------------------------------------------------
-    -- 
+    --
     -------------------------------------------------------------------------------
     M_GPI <= S_GPO;
     S_GPI <= M_GPO;
     -------------------------------------------------------------------------------
-    -- 
+    --
     -------------------------------------------------------------------------------
     process
         variable L   : LINE;
@@ -463,7 +463,7 @@ use     PIPEWORK.IMAGE_TYPES.all;
 entity  IMAGE_STREAM_PLAYER_TEST_8x0x0x2x2 is
     generic (
         NAME            : STRING                  := "test_8x0x0x2x2";
-        SCENARIO_FILE   : STRING                  := "test_8x0x0x2x2.snr";
+        SCENARIO_FILE   : STRING                  := "src/test/scenarios/image_stream_models/test_8x0x0x2x2.snr";
         PARAM           : IMAGE_STREAM_PARAM_TYPE := NEW_IMAGE_STREAM_PARAM(ELEM_BITS => 8,
                                                                             SHAPE     => NEW_IMAGE_SHAPE(
                                                                                 ELEM_BITS => 8,

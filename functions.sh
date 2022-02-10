@@ -19,6 +19,13 @@ _ghdl () {
   [ $? = 0 ] || exit 1
 }
 
+_filter_test () {
+  local _top=$1
+  [ -z "$TEST" ] && return 0
+  grep -q "$TEST" <<< $_top
+  return $?
+}
+
 analyse () {
   local _files=$*
   case ${SIM:-nvc} in
@@ -29,6 +36,7 @@ analyse () {
 
 elaborate () {
   local _top=${TOP:-$1}
+  _filter_test $_top || return
   case ${SIM:-nvc} in
     ghdl) _ghdl -e -P.ghdl/ $GHDL_OPTS $_top ;;
     nvc)  _nvc -e -V $E_OPTS $_top ;;
@@ -37,6 +45,7 @@ elaborate () {
 
 run () {
   local _top=${TOP:-$1}
+  _filter_test $_top || return
   case ${SIM:-nvc} in
     ghdl)
       time _ghdl -r -P.ghdl/ $GHDL_OPTS $_top \

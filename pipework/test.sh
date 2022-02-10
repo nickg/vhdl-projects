@@ -164,10 +164,14 @@ for TOP in axi4_register_interface_test_bench_32_32 \
 done
 
 analyse src/test/vhdl/image_stream_models/image_stream_player.vhd \
+        src/test/vhdl/image_stream_models/image_stream_master_player.vhd \
+        src/test/vhdl/image_stream_models/image_stream_models.vhd \
+        src/test/vhdl/image_stream_models/image_stream_player_test_bench.vhd \
         src/test/vhdl/image_stream_models/image_stream_slave_player.vhd \
         src/test/vhdl/convolution_parameter_buffer/convolution_parameter_buffer_test_bench.vhd
 
-for TOP in convolution_parameter_buffer_test_bench_{1x1x1x1,1x1x1x1_1x1x1x1,1x1x1x4,1x1x2x4,3x3x1x1,3x3x2x4}; do
+for TOP in convolution_parameter_buffer_test_bench_3x3x2x4 \
+             image_stream_player_test_8x0x0x2x2; do
  elaborate
  run
 done
