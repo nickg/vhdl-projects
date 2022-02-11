@@ -10,7 +10,7 @@ A_OPTS=
 E_OPTS=
 R_OPTS=
 
-NVC_OPTS="-M 16m"
+NVC_OPTS="-M 32m"
 GHDL_OPTS="-fexplicit -fsynopsys -frelaxed"
 
 if [ ! -f src/test/scenarios/axi4_adapter/axi4_adapter_test_bench_4096_32_32.snr ]; then
@@ -45,7 +45,7 @@ analyse ../dummyplug/src/main/vhdl/core/util.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_slave_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_stream_master_player.vhd \
         ../dummyplug/src/main/vhdl/axi4/axi4_stream_player.vhd \
-        ../dummyplug/src/main/vhdl/axi4/axi4_stream_slave_player.vhd \
+        ../dummyplug/src/main/vhdl/axi4/axi4_stream_slave_player.vhd
 
 WORK=pipework
 
@@ -79,6 +79,15 @@ analyse src/components/chopper.vhd \
         src/components/syncronizer_input_pending_register.vhd \
         src/components/unrolled_loop_counter.vhd \
         src/image/image_types.vhd \
+        src/image/image_components.vhd \
+        src/image/image_stream_atrb_generator.vhd \
+        src/image/image_stream_buffer_bank_memory_reader.vhd \
+        src/image/image_stream_buffer_bank_memory_writer.vhd \
+        src/image/image_stream_buffer_bank_memory.vhd \
+        src/image/image_stream_buffer_intake_line_selector.vhd \
+        src/image/image_stream_buffer_outlet_line_selector.vhd \
+        src/image/image_stream_channel_reducer.vhd \
+        src/image/image_stream_buffer.vhd \
         src/convolution/convolution_types.vhd \
         src/convolution/convolution_components.vhd \
         src/convolution/convolution_parameter_buffer.vhd \
@@ -105,7 +114,7 @@ analyse src/components/chopper.vhd \
         src/axi4/axi4_register_write_interface.vhd \
         src/axi4/axi4_slave_read_interface.vhd \
         src/axi4/axi4_slave_write_interface.vhd \
-        src/axi4/axi4_data_outlet_port.vhd
+        src/axi4/axi4_data_outlet_port.vhd \
 
 WORK=work
 
@@ -168,10 +177,12 @@ analyse src/test/vhdl/image_stream_models/image_stream_player.vhd \
         src/test/vhdl/image_stream_models/image_stream_models.vhd \
         src/test/vhdl/image_stream_models/image_stream_player_test_bench.vhd \
         src/test/vhdl/image_stream_models/image_stream_slave_player.vhd \
-        src/test/vhdl/convolution_parameter_buffer/convolution_parameter_buffer_test_bench.vhd
+        src/test/vhdl/convolution_parameter_buffer/convolution_parameter_buffer_test_bench.vhd \
+        src/test/vhdl/image_stream_buffer/image_stream_buffer_test_bench.vhd
 
 for TOP in convolution_parameter_buffer_test_bench_3x3x2x4 \
-             image_stream_player_test_8x0x0x2x2; do
+             image_stream_player_test_8x0x0x2x2 \
+             image_stream_buffer_test_4_8_1x1x1_1x1x1x1; do
  elaborate
  run
 done
