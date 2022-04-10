@@ -13,6 +13,9 @@ GHDL_OPTS=
 
 WORK=osvvm
 
+mkdir -p results
+mkdir -p reports
+
 analyse osvvm/NamePkg.vhd \
         osvvm/OsvvmGlobalPkg.vhd \
         osvvm/TranscriptPkg.vhd \
@@ -63,12 +66,18 @@ analyse UART/src/UartTbPkg.vhd \
 WORK=osvvm_tbuart
 
 analyse UART/testbench/TestCtrl_e.vhd \
-        UART/testbench/TbUart.vhd
+        UART/testbench/TbUart.vhd \
+        UART/testbench/TbUart_SendGet1.vhd \
+        UART/testbench/TbUart_SendGet2.vhd \
+        UART/testbench/TbUart_Checkers1.vhd \
+        UART/testbench/TbUart_Checkers2.vhd \
+        UART/testbench/TbUart_Options1.vhd \
+        UART/testbench/TbUart_Options2.vhd \
+        UART/testbench/TbUart_Overload1.vhd \
+        UART/testbench/TbUart_Scoreboard1.vhd
 
-TOP=TestCtrl
-
-for tb in UART/testbench/TbUart_SendGet1.vhd UART/testbench/TbUart_SendGet2.vhd; do
-  analyse $tb
+for TOP in TbUart_{SendGet1,SendGet2,Checkers1,Checkers2} \
+           TbUart_{Options1,Options2,Overload1,Scoreboard1}; do
   elaborate
   run
 done
