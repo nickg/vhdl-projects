@@ -2,7 +2,9 @@
 
 _nvc () {
   local _work=${WORK:-work}
-  local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc $NVC_OPTS"
+  local _libdirs=(${LIBS[@]/#/-L..\/})
+  local _libs=${_libdirs[@]/%/\/.nvc}
+  local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc $_libs $NVC_OPTS"
   mkdir -p .nvc
   echo ${PERF+perf stat --} ${NVC:-nvc} $_opts $*
   ${PERF+perf stat --} ${NVC:-nvc} $_opts  $*
