@@ -81,3 +81,48 @@ for TOP in TbUart_{SendGet1,SendGet2,Checkers1,Checkers2} \
   elaborate
   run
 done
+
+WORK=osvvm_axi4
+
+analyse AXI4/common/src/Axi4CommonPkg.vhd \
+        AXI4/common/src/Axi4InterfaceCommonPkg.vhd \
+        AXI4/common/src/Axi4InterfacePkg.vhd \
+        AXI4/common/src/Axi4LiteInterfacePkg.vhd \
+        AXI4/common/src/Axi4ModelPkg.vhd \
+        AXI4/common/src/Axi4OptionsPkg.vhd \
+        AXI4/common/src/Axi4VersionCompatibilityPkg.vhd
+
+analyse AXI4/Axi4Lite/src/Axi4LiteComponentPkg.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteMasterComponentPkg.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteMaster.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteMemoryComponentPkg.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteMemory.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteMonitorComponentPkg.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteMonitor_dummy.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteResponderComponentPkg.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteResponder_Transactor.vhd \
+        AXI4/Axi4Lite/src/Axi4LiteContext.vhd
+
+WORK=osvvm_tbaxi4
+
+analyse AXI4/Axi4Lite/testbench/TestCtrl_e.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_BasicReadWrite.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_MemoryReadWrite1.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_RandomReadWriteByte.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_RandomReadWrite.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_ReadWriteAsync1.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_ReadWriteAsync2.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_ReadWriteAsync3.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_TimeOut.vhd \
+        AXI4/Axi4Lite/testbench/TbAxi4_WriteOptions.vhd
+
+
+exit  # Not working yet
+
+for TOP in TbAxi4_{BasicReadWrite,ReadWriteAsync1,ReadWriteAsync2} \
+           TbAxi4_{ReadWriteAsync3,RandomReadWrite,RandomReadWriteByte} \
+           TbAxi4_{TimeOut,WriteOptions,MemoryReadWrite1}; do
+  elaborate
+  run
+done
