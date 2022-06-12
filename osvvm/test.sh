@@ -38,15 +38,16 @@ analyse osvvm/NamePkg.vhd \
         osvvm/ReportPkg.vhd \
         osvvm/ResizePkg.vhd \
         osvvm/TbUtilPkg.vhd \
+        osvvm/OsvvmTypesPkg.vhd \
         osvvm/OsvvmContext.vhd
 
 WORK=osvvm_common
 
-analyse Common/src/AddressBusTransactionPkg.vhd \
+analyse Common/src/FifoFillPkg_slv.vhd \
+        Common/src/FifoFillPtPkg_slv.vhd \
+        Common/src/AddressBusTransactionPkg.vhd \
         Common/src/AddressBusResponderTransactionPkg.vhd \
         Common/src/AddressBusVersionCompatibilityPkg.vhd \
-        Common/src/FifoFillPkg_slv.vhd \
-        Common/src/FifoFillPtPkg_slv.vhd \
         Common/src/InterruptHandlerComponentPkg.vhd \
         Common/src/InterruptHandler.vhd \
         Common/src/ModelParametersPkg.vhd \
@@ -82,6 +83,8 @@ for TOP in TbUart_{SendGet1,SendGet2,Checkers1,Checkers2} \
   run
 done
 
+exit  # Not working yet
+
 WORK=osvvm_axi4
 
 analyse AXI4/common/src/Axi4CommonPkg.vhd \
@@ -116,9 +119,6 @@ analyse AXI4/Axi4Lite/testbench/TestCtrl_e.vhd \
         AXI4/Axi4Lite/testbench/TbAxi4_ReadWriteAsync3.vhd \
         AXI4/Axi4Lite/testbench/TbAxi4_TimeOut.vhd \
         AXI4/Axi4Lite/testbench/TbAxi4_WriteOptions.vhd
-
-
-exit  # Not working yet
 
 for TOP in TbAxi4_{BasicReadWrite,ReadWriteAsync1,ReadWriteAsync2} \
            TbAxi4_{ReadWriteAsync3,RandomReadWrite,RandomReadWriteByte} \

@@ -20,11 +20,12 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    02/2022   2022.02    EndOfTestReports now calls WriteScoreboardYaml
 --    10/2021   2021.10    Initial revision
 --
 --  This file is part of OSVVM.
 --
---  Copyright (c) 2021 by SynthWorks Design Inc.
+--  Copyright (c) 2021-2022 by SynthWorks Design Inc.
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
 --  you may not use this file except in compliance with the License.
@@ -40,15 +41,10 @@
 --
 
 
-use std.textio.all ;
-use work.AlertLogPkg.all ;
-use work.CoveragePkg.all ;
-use work.ScoreboardPkg_slv.all ;
-use work.ScoreboardPkg_int.all ;
+  use work.AlertLogPkg.AlertCountType ;
 
 
 package ReportPkg is
-
 
   impure function EndOfTestReports (
     ReportAll      : boolean        := FALSE ;
@@ -71,6 +67,26 @@ end ReportPkg ;
 --- ///////////////////////////////////////////////////////////////////////////
 
 package body ReportPkg is
+  use std.textio.all ;
+  use work.AlertLogPkg.all ;
+  use work.CoveragePkg.all ;
+  use work.ScoreboardPkg_slv.all ;
+  use work.ScoreboardPkg_int.all ;
+
+  ------------------------------------------------------------
+  procedure WriteCovSummaryYaml (FileName : string ) is
+  ------------------------------------------------------------
+    file OsvvmYamlFile : text open APPEND_MODE is FileName ;
+    variable buf : line ;
+  begin
+    if GotCoverage then 
+      swrite(buf, "      FunctionalCoverage: " & to_string(GetCov, 2)) ; 
+    else
+      swrite(buf, "      FunctionalCoverage:  ") ; 
+    end if ; 
+    writeline(OsvvmYamlFile, buf) ; 
+    file_close(OsvvmYamlFile) ;
+  end procedure WriteCovSummaryYaml ;
 
   ------------------------------------------------------------
   impure function EndOfTestReports (
@@ -82,27 +98,34 @@ package body ReportPkg is
     ReportAlerts(ExternalErrors => ExternalErrors, ReportAll => ReportAll) ; 
     
     WriteAlertSummaryYaml(
-      FileName        => "./reports/OsvvmRun.yml", 
+      FileName        => "OsvvmRun.yml", 
       ExternalErrors  => ExternalErrors
     ) ; 
+    WriteCovSummaryYaml (
+      FileName        => "OsvvmRun.yml"
+    ) ;
     WriteAlertYaml (
-      FileName        => "./reports/" & GetAlertLogName & "_alerts.yml", 
+      FileName        => REPORTS_DIRECTORY &  GetAlertLogName & "_alerts.yml", 
       ExternalErrors  => ExternalErrors
     ) ; 
         
     if GotCoverage then 
       WriteCovYaml (
-        FileName     => "./reports/" & GetAlertLogName & "_cov.yml"
+        FileName      => REPORTS_DIRECTORY &  GetAlertLogName & "_cov.yml"
       ) ;
     end if ; 
     
---    if work.ScoreboardPkg_slv.GotScoreboard then 
---       work.ScoreboardPkg_slv.WriteScoreboardYaml ;
---    end if ; 
---
---    if work.ScoreboardPkg_int.GotScoreboard then 
---       work.ScoreboardPkg_int.WriteScoreboardYaml ;
---    end if ; 
+    if work.ScoreboardPkg_slv.GotScoreboards then 
+      work.ScoreboardPkg_slv.WriteScoreboardYaml (
+        FileName     => REPORTS_DIRECTORY &  GetAlertLogName & "_sb_slv.yml"
+      ) ;
+    end if ; 
+    
+    if work.ScoreboardPkg_int.GotScoreboards then 
+      work.ScoreboardPkg_int.WriteScoreboardYaml (
+        FileName     => REPORTS_DIRECTORY &  GetAlertLogName & "_sb_int.yml"
+      ) ;
+    end if ; 
 
     return SumAlertCount(GetAlertCount + ExternalErrors) ;
   end function EndOfTestReports ;

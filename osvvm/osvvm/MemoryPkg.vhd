@@ -19,18 +19,19 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    02/2022   2022.02    Updated NewID with ReportMode, Search, PrintParent.   Supports searching for Memory models.
 --    06/2021   2021.06    Updated Data Structure, IDs for new use model, and Wrapper Subprograms
 --    01/2020   2020.01    Updated Licenses to Apache
 --    11/2016   2016.11    Refinement to MemRead to return value, X (if X), U (if not initialized)
 --    01/2016   2016.01    Update for buf.all(buf'left)
 --    06/2015   2015.06    Updated for Alerts, ...
---                         Numerous revisions for VHDL Testbenches and Verification
+--    ...       ...        Numerous revisions for VHDL Testbenches and Verification
 --    05/2005   0.1        Initial revision
 --
 --
 --  This file is part of OSVVM.
 --  
---  Copyright (c) 2005 - 2021 by SynthWorks Design Inc.  
+--  Copyright (c) 2005 - 2022 by SynthWorks Design Inc.  
 --  
 --  Licensed under the Apache License, Version 2.0 (the "License");
 --  you may not use this file except in compliance with the License.
@@ -70,7 +71,10 @@ package MemoryPkg is
     Name                : String ; 
     AddrWidth           : integer ; 
     DataWidth           : integer ; 
-    ParentAlertLogID    : AlertLogIDType := OSVVM_MEMORY_ALERTLOG_ID
+    ParentID            : AlertLogIDType          := OSVVM_MEMORY_ALERTLOG_ID ;
+    ReportMode          : AlertLogReportModeType  := ENABLED ; 
+    Search              : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent         : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
   ) return MemoryIDType ;
 
   ------------------------------------------------------------
@@ -170,7 +174,10 @@ package MemoryPkg is
       Name                : String ; 
       AddrWidth           : integer ; 
       DataWidth           : integer ; 
-      ParentAlertLogID    : AlertLogIDType := OSVVM_MEMORY_ALERTLOG_ID
+      ParentID            : AlertLogIDType          := OSVVM_MEMORY_ALERTLOG_ID ;
+      ReportMode          : AlertLogReportModeType  := ENABLED ; 
+      Search              : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent         : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
     ) return integer ;
 
     ------------------------------------------------------------
@@ -349,28 +356,21 @@ package body MemoryPkg is
     type MemArrayPtrType is access MemArrayType ; 
     
     type FileFormatType is (BINARY, HEX) ; 
-    
--- Replaced     variable ArrayPtrVar     : MemArrayPtrType := NULL ; 
--- Replaced     variable AddrWidthVar    : integer := -1 ;  -- set by MemInit  -- Replaced by MemStructPtr(ID).AddrWidth
--- Replaced     variable DataWidthVar    : natural := 1 ;   -- set by MemInit  -- Replaced by MemStructPtr(ID).DataWidth
--- Replaced     variable BlockWidthVar  : natural := 0 ;    -- set by MemInit
--- Replaced     
--- Replaced     variable AlertLogIDVar : AlertLogIDType := OSVVM_ALERTLOG_ID ;  -- replaced by 
-    
+        
     type MemStructType is record
       MemArrayPtr : MemArrayPtrType ; 
       AddrWidth   : integer ;
       DataWidth   : natural ;
       BlockWidth  : natural ; 
       AlertLogID  : AlertLogIDType ; 
-      Name        : Line ;  -- Implement internally vs NameStorePType
+--! removed      Name        : Line ;  -- only in NameStorePType
     end record MemStructType ; 
     
     -- New Structure
     type     ItemArrayType    is array (integer range <>) of MemStructType ; 
     type     ItemArrayPtrType is access ItemArrayType ;
     
-    variable Template         : ItemArrayType(1 to 1) := (1 => (NULL, -1, 1, 0, OSVVM_MEMORY_ALERTLOG_ID, NULL)) ;  -- Work around for QS 2020.04 and 2021.02
+    variable Template         : ItemArrayType(1 to 1) := (1 => (NULL, -1, 1, 0, OSVVM_MEMORY_ALERTLOG_ID)) ;  -- Work around for QS 2020.04 and 2021.02
     constant MEM_STRUCT_PTR_LEFT : integer := Template'left ; 
     variable MemStructPtr     : ItemArrayPtrType := new ItemArrayType'(Template) ;   
     variable NumItems         : integer := 0 ; 
@@ -397,12 +397,16 @@ package body MemoryPkg is
     procedure GrowNumberItems (
     ------------------------------------------------------------
       variable ItemArrayPtr     : InOut ItemArrayPtrType ;
-      constant NewNumItems      : in integer ;
-      constant CurNumItems      : in integer ;
+      variable NumItems         : InOut integer ;
+      constant GrowAmount       : in integer ;
+--      constant NewNumItems      : in integer ;
+--      constant CurNumItems      : in integer ;
       constant MinNumItems      : in integer 
     ) is
       variable oldItemArrayPtr  : ItemArrayPtrType ;
+      variable NewNumItems : integer ;
     begin
+      NewNumItems := NumItems + GrowAmount ;
       -- Array Allocated in declaration to have a single item, but no items (historical mode)
       -- if ItemArrayPtr = NULL then
       --  ItemArrayPtr := new ItemArrayType(1 to NormalizeArraySize(NewNumItems, MinNumItems)) ;
@@ -410,9 +414,10 @@ package body MemoryPkg is
       if NewNumItems > ItemArrayPtr'length then
         oldItemArrayPtr := ItemArrayPtr ;
         ItemArrayPtr := new ItemArrayType(1 to NormalizeArraySize(NewNumItems, MinNumItems)) ;
-        ItemArrayPtr.all(1 to CurNumItems) := oldItemArrayPtr.all(1 to CurNumItems) ;
+        ItemArrayPtr.all(1 to NumItems) := oldItemArrayPtr.all(1 to NumItems) ;
         deallocate(oldItemArrayPtr) ;
       end if ;
+      NumItems := NewNumItems ; 
     end procedure GrowNumberItems ;  
     
    ------------------------------------------------------------
@@ -442,34 +447,48 @@ package body MemoryPkg is
       Name                : String ; 
       AddrWidth           : integer ; 
       DataWidth           : integer ; 
-      ParentAlertLogID    : AlertLogIDType := OSVVM_MEMORY_ALERTLOG_ID
+      ParentID            : AlertLogIDType          := OSVVM_MEMORY_ALERTLOG_ID ;
+      ReportMode          : AlertLogReportModeType  := ENABLED ; 
+      Search              : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent         : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
     ) return integer is 
-      variable NewNumItems : integer ;
-      variable NameID : integer ; 
+      variable NameID              : integer ; 
+      variable ResolvedSearch      : NameSearchType ; 
+      variable ResolvedPrintParent : AlertLogPrintParentType ; 
     begin
-      NameID := LocalNameStore.find(Name) ; 
+      ResolvedSearch      := ResolveSearch     (ParentID /= OSVVM_MEMORY_ALERTLOG_ID, Search) ; 
+      ResolvedPrintParent := ResolvePrintParent(ParentID /= OSVVM_MEMORY_ALERTLOG_ID, PrintParent) ; 
+      
+      NameID := LocalNameStore.find(Name, ParentID, ResolvedSearch) ; 
 
-      -- Share the memory if they have matching Names
-      if NameID /= ID_NOT_FOUND.ID then 
---! Check that AddrWidth and DataWidth match
---! If AddrWidths are allowed to differ, will need to grow memory size
---! DataWidth must match
---! ParentAlertLogID should match, check it?
-        return NameID ; -- Name IDs are issued sequentially and match MemoryID
+      -- Share the memory if they match
+      if NameID /= ID_NOT_FOUND.ID then
+        if MemStructPtr(NumItems).MemArrayPtr /= NULL then 
+          -- Found ID and structure exists, does structure match?
+          AlertIf(MemStructPtr(NumItems).AlertLogID, AddrWidth /= MemStructPtr(NameID).AddrWidth,  
+            "NewID: AddrWidth: " & to_string(AddrWidth) & " /= Existing AddrWidth: "  & to_string(MemStructPtr(NameID).AddrWidth), FAILURE);
+          AlertIf(MemStructPtr(NumItems).AlertLogID, DataWidth /= MemStructPtr(NameID).DataWidth,  
+            "NewID: DataWidth: " & to_string(DataWidth) & " /= Existing DataWidth: "  & to_string(MemStructPtr(NameID).DataWidth), FAILURE);
+          -- NameStore IDs are issued sequentially and match MemoryID
+        else 
+          -- Found ID and structure does not exist, Reconstruct Memory
+          MemInit(NameID, AddrWidth, DataWidth) ;
+        end if ; 
+        return NameID ; 
         
       else
-        NewNumItems := NumItems + 1 ; 
-        GrowNumberItems(MemStructPtr, NewNumItems, NumItems, MIN_NUM_ITEMS) ;
-        NumItems  := NewNumItems ;
--- Resolve, use NameStore or local name - currently has both.
-        NameID := LocalNameStore.NewID(Name) ;
-        MemStructPtr(NumItems).Name := new string'(Name) ; 
-  -- Name is for SetAlertLogID + SetName of Memory   
-        MemStructPtr(NumItems).AlertLogID := GetAlertLogID(Name, ParentAlertLogID) ;
+        -- Add New Memory to Structure 
+        GrowNumberItems(MemStructPtr, NumItems, GrowAmount => 1, MinNumItems => MIN_NUM_ITEMS) ;
+        -- Create AlertLogID
+        MemStructPtr(NumItems).AlertLogID := NewID(Name, ParentID, ReportMode, ResolvedPrintParent, CreateHierarchy => FALSE) ;
+        -- Construct Memory, Reports agains AlertLogID
         MemInit(NumItems, AddrWidth, DataWidth) ;
+        -- Add item to NameStore
+        NameID := LocalNameStore.NewID(Name, ParentID, ResolvedSearch) ;
+        -- Check NameStore Index vs MemoryIndex
         AlertIfNotEqual(MemStructPtr(NumItems).AlertLogID, NameID, NumItems, "MemoryStore, Check Index of LocalNameStore matches MemoryID") ;  
         return NumItems ; 
-      end if ; 
+      end if ;
     end function NewID ;
     
     ------------------------------------------------------------
@@ -656,7 +675,7 @@ package body MemoryPkg is
     ------------------------------------------------------------
     begin
       if IdOutOfRange(ID, "MemErase") then 
-        return -1 ;
+        return ALERTLOG_ID_NOT_FOUND ;
       else
         return MemStructPtr(ID).AlertLogID ; 
       end if ; 
@@ -736,11 +755,11 @@ package body MemoryPkg is
             ReadHexToken(buf, Addr, StrLen) ; 
             exit ReadLineLoop when AlertIf(MemStructPtr(ID).AlertLogID, StrLen = 0, "MemoryPkg.FileReadX: Address length 0 on line: " & to_string(LineNum), FAILURE) ;
             exit ItemLoop when AlertIf(MemStructPtr(ID).AlertLogID, Addr < SmallAddr, 
-                                           "MemoryPkg.FileReadX: Address in file: " & to_hstring(Addr) & 
-                                           " < StartAddr: " & to_hstring(StartAddr) & " on line: " & to_string(LineNum)) ; 
+                                           "MemoryPkg.FileReadX: Address in file: " & to_hxstring(Addr) & 
+                                           " < StartAddr: " & to_hxstring(StartAddr) & " on line: " & to_string(LineNum)) ; 
             exit ItemLoop when AlertIf(MemStructPtr(ID).AlertLogID, Addr > BigAddr, 
-                                           "MemoryPkg.FileReadX: Address in file: " & to_hstring(Addr) & 
-                                           " > EndAddr: " & to_hstring(BigAddr) & " on line: " & to_string(LineNum)) ; 
+                                           "MemoryPkg.FileReadX: Address in file: " & to_hxstring(Addr) & 
+                                           " > EndAddr: " & to_hxstring(BigAddr) & " on line: " & to_string(LineNum)) ; 
           
           elsif DataFormat = HEX and ishex(NextChar) then 
           -- Get Hex Data
@@ -748,7 +767,7 @@ package body MemoryPkg is
             exit ReadLineLoop when AlertIfNot(MemStructPtr(ID).AlertLogID, StrLen > 0, 
               "MemoryPkg.FileReadH: Error while reading data on line: " & to_string(LineNum) &
               "  Item number: " & to_string(ItemNum), FAILURE) ;
-            log(MemStructPtr(ID).AlertLogID, "MemoryPkg.FileReadX:  MemWrite(Addr => " & to_hstring(Addr) & ", Data => " & to_hstring(Data) & ")", DEBUG) ; 
+            log(MemStructPtr(ID).AlertLogID, "MemoryPkg.FileReadX:  MemWrite(Addr => " & to_hxstring(Addr) & ", Data => " & to_hxstring(Data) & ")", DEBUG) ; 
             MemWrite(ID, Addr, data) ; 
             Addr := Addr + AddrInc ; 
             
@@ -760,7 +779,7 @@ package body MemoryPkg is
             exit ReadLineLoop when AlertIfNot(MemStructPtr(ID).AlertLogID, StrLen > 0, 
               "MemoryPkg.FileReadB: Error while reading data on line: " & to_string(LineNum) &
               "  Item number: " & to_string(ItemNum), FAILURE) ;
-            log(MemStructPtr(ID).AlertLogID, "MemoryPkg.FileReadX:  MemWrite(Addr => " & to_hstring(Addr) & ", Data => " & to_string(Data) & ")", DEBUG) ; 
+            log(MemStructPtr(ID).AlertLogID, "MemoryPkg.FileReadX:  MemWrite(Addr => " & to_hxstring(Addr) & ", Data => " & to_string(Data) & ")", DEBUG) ; 
             MemWrite(ID, Addr, data) ; 
             Addr := Addr + AddrInc ; 
           
@@ -921,8 +940,8 @@ package body MemoryPkg is
 
       if StartAddr > EndAddr then 
       -- Only support ascending addresses
-        Alert(MemStructPtr(ID).AlertLogID, "MemoryPkg.FileWriteX:  StartAddr: " & to_hstring(StartAddr) & 
-                             " > EndAddr: " & to_hstring(EndAddr), FAILURE) ;
+        Alert(MemStructPtr(ID).AlertLogID, "MemoryPkg.FileWriteX:  StartAddr: " & to_hxstring(StartAddr) & 
+                             " > EndAddr: " & to_hxstring(EndAddr), FAILURE) ;
         return ; 
       end if ; 
             
@@ -1102,7 +1121,7 @@ package body MemoryPkg is
       MemStructPtr(ID).AddrWidth   := -1 ;
       MemStructPtr(ID).DataWidth   := 1 ;
       MemStructPtr(ID).BlockWidth  := 0 ;
-      deallocate(MemStructPtr(ID).Name) ; 
+--! removed      -- deallocate(MemStructPtr(ID).Name) ; 
     end procedure ; 
 
     procedure deallocate is
@@ -1301,11 +1320,14 @@ package body MemoryPkg is
     Name                : String ; 
     AddrWidth           : integer ; 
     DataWidth           : integer ; 
-    ParentAlertLogID    : AlertLogIDType := OSVVM_MEMORY_ALERTLOG_ID
+    ParentID            : AlertLogIDType          := OSVVM_MEMORY_ALERTLOG_ID ;
+    ReportMode          : AlertLogReportModeType  := ENABLED ; 
+    Search              : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent         : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
   ) return MemoryIDType is
     variable Result : MemoryIDType ; 
   begin
-    Result.ID := MemoryStore.NewID(Name, AddrWidth, DataWidth, ParentAlertLogID) ; 
+    Result.ID := MemoryStore.NewID(Name, AddrWidth, DataWidth, ParentID, ReportMode, Search, PrintParent) ; 
     return Result ; 
   end function NewID ; 
 

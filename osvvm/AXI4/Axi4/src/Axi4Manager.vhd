@@ -19,6 +19,9 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    03/2022   2022.03    Updated calls to NewID for AlertLogID and FIFOs
+--    02/2022   2022.02    Replaced to_hstring with to_hxstring
+--    01/2022   2022.01    Moved MODEL_INSTANCE_NAME and MODEL_NAME to entity declarative region
 --    07/2021   2021.07    All FIFOs and Scoreboards now use the New Scoreboard/FIFO capability
 --    06/2021   2021.06    GHDL support + New Burst FIFOs 
 --    02/2021   2021.02    Added MultiDriver Detect.  Added Valid Delays.  Updated Generics.   
@@ -31,7 +34,7 @@
 --
 --  This file is part of OSVVM.
 --
---  Copyright (c) 2017 - 2021 by SynthWorks Design Inc.
+--  Copyright (c) 2017 - 2022 by SynthWorks Design Inc.
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
 --  you may not use this file except in compliance with the License.
@@ -60,6 +63,7 @@ library osvvm_common ;
 
   use work.Axi4OptionsPkg.all ;
   use work.Axi4ModelPkg.all ;
+  use work.Axi4InterfaceCommonPkg.all ;
   use work.Axi4InterfacePkg.all ;
   use work.Axi4CommonPkg.all ;
 
@@ -130,12 +134,17 @@ port (
   -- Derive AXI interface properties from the AxiBus
   constant AXI_ADDR_WIDTH      : integer := AxiBus.WriteAddress.Addr'length ;
   constant AXI_DATA_WIDTH      : integer := AxiBus.WriteData.Data'length ;
+  
+  -- Derive ModelInstance label from path_name
+  constant MODEL_INSTANCE_NAME : string :=
+    -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
+    IfElse(MODEL_ID_NAME /= "", MODEL_ID_NAME, PathTail(to_lower(Axi4Manager'PATH_NAME))) ;
+
+  constant MODEL_NAME : string := "Axi4Manager" ;
+  
 end entity Axi4Manager ;
 architecture AxiFull of Axi4Manager is
 
-  -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
-  constant MODEL_INSTANCE_NAME : string :=
-    IfElse(MODEL_ID_NAME /= "", MODEL_ID_NAME, PathTail(to_lower(Axi4Manager'PATH_NAME))) ;
 
   signal ModelID, ProtocolID, DataCheckID, BusFailedID : AlertLogIDType ;
 
@@ -182,22 +191,22 @@ begin
     InitAxiOptions(Params) ;
 
     -- Alerts
-    ID                      := GetAlertLogID(MODEL_INSTANCE_NAME) ;
+    ID                      := NewID(MODEL_INSTANCE_NAME) ;
     ModelID                 <= ID ;
-    ProtocolID              <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Protocol Error", ID ) ;
-    DataCheckID             <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Data Check", ID ) ;
-    BusFailedID             <= GetAlertLogID(MODEL_INSTANCE_NAME & ": No response", ID ) ;
+    ProtocolID              <= NewID("Protocol Error", ID ) ;
+    DataCheckID             <= NewID("Data Check", ID ) ;
+    BusFailedID             <= NewID("No response", ID ) ;
 
-    WriteResponseScoreboard <= NewID( MODEL_INSTANCE_NAME & ": WriteResponse Scoreboard", ID);
-    ReadResponseScoreboard  <= NewID( MODEL_INSTANCE_NAME & ": ReadResponse Scoreboard",  ID);
+    WriteResponseScoreboard <= NewID("WriteResponse Scoreboard", ID);
+    ReadResponseScoreboard  <= NewID("ReadResponse Scoreboard",  ID);
 
     -- FIFOs get an AlertLogID with NewID, however, it does not print in ReportAlerts (due to DoNotReport)
     --   FIFOS only generate usage type errors 
-    WriteAddressFifo           <= NewID(MODEL_INSTANCE_NAME & ": WriteAddressFIFO",             ID, DoNotReport => TRUE);
-    WriteDataFifo              <= NewID(MODEL_INSTANCE_NAME & ": WriteDataFifo",                ID, DoNotReport => TRUE);
-    ReadAddressFifo            <= NewID(MODEL_INSTANCE_NAME & ": ReadAddressFifo",              ID, DoNotReport => TRUE);
-    ReadAddressTransactionFifo <= NewID(MODEL_INSTANCE_NAME & ": ReadAddressTransactionFifo",   ID, DoNotReport => TRUE);
-    ReadDataFifo               <= NewID(MODEL_INSTANCE_NAME & ": ReadDataFifo",                 ID, DoNotReport => TRUE);
+    WriteAddressFifo           <= NewID("WriteAddressFIFO",             ID, ReportMode => DISABLED);
+    WriteDataFifo              <= NewID("WriteDataFifo",                ID, ReportMode => DISABLED);
+    ReadAddressFifo            <= NewID("ReadAddressFifo",              ID, ReportMode => DISABLED);
+    ReadAddressTransactionFifo <= NewID("ReadAddressTransactionFifo",   ID, ReportMode => DISABLED);
+    ReadDataFifo               <= NewID("ReadDataFifo",                 ID, ReportMode => DISABLED);
 
     wait ;
   end process Initialize ;
@@ -239,7 +248,7 @@ begin
     variable ExpectedData    : std_logic_vector(LRD.Data'range) ;
 
     variable Operation       : AddressBusOperationType ;
-    variable TransactionCount : integer := 0 ; 
+    variable WriteDataCount   : integer := 0 ;
   begin
     AxiDefaults := InitAxi4Rec(AxiDefaults, '0') ;
     LAW.Size    := to_slv(AXI_BYTE_ADDR_WIDTH, LAW.Size'length) ;
@@ -250,8 +259,8 @@ begin
     LRD.Resp    := to_Axi4RespType(OKAY) ;
     
     wait for 0 ns ; 
-    TransRec.WriteBurstFifo <= NewID(MODEL_INSTANCE_NAME & ": WriteBurstFifo", ModelID) ;
-    TransRec.ReadBurstFifo  <= NewID(MODEL_INSTANCE_NAME & ": ReadBurstFifo",  ModelID) ;
+    TransRec.WriteBurstFifo <= NewID("WriteBurstFifo", ModelID) ;
+    TransRec.ReadBurstFifo  <= NewID("ReadBurstFifo",  ModelID) ;
     
 --!! AWCache, ARCache Defaults
     loop
@@ -260,7 +269,6 @@ begin
          Rdy      => TransRec.Rdy,
          Ack      => TransRec.Ack
       ) ;
-      TransactionCount := increment(TransactionCount) ; 
       Operation := TransRec.Operation ;
 
       case Operation is
@@ -333,7 +341,7 @@ begin
           TransRec.IntFromModel <= BurstFifoMode ;
 
         when GET_TRANSACTION_COUNT =>
-          TransRec.IntFromModel <= TransactionCount ; --  WriteAddressDoneCount + ReadAddressDoneCount ;
+          TransRec.IntFromModel <= integer(TransRec.Rdy) ; --  WriteAddressDoneCount + ReadAddressDoneCount ;
           wait for 0 ns ; 
 
         when GET_WRITE_TRANSACTION_COUNT =>
@@ -369,6 +377,7 @@ begin
             Push(WriteDataFifo, '0' & '1' & LWD.Data & LWD.Strb & LWD.User & LWD.ID) ;
 
             Increment(WriteDataRequestCount) ;
+            WriteDataCount := WriteDataCount + 1 ; 
           end if ;
           
           -- Allow RequestCounts to update
@@ -377,7 +386,7 @@ begin
 --!! If burst emulation is added, then this will need to be a while loop since
 --!! more than one transaction will be dispatched at a time.
           if WriteAddressRequestCount /= WriteResponseExpectCount and
-             WriteDataRequestCount    /= WriteResponseExpectCount 
+             WriteDataCount           /= WriteResponseExpectCount 
           then
             -- Queue Expected Write Response
             Push(WriteResponseScoreboard, LWR.Resp) ;
@@ -444,6 +453,7 @@ begin
 
             -- Increment(WriteDataRequestCount) ;
             WriteDataRequestCount        <= Increment(WriteDataRequestCount, TransfersInBurst) ;
+            WriteDataCount := WriteDataCount + 1 ; 
           end if ;
 
           -- Allow RequestCounts to update
@@ -452,7 +462,7 @@ begin
 --!! will need to be a while loop if more than one transaction can be dispatched at a time.
 --!! only happens if bursts are emulated - ie translated from a burst cycle to a multiple individual cycles
           if WriteAddressRequestCount /= WriteResponseExpectCount and 
-             WriteDataRequestCount    /= WriteResponseExpectCount 
+             WriteDataCount           /= WriteResponseExpectCount 
           then
             -- Queue Expected Write Response
             Push(WriteResponseScoreboard, LWR.Resp) ;
@@ -475,7 +485,7 @@ begin
             -- Send Read Address to Read Address Handler and Read Data Handler
             LAR.Addr   :=  SafeResize(TransRec.Address, LAR.Addr'length) ;
             ReadByteAddr  :=  CalculateByteAddress(LAR.Addr, AXI_BYTE_ADDR_WIDTH);
-            AlertIf(ModelID, TransRec.AddrWidth /= AXI_ADDR_WIDTH, "Read Address length does not match", FAILURE) ;
+--             AlertIf(ModelID, TransRec.AddrWidth /= AXI_ADDR_WIDTH, "Read Address length does not match", FAILURE) ;
             BytesPerTransfer := 2**to_integer(LAR.Size);
 
             LAR.Len := (others => '0') ;
@@ -519,18 +529,18 @@ begin
   --!!9 TODO:  Change format to Transaction #, Address, Prot, Read Data
   --!! Run regressions before changing
               AffirmIf( DataCheckID, LRD.Data = ExpectedData,
-                "Read Data: " & to_hstring(LRD.Data) &
-                "  Read Address: " & to_hstring(LAR.Addr) &
-                "  Prot: " & to_hstring(ReadProt),
-                "  Expected: " & to_hstring(ExpectedData),
+                "Read Data: " & to_hxstring(LRD.Data) &
+                "  Read Address: " & to_hxstring(LAR.Addr) &
+                "  Prot: " & to_hxstring(ReadProt),
+                "  Expected: " & to_hxstring(ExpectedData),
                 TransRec.StatusMsgOn or IsLogEnabled(ModelID, INFO) ) ;
             else
   --!!9 TODO:  Change format to Transaction #, Address, Prot, Read Data
   --!! Run regressions before changing
               Log( ModelID,
-                "Read Data: " & to_hstring(LRD.Data) &
-                "  Read Address: " & to_hstring(LAR.Addr) &
-                "  Prot: " & to_hstring(ReadProt),
+                "Read Data: " & to_hxstring(LRD.Data) &
+                "  Read Address: " & to_hxstring(LAR.Addr) &
+                "  Prot: " & to_hxstring(ReadProt),
                 INFO,
                 TransRec.StatusMsgOn
               ) ;
@@ -608,9 +618,6 @@ begin
             end loop ;
           end if ;
 
-          -- Transaction wait time
-          wait for 0 ns ;  wait for 0 ns ;
-
         -- Model Configuration Options
         when SET_MODEL_OPTIONS =>
           Axi4Option := Axi4OptionsType'val(TransRec.Options) ;
@@ -619,7 +626,6 @@ begin
           else
             SetAxi4Parameter(Params, Axi4Option, TransRec.IntToModel) ;
           end if ;
-          wait for 0 ns ;  wait for 0 ns ;
 
         when GET_MODEL_OPTIONS =>
           Axi4Option := Axi4OptionsType'val(TransRec.Options) ;
@@ -629,16 +635,13 @@ begin
             GetAxi4Parameter(Params, Axi4Option, Axi4OptionVal) ;
             TransRec.IntFromModel <= Axi4OptionVal ;
           end if ;
-          wait for 0 ns ;  wait for 0 ns ;
 
         when MULTIPLE_DRIVER_DETECT =>
-          Alert(ModelID, "Axi4Manager: Multiple Drivers on Transaction Record." & 
-                         "  Transaction # " & to_string(TransactionCount), FAILURE) ;
-          wait for 0 ns ;  wait for 0 ns ;
+          Alert(ModelID, "Multiple Drivers on Transaction Record." & 
+                         "  Transaction # " & to_string(TransRec.Rdy), FAILURE) ;
 
         when others =>
-          Alert(ModelID, "Unimplemented Transaction", FAILURE) ;
-          wait for 0 ns ;  wait for 0 ns ;
+          Alert(ModelID, "Unimplemented Transaction: " & to_string(TransRec.Operation), FAILURE) ;
       end case ;
     end loop ;
   end process TransactionDispatcher ;
@@ -693,7 +696,7 @@ begin
 
       Log(ModelID,
         "Write Address." &
-        "  AWAddr: "  & to_hstring(Local.Addr) &
+        "  AWAddr: "  & to_hxstring(Local.Addr) &
         "  AWProt: "  & to_string(Local.Prot) &
         "  Operation# " & to_string(WriteAddressDoneCount + 1),
         INFO
@@ -741,16 +744,9 @@ begin
 
     variable Local : AxiBus.WriteData'subtype ;
     
---    variable Local : Axi4WriteDataRecType (
---                      Data(WD.Data'length-1 downto 0),
---                      Strb(WD.Strb'length-1 downto 0),
---                      User(WD.User'range),
---                      ID(WD.ID'range)
---                    );
-
-      variable WriteDataReadyTimeOut : integer ;
-      variable Burst    : std_logic ; 
-      variable NewTransfer : std_logic := '1' ; 
+    variable WriteDataReadyTimeOut : integer ;
+    variable Burst    : std_logic ; 
+    variable NewTransfer : std_logic := '1' ; 
   begin
     -- initialize
     WD.Valid <= '0' ;
@@ -789,7 +785,7 @@ begin
 
       Log(ModelID,
         "Write Data." &
-        "  WData: "  & to_hstring(Local.Data) &
+        "  WData: "  & to_hxstring(Local.Data) &
         "  WStrb: "  & to_string( Local.Strb) &
         "  Operation# " & to_string(WriteDataDoneCount + 1),
         INFO
@@ -946,7 +942,7 @@ begin
 
       Log(ModelID,
         "Read Address." &
-        "  ARAddr: "  & to_hstring(Local.Addr) &
+        "  ARAddr: "  & to_hxstring(Local.Addr) &
         "  ARProt: "  & to_string( Local.Prot) &
         "  Operation# " & to_string(ReadAddressDoneCount + 1),
         INFO
@@ -1044,7 +1040,7 @@ begin
     AlertIf(ProtocolID, not ReadDataActive,
       "Unexpected Read Data Cycle. " &
       " RValid: " & to_string (AxiBus.ReadData.Valid) &
-      " RData: "  & to_hstring(AxiBus.ReadData.Data) &
+      " RData: "  & to_hxstring(AxiBus.ReadData.Data) &
       " RResp: "  & to_string (AxiBus.ReadData.Resp) &
       "  Operation# " & to_string(ReadDataReceiveCount + 1),
       FAILURE

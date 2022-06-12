@@ -19,9 +19,10 @@
 --
 --  Revision History:
 --    Date      Version    Description
---    1999      1999.00    Developed for SynthWorks' Advanced VHDL Testbenches and Verification Class
---    05/2019   2019.05    Updated for OSVVM public release
+--    02/2022   2022.02    Replaced to_hstring with to_hxstring
 --    01/2020   2020.01    Updated license notice
+--    05/2019   2019.05    Updated for OSVVM public release
+--    1999      1999.00    Developed for SynthWorks' Advanced VHDL Testbenches and Verification Class
 --
 --
 --  This file is part of OSVVM.
@@ -276,7 +277,7 @@ package body UartTbPkg is
     constant  rec       : in    UartStimType 
   ) return string is 
   begin
-    return "Data = " & to_hstring(rec.Data) & 
+    return "Data = " & to_hxstring(rec.Data) & 
            ", Parity Error: " & to_string( rec.Error(UARTTB_PARITY_INDEX)) &
            ", Stop Error: " & to_string( rec.Error(UARTTB_STOP_INDEX)) &
            ", Break Error: " & to_string( rec.Error(UARTTB_BREAK_INDEX)) ;

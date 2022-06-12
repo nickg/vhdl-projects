@@ -20,8 +20,10 @@
 --
 --  Revision History:
 --    Date      Version    Description
---    01/2014   2015.01    Initial revision
+--    02/2022   2022.02    Added support for IdSeparator.  
+--                         Supports PrintParent mode PRINT_NAME_AND_PARENT.  <Parent Name> <IdSeparator> <AlertLogID Name>.   
 --    01/2020   2020.01    Updated Licenses to Apache
+--    01/2014   2015.01    Initial revision
 --
 --
 --  This file is part of OSVVM.
@@ -62,6 +64,7 @@ package OsvvmGlobalPkg is
   constant OSVVM_DEFAULT_DONE_NAME        : string := "DONE" ;
   constant OSVVM_DEFAULT_PASS_NAME        : string := "PASSED" ;
   constant OSVVM_DEFAULT_FAIL_NAME        : string := "FAILED" ;
+  constant OSVVM_DEFAULT_ID_SEPARATOR     : string := ": " ; 
   constant OSVVM_STRING_INIT_PARM_DETECT  : string := NUL & NUL & NUL ; 
   constant OSVVM_STRING_USE_DEFAULT       : string := NUL & "" ; 
 
@@ -81,7 +84,8 @@ package OsvvmGlobalPkg is
     WritePrefix     : string := OSVVM_STRING_INIT_PARM_DETECT ;
     DoneName        : string := OSVVM_STRING_INIT_PARM_DETECT ;
     PassName        : string := OSVVM_STRING_INIT_PARM_DETECT ;
-    FailName        : string := OSVVM_STRING_INIT_PARM_DETECT
+    FailName        : string := OSVVM_STRING_INIT_PARM_DETECT ;
+    IdSeparator     : string := OSVVM_STRING_INIT_PARM_DETECT
   ) ;
   
   ------------------------------------------------------------
@@ -97,6 +101,7 @@ package OsvvmGlobalPkg is
   impure function ResolveOsvvmDoneName     (A : String)  return string ; 
   impure function ResolveOsvvmPassName     (A : String)  return string ; 
   impure function ResolveOsvvmFailName     (A : String)  return string ; 
+  impure function ResolveOsvvmIdSeparator  (A : String)  return string ; 
   
   impure function ResolveCovWritePassFail  (A : OsvvmOptionsType) return OsvvmOptionsType ;  -- Cov
   impure function ResolveCovWriteBinInfo   (A : OsvvmOptionsType) return OsvvmOptionsType ; -- Cov
@@ -166,6 +171,7 @@ package body OsvvmGlobalPkg is
   shared variable DoneNameVar              : NamePType ;
   shared variable PassNameVar              : NamePType ;
   shared variable FailNameVar              : NamePType ;
+  shared variable IdSeparatorVar           : NamePType ;
   shared variable WritePassFailVar         : OptionsPType ; -- := FALSE ;
   shared variable WriteBinInfoVar          : OptionsPType ; -- := TRUE ;
   shared variable WriteCountVar            : OptionsPType ; -- := TRUE ;
@@ -197,7 +203,8 @@ package body OsvvmGlobalPkg is
     WritePrefix     : string := OSVVM_STRING_INIT_PARM_DETECT ;
     DoneName        : string := OSVVM_STRING_INIT_PARM_DETECT ;
     PassName        : string := OSVVM_STRING_INIT_PARM_DETECT ;
-    FailName        : string := OSVVM_STRING_INIT_PARM_DETECT
+    FailName        : string := OSVVM_STRING_INIT_PARM_DETECT ;
+    IdSeparator     : string := OSVVM_STRING_INIT_PARM_DETECT
   ) is
   begin
     if WritePassFail /= OPT_INIT_PARM_DETECT then
@@ -223,6 +230,9 @@ package body OsvvmGlobalPkg is
     end if ;
     if FailName /= OSVVM_STRING_INIT_PARM_DETECT then
       FailNameVar.Set(FailName) ; 
+    end if ;
+    if IdSeparator /= OSVVM_STRING_INIT_PARM_DETECT then
+      IdSeparatorVar.Set(IdSeparator) ; 
     end if ;
   end procedure SetOsvvmGlobalOptions ;  
 
@@ -321,6 +331,11 @@ package body OsvvmGlobalPkg is
   begin
     return ResolveOsvvmOption(A, FailNameVar.GetOpt, OSVVM_DEFAULT_FAIL_NAME) ;
   end function ResolveOsvvmFailName ;  
+  
+  impure function ResolveOsvvmIdSeparator(A : String)  return string is
+  begin
+    return ResolveOsvvmOption(A, IdSeparatorVar.GetOpt, OSVVM_DEFAULT_ID_SEPARATOR) ;
+  end function ResolveOsvvmIdSeparator ;  
   
  
   impure function ResolveCovWritePassFail(A : OsvvmOptionsType) return OsvvmOptionsType is

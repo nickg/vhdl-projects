@@ -19,6 +19,7 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    03/2022   2022.03    Updated to use singleton based FIFOs.  Updated calls for AlertLogIDs
 --    08/2021   2021.08    Initialized NumDataBits, ParityMode, and NumStopBits
 --    02/2021   2021.02    Updated for resizing Data and Param to/from TransRec
 --    10/2020   2020.10    Update for updates to stream MIT
@@ -55,6 +56,7 @@ library OSVVM ;
 
 library osvvm_common ; 
   context osvvm_common.OsvvmCommonContext ;  
+  use osvvm.ScoreboardPkg_slv.all ;
 
   use work.UartTbPkg.all ;
 
@@ -77,7 +79,7 @@ architecture model of UartTx is
   constant MODEL_INSTANCE_NAME : string := PathTail(to_lower(UartTx'PATH_NAME)) ; 
   signal ModelID  : AlertLogIDType ;
   
-  shared variable TransmitFifo     : osvvm.ScoreboardPkg_slv.ScoreboardPType ; 
+  signal TransmitFifo : osvvm.ScoreboardPkg_slv.ScoreboardIDType ;  
   signal TransmitRequestCount, TransmitDoneCount      : integer := 0 ;   
 
   -- Set initial values for configurable modes
@@ -95,9 +97,9 @@ begin
   Initialize : process
     variable ID : AlertLogIDType ; 
   begin
-    ID                         := GetAlertLogID(MODEL_INSTANCE_NAME) ; 
-    ModelID                    <= ID ; 
-    TransmitFifo.SetAlertLogID(MODEL_INSTANCE_NAME & ": Transmit FIFO", ID) ;
+    ID             := NewID(MODEL_INSTANCE_NAME) ; 
+    ModelID        <= ID ; 
+    TransmitFifo   <= NewID("TransmitFifo", ID, ReportMode => DISABLED) ; 
     wait ; 
   end process Initialize ;
 
@@ -134,7 +136,7 @@ begin
 --          if TxStim.Error(TxStim.Error'right) = '-' then 
 --            TxStim.Error := (TxStim.Error'range => '0') ;
 --          end if ; 
-          TransmitFifo.Push(TxStim.Data & TxStim.Error) ;
+          Push(TransmitFifo, TxStim.Data & TxStim.Error) ;
           Log(ModelID, 
             "SEND Queueing Transaction: " & to_string(TxStim) & 
             "  Operation # " & to_string(TransmitRequestCount + 1),
@@ -174,13 +176,17 @@ begin
               NumDataBits   <= CheckNumDataBits(ModelID, TransRec.IntToModel, TransRec.BoolToModel) ; 
             when UartOptionType'pos(SET_BAUD) =>
               Baud          <= CheckBaud(ModelID, TransRec.TimeToModel, TransRec.BoolToModel) ;  
-            when others =>     
-              alert(ModelID, "SetOptions: " & to_string(TransRec.Options) & ". Unsupported Option was Ignored", ERROR) ;
+            when others =>              
+              Alert(ModelID, "SetOptions, Unimplemented Option: " & to_string(UartOptionType'val(TransRec.Options)), FAILURE) ;
           end case ; 
-        
+
+        when MULTIPLE_DRIVER_DETECT =>
+          Alert(ModelID, "Multiple Drivers on Transaction Record." & 
+                         "  Transaction # " & to_string(TransRec.Rdy), FAILURE) ;
+
         when others =>
-          Alert(ModelID, "Unimplemented Transaction", FAILURE) ;
-          
+          Alert(ModelID, "Unimplemented Transaction: " & to_string(Operation), FAILURE) ;
+
       end case ;
     end loop TransactionDispatcherLoop ;
   end process TransactionDispatcher ;
@@ -203,16 +209,17 @@ begin
   begin
     -- Initialize
     SerialDataOut <= '1' ; 
+    wait for 0 ns ; 
     
     TransmitLoop : loop 
       -- Find Transaction
-      if TransmitFifo.Empty then
+      if Empty(TransmitFifo) then
         WaitForToggle(TransmitRequestCount) ;
       else 
         wait for 0 ns ; -- allow TransmitRequestCount to settle if both happen at same time.
       end if ;
       
-      (TxStim.Data, TxStim.Error) := TransmitFifo.Pop ;
+      (TxStim.Data, TxStim.Error) := Pop(TransmitFifo) ;
       
       Log(ModelID, 
         "SEND Starting: " & to_string(TxStim) & 

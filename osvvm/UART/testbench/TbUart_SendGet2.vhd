@@ -172,10 +172,12 @@ begin
         TryExpectValid := FALSE ;     
         TryGet(UartRxRec, RxStim.Data, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryGet(UartRxRec, RxStim.Data, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryGet(UartRxRec, RxStim.Data, Available) ;
         exit when Available ;
         WaitForTransaction(UartRxRec) ;
@@ -185,7 +187,7 @@ begin
         Alert("TryGet Failed to return data", FAILURE) ;
       end loop ;
       AlertIf(not TryExpectValid, "TryGet returned too soon") ;
-      RxStim.Error := std_logic_vector(UartRxRec.ParamFromModel) ; 
+      RxStim.Error := SafeResize(UartRxRec.ParamFromModel, RxStim.Error'length) ; 
       AffirmIf(osvvm_UART.UartTbPkg.Match(RxStim, ExpectStim), 
         "Received: " & to_string(RxStim), 
         ".  Expected: " & to_string(ExpectStim) ) ;
@@ -205,10 +207,12 @@ begin
         TryExpectValid := FALSE ;     
         TryGet(UartRxRec, RxStim.Data, RxStim.Error, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryGet(UartRxRec, RxStim.Data, RxStim.Error, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryGet(UartRxRec, RxStim.Data, RxStim.Error, Available) ;
         exit when Available ;
         WaitForTransaction(UartRxRec) ;
@@ -237,10 +241,12 @@ begin
         TryExpectValid := FALSE ;     
         TryCheck(UartRxRec, ExpectStim.Data, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryCheck(UartRxRec, ExpectStim.Data, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryCheck(UartRxRec, ExpectStim.Data, Available) ;
         exit when Available ;
         WaitForTransaction(UartRxRec) ;
@@ -250,8 +256,8 @@ begin
         Alert("TryCheck Failed to return data", FAILURE) ;
       end loop ;
       AlertIf(not TryExpectValid, "TryCheck returned too soon") ;
-      RxStim.Data  := std_logic_vector(UartRxRec.DataFromModel) ; 
-      RxStim.Error := std_logic_vector(UartRxRec.ParamFromModel) ; 
+      RxStim.Data  := SafeResize(UartRxRec.DataFromModel,  RxStim.Data'length) ; 
+      RxStim.Error := SafeResize(UartRxRec.ParamFromModel, RxStim.Error'length) ; 
       AffirmIf(osvvm_UART.UartTbPkg.Match(RxStim, ExpectStim), 
         "Received: " & to_string(RxStim), 
         ".  Expected: " & to_string(ExpectStim) ) ;
@@ -270,10 +276,12 @@ begin
         TryExpectValid := FALSE ;     
         TryCheck(UartRxRec, ExpectStim.Data, ExpectStim.Error, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryCheck(UartRxRec, ExpectStim.Data, ExpectStim.Error, Available) ;
         exit when Available ;
-        wait for 500 ns ; 
+        -- wait for 500 ns ; 
+        WaitForClock(UartRxRec, 2) ;
         TryCheck(UartRxRec, ExpectStim.Data, ExpectStim.Error, Available) ;
         exit when Available ;
         WaitForTransaction(UartRxRec) ;

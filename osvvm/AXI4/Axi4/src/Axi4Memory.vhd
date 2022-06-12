@@ -19,6 +19,10 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    03/2022   2022.03    Updated calls to NewID for AlertLogID and FIFOs
+--    02/2022   2022.02    Replaced to_hstring with to_hxstring
+--                         Added Search by NAME to NewID.
+--    01/2022   2022.01    Moved MODEL_INSTANCE_NAME and MODEL_NAME to entity declarative region
 --    07/2021   2021.07    All FIFOs and Scoreboards now use the New Scoreboard/FIFO capability 
 --    06/2021   2021.06    GHDL support + new memory data structure  
 --    02/2021   2021.02    Added MultiDriver Detect.  Updated Generics.   
@@ -56,6 +60,7 @@ library osvvm_common ;
   context osvvm_common.OsvvmCommonContext ;
 
   use work.Axi4OptionsPkg.all ;
+  use work.Axi4InterfaceCommonPkg.all ;
   use work.Axi4InterfacePkg.all ;
   use work.Axi4CommonPkg.all ;
   use work.Axi4ModelPkg.all ;
@@ -106,26 +111,30 @@ port (
   constant AXI_ADDR_WIDTH : integer := AxiBus.WriteAddress.Addr'length ;
   constant AXI_DATA_WIDTH : integer := AxiBus.WriteData.Data'length ;
   
+  -- Derive ModelInstance label from path_name
+  constant MODEL_INSTANCE_NAME : string :=
+    -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
+    IfElse(MODEL_ID_NAME /= "", MODEL_ID_NAME, PathTail(to_lower(Axi4Memory'PATH_NAME))) ;
+
+  -- Memory Data Structure, Access via MemoryName
+  constant LOCAL_MEMORY_NAME : string := 
+    IfElse(MEMORY_NAME /= "", MEMORY_NAME, to_lower(Axi4Memory'PATH_NAME) & ":memory") ;
+    
+  constant MODEL_NAME : string := "Axi4Memory" ;
+
 end entity Axi4Memory ;
 
 architecture MemorySubordinate of Axi4Memory is
   constant AXI_DATA_BYTE_WIDTH  : integer := AXI_DATA_WIDTH / 8 ;
   constant AXI_BYTE_ADDR_WIDTH  : integer := integer(ceil(log2(real(AXI_DATA_BYTE_WIDTH)))) ;
 
-  constant MODEL_INSTANCE_NAME : string :=
-    -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
-    IfElse(MODEL_ID_NAME /= "", MODEL_ID_NAME, PathTail(to_lower(Axi4Memory'PATH_NAME))) ;
-
   signal ModelID, BusFailedID, DataCheckID : AlertLogIDType ;
 
-  -- Memory Data Structure, Access via MemoryName
-  constant LOCAL_MEMORY_NAME : string := 
-    IfElse(MEMORY_NAME /= "", MEMORY_NAME, to_lower(Axi4Memory'PATH_NAME) & ":memory") ;
-    
   constant MemoryID : MemoryIDType := NewID(
       Name       => LOCAL_MEMORY_NAME, 
       AddrWidth  => AXI_ADDR_WIDTH,  -- Address is byte address
-      DataWidth  => 8                -- Memory is byte oriented
+      DataWidth  => 8,               -- Memory is byte oriented
+      Search     => NAME
     ) ; 
 
   signal WriteAddressFifo     : osvvm.ScoreboardPkg_slv.ScoreboardIDType ;
@@ -175,18 +184,18 @@ begin
     variable ID : AlertLogIDType ;
   begin
     -- Alerts
-    ID           := GetAlertLogID(MODEL_INSTANCE_NAME) ;
+    ID           := NewID(MODEL_INSTANCE_NAME) ;
     ModelID      <= ID ;
-    BusFailedID  <= GetAlertLogID(MODEL_INSTANCE_NAME & ": No response", ID ) ;
-    DataCheckID  <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Data Check", ID ) ;
+    BusFailedID  <= NewID("No response", ID ) ;
+    DataCheckID  <= NewID("Data Check", ID ) ;
 
     -- FIFOs get an AlertLogID with NewID, however, it does not print in ReportAlerts (due to DoNotReport)
     --   FIFOS only generate usage type errors 
-    WriteAddressFifo    <= NewID(MODEL_INSTANCE_NAME & ": WriteAddressFIFO",   ID, DoNotReport => TRUE);
-    WriteDataFifo       <= NewID(MODEL_INSTANCE_NAME & ": WriteDataFifo",      ID, DoNotReport => TRUE);
-    WriteResponseFifo   <= NewID(MODEL_INSTANCE_NAME & ": WriteResponseFifo",  ID, DoNotReport => TRUE);
-    ReadAddressFifo     <= NewID(MODEL_INSTANCE_NAME & ": ReadAddressFifo",    ID, DoNotReport => TRUE);
-    ReadDataFifo        <= NewID(MODEL_INSTANCE_NAME & ": ReadDataFifo",       ID, DoNotReport => TRUE);
+    WriteAddressFifo    <= NewID("WriteAddressFIFO",   ID, ReportMode => DISABLED);
+    WriteDataFifo       <= NewID("WriteDataFifo",      ID, ReportMode => DISABLED);
+    WriteResponseFifo   <= NewID("WriteResponseFifo",  ID, ReportMode => DISABLED);
+    ReadAddressFifo     <= NewID("ReadAddressFifo",    ID, ReportMode => DISABLED);
+    ReadDataFifo        <= NewID("ReadDataFifo",       ID, ReportMode => DISABLED);
     wait ;
   end process InitalizeAlertLogIDs ;
 
@@ -250,7 +259,7 @@ begin
         wait for 0 ns ;
 
       when GET_TRANSACTION_COUNT =>
-        TransRec.IntFromModel <= WriteAddressReceiveCount + ReadAddressReceiveCount ;
+        TransRec.IntFromModel <= integer(TransRec.Rdy) ;
         wait for 0 ns ;
 
       when GET_WRITE_TRANSACTION_COUNT =>
@@ -300,15 +309,15 @@ begin
         if IsReadCheck(TransRec.Operation) then
           ExpectedData := SafeResize(TransRec.DataToModel, ExpectedData'length) ;
           AffirmIf( DataCheckID, Data = ExpectedData,
-            "Read Address: " & to_hstring(Address) &
-            "  Data: " & to_hstring(Data) &
-            "  Expected: " & to_hstring(ExpectedData),
+            "Read Address: " & to_hxstring(Address) &
+            "  Data: " & to_hxstring(Data) &
+            "  Expected: " & to_hxstring(ExpectedData),
             IsLogEnabled(ModelID, INFO) ) ;
         else
 --!! TODO:  Change format to Address, Data Transaction #, Read Data
           Log( ModelID,
-            "Read Address: " & to_hstring(Address) &
-            "  Data: " & to_hstring(Data),
+            "Read Address: " & to_hxstring(Address) &
+            "  Data: " & to_hxstring(Data),
             INFO
           ) ;
         end if ;
@@ -331,7 +340,8 @@ begin
             when RUSER =>                ModelRUser <= to_slv(TransRec.IntToModel, ModelRUser'length) ;
             --
             -- The End -- Done
-            when others =>               Alert(ModelID, "Unimplemented Option", FAILURE) ;
+            when others =>        
+              Alert(ModelID, "SetOptions, Unimplemented Option: " & to_string(Axi4OptionsType'val(TransRec.Options)), FAILURE) ;
           end case ;
         end if ;
 
@@ -354,18 +364,17 @@ begin
             when RUSER =>                TransRec.IntFromModel <= to_integer(ModelRUser) ;
             --
             -- The End -- Done
-            when others =>               Alert(ModelID, "Unimplemented Option", FAILURE) ;
+            when others =>              
+              Alert(ModelID, "GetOptions, Unimplemented Option: " & to_string(Axi4OptionsType'val(TransRec.Options)), FAILURE) ;
           end case ;
         end if ;
 
-      when MULTIPLE_DRIVER_DETECT =>
-        Alert(ModelID, "Axi4Memory: Multiple Drivers on Transaction Record." & 
-                       "  Transaction # " & to_string(TransactionCount), FAILURE) ;
-        wait for 0 ns ;  
+        when MULTIPLE_DRIVER_DETECT =>
+          Alert(ModelID, "Multiple Drivers on Transaction Record." & 
+                         "  Transaction # " & to_string(TransRec.Rdy), FAILURE) ;
 
       when others =>
-        Alert(ModelID, "Unimplemented Transaction", FAILURE) ;
-        wait for 0 ns ;
+          Alert(ModelID, "Unimplemented Transaction: " & to_string(TransRec.Operation), FAILURE) ;
     end case ;
 
     -- Wait for 1 delta cycle, required if a wait is not in all case branches above
@@ -403,7 +412,7 @@ begin
 --!9 Resolve Level
       Log(ModelID,
         "Write Address." &
-        "  AWAddr: "    & to_hstring(AW.Addr) &
+        "  AWAddr: "    & to_hxstring(AW.Addr) &
         "  AWProt: "    & to_string (AW.Prot) &
         "  AWLen: "     & to_string (AW.Len) &
         "  AWSize: "    & to_string (AW.Size) &
@@ -461,7 +470,7 @@ begin
 --!9 Resolve Level
       Log(ModelID,
         "Write Data." &
-        "  WData: "  & to_hstring(WD.Data) &
+        "  WData: "  & to_hxstring(WD.Data) &
         "  WStrb: "  & to_string(WD.Strb) &
         "  Operation# " & to_string(WriteDataReceiveCount + 1),
         DEBUG
@@ -534,9 +543,9 @@ begin
         if i = 1 then
           Log(ModelID,
             "Memory Write." &
-            "  AWAddr: "    & to_hstring(LAW.Addr) &
+            "  AWAddr: "    & to_hxstring(LAW.Addr) &
             "  AWProt: "    & to_string (LAW.Prot) &
-            "  WData: "     & to_hstring(LWD.Data) &
+            "  WData: "     & to_hxstring(LWD.Data) &
             "  WStrb: "     & to_string (LWD.Strb) &
             "  Operation# " & to_string (WriteReceiveCount),
             INFO
@@ -605,9 +614,9 @@ begin
 
       Log(ModelID,
         "Write Response." &
-        "  BResp: "  & to_hstring(Local.Resp) &
-        "  BID: "    & to_hstring(Local.ID) &
-        "  BUser: "  & to_hstring(Local.User) &
+        "  BResp: "  & to_hxstring(Local.Resp) &
+        "  BID: "    & to_hxstring(Local.ID) &
+        "  BUser: "  & to_hxstring(Local.User) &
         "  Operation# " & to_string(WriteResponseDoneCount + 1),
         DEBUG
       ) ;
@@ -673,7 +682,7 @@ begin
 --!9 Resolve Level
       Log(ModelID,
         "Read Address." &
-        "  ARAddr: "    & to_hstring(AR.Addr) &
+        "  ARAddr: "    & to_hxstring(AR.Addr) &
         "  ARProt: "    & to_string (AR.Prot) &
         "  ARLen: "     & to_string (AR.Len) &
         "  ARSize: "    & to_string (AR.Size) &
@@ -766,9 +775,9 @@ begin
         if i = 1 then
           Log(ModelID,
             "Memory Read." &
-            "  ARAddr: "    & to_hstring(LAR.Addr) &
+            "  ARAddr: "    & to_hxstring(LAR.Addr) &
             "  ARProt: "    & to_string (LAR.Prot) &
-            "  RData: "     & to_hstring(LRD.Data) &
+            "  RData: "     & to_hxstring(LRD.Data) &
             "  Operation# " & to_string (ReadDataRequestCount),
             INFO
           ) ;
@@ -784,7 +793,11 @@ begin
         end if ;
         push(ReadDataFifo, LRD.Data & LRD.Last & ModelRResp & LAR.ID & LAR.User) ;
         increment(ReadDataRequestCount) ;
-        wait for 0 ns ;
+        if i /= BurstLen then 
+          wait until Rising_Edge(Clk) ; -- read memory location per clock
+        else
+          wait for 0 ns ;
+        end if ; 
 
       end loop BurstLoop ;
     end loop ReadHandlerLoop ;
@@ -841,10 +854,10 @@ begin
 --!9 Resolve Level
       Log(ModelID,
         "Read Data." &
-        "  RData: "     & to_hstring(Local.Data) &
-        "  RResp: "     & to_hstring(Local.Resp) &
-        "  RID: "       & to_hstring(Local.ID) &
-        "  RUser: "     & to_hstring(Local.User) &
+        "  RData: "     & to_hxstring(Local.Data) &
+        "  RResp: "     & to_hxstring(Local.Resp) &
+        "  RID: "       & to_hxstring(Local.ID) &
+        "  RUser: "     & to_hxstring(Local.User) &
         "  Operation# " & to_string(ReadDataDoneCount + 1),
         DEBUG
       ) ;

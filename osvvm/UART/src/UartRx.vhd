@@ -19,6 +19,8 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    03/2022   2022.03    Updated to use singleton based FIFOs.  Updated calls for AlertLogIDs
+--    02/2022   2022.02    Replaced to_hstring with to_hxstring
 --    08/2021   2021.08    Initialized NumDataBits, ParityMode, and NumStopBits
 --    02/2021   2021.02    Updated for resizing Data and Param to/from TransRec
 --    10/2020   2020.10    Update for updates to stream MIT
@@ -54,6 +56,12 @@ library ieee ;
 
 library OSVVM ;
   context OSVVM.OsvvmContext ; 
+--  use osvvm.ScoreboardPkg_slv.all ;
+--!! GHDL
+  use osvvm.ScoreboardPkg_slv.NewID ;
+  use osvvm.ScoreboardPkg_slv.Empty ;
+  use osvvm.ScoreboardPkg_slv.Push ;
+  use osvvm.ScoreboardPkg_slv.Pop ;
 
 library osvvm_common ; 
   context osvvm_common.OsvvmCommonContext ;  
@@ -94,7 +102,7 @@ architecture model of UartRx is
   constant MODEL_INSTANCE_NAME : string := PathTail(to_lower(UartRx'PATH_NAME)) ;
   signal   ModelID  : AlertLogIDType ;
 
-  shared variable ReceiveFifo : osvvm.ScoreboardPkg_slv.ScoreboardPType ; 
+  signal ReceiveFifo : osvvm.ScoreboardPkg_slv.ScoreboardIDType ;
 
   signal ReceiveCount : integer := 0 ;   
   
@@ -112,9 +120,9 @@ begin
   InitializeAlerts : process
     variable ID : AlertLogIDType ;
   begin
-    ID := GetAlertLogID(MODEL_INSTANCE_NAME, ALERTLOG_BASE_ID) ;
-    ModelID                   <= ID ; 
-    ReceiveFifo.SetAlertLogID(MODEL_INSTANCE_NAME & ": Receive FIFO", ID) ;
+    ID            := NewID(MODEL_INSTANCE_NAME) ;
+    ModelID       <= ID ; 
+    ReceiveFifo   <= NewID("ReceiveFifo", ID, ReportMode => DISABLED) ;
     wait ;
   end process InitializeAlerts ;
   
@@ -146,13 +154,13 @@ begin
       
       case Operation is
         when GET | TRY_GET | CHECK | TRY_CHECK =>
-          if ReceiveFifo.empty and IsTry(Operation) then
+          if Empty(ReceiveFifo) and IsTry(Operation) then
             -- Return if no data
             TransRec.BoolFromModel <= FALSE ; 
           else
             -- Get data
             TransRec.BoolFromModel <= TRUE ; 
-            if ReceiveFifo.empty then 
+            if Empty(ReceiveFifo) then 
               -- Wait for data
               WaitForToggle(ReceiveCount) ;
             else 
@@ -161,7 +169,7 @@ begin
               wait for 0 ns ; 
             end if ; 
             -- Put Data and Parameters into record
-            (RxStim.Data, RxStim.Error) := ReceiveFifo.pop ;
+            (RxStim.Data, RxStim.Error) := pop(ReceiveFifo) ;
             TransRec.DataFromModel   <= SafeResize(RxStim.Data,  TransRec.DataFromModel'length) ; 
             TransRec.ParamFromModel  <= SafeResize(RxStim.Error, TransRec.ParamFromModel'length); 
             
@@ -190,7 +198,7 @@ begin
           end if ; 
           
         when WAIT_FOR_TRANSACTION =>
-          if ReceiveFifo.empty then 
+          if Empty(ReceiveFifo) then 
             WaitForToggle(ReceiveCount) ;
           end if ; 
 
@@ -220,11 +228,15 @@ begin
             when UartOptionType'pos(SET_BAUD) =>
               Baud          <= CheckBaud(ModelID, TransRec.TimeToModel, TransRec.BoolToModel) ;  
             when others =>     
-              alert(ModelID, "SetOptions: " & to_string(TransRec.Options) & ". Unsupported Option was Ignored", ERROR) ;
+              Alert(ModelID, "SetOptions, Unimplemented Option: " & to_string(UartOptionType'val(TransRec.Options)), FAILURE) ;
           end case ; 
         
+        when MULTIPLE_DRIVER_DETECT =>
+          Alert(ModelID, "Multiple Drivers on Transaction Record." & 
+                         "  Transaction # " & to_string(TransRec.Rdy), FAILURE) ;
+
         when others =>
-          Alert(ModelID, "Unimplemented Transaction: " & to_string(Operation), ERROR) ;
+          Alert(ModelID, "Unimplemented Transaction: " & to_string(Operation), FAILURE) ;
           
       end case ;
     end loop TransactionDispatcherLoop ;
@@ -332,13 +344,13 @@ begin
         end if ; 
         
         -- Hand off values to Transaction Handler
-        ReceiveFifo.push(RxData & ErrorMode) ;
+        push(ReceiveFifo, RxData & ErrorMode) ;
         increment(ReceiveCount) ;
         
         -- Log at interface at DEBUG level
         Log(ModelID, 
           "Received:" & 
-          " Data = " & to_hstring(RxData) & 
+          " Data = " & to_hxstring(RxData) & 
           ", Parity = " & to_string(RxParity) & 
           ", Stop = " & to_string(iSerialDataIn) & 
           ", Parity Error = " & to_string(ErrorMode(UARTTB_PARITY_INDEX)) & 

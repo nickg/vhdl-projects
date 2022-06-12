@@ -21,6 +21,10 @@
 --
 --  Revision History:
 --    Date      Version     Description 
+--    03/2022   2022.03     Removed deprecated SetAlertLogID in Singleton API  
+--    02/2022   2022.02     Added WriteScoreboardYaml and GotScoreboards.  Updated NewID with ParentID, 
+--                          ReportMode, Search, PrintParent.   Supports searching for Scoreboard models..
+--    01/2022   2022.01     Added CheckExpected.  Added SetCheckCountZero to ScoreboardPType   
 --    08/2021   2021.08     Removed SetAlertLogID from singleton public interface - set instead by NewID
 --    06/2021   2021.06     Updated Data Structure, IDs for new use model, and Wrapper Subprograms
 --    10/2020   2020.10     Added Peek
@@ -49,7 +53,7 @@
 --
 --  This file is part of OSVVM.
 --  
---  Copyright (c) 2006 - 2021 by SynthWorks Design Inc.  
+--  Copyright (c) 2006 - 2022 by SynthWorks Design Inc.  
 --  
 --  Licensed under the Apache License, Version 2.0 (the "License");
 --  you may not use this file except in compliance with the License.
@@ -72,8 +76,10 @@ library ieee ;
   use ieee.numeric_std.all ;
   
   use work.TranscriptPkg.all ; 
+  use work.TextUtilPkg.all ; 
   use work.AlertLogPkg.all ; 
   use work.NamePkg.all ; 
+  use work.NameStorePkg.all ;
   use work.ResolutionPkg.all ; 
 
 
@@ -86,16 +92,16 @@ package ScoreBoardPkg_int is
 --    function expected_to_string(A : ExpectedType) return string ;  -- is to_string ;
 --    function actual_to_string  (A : ActualType) return string      -- is to_string ; 
 --  ) ; 
-
-  --  For a VHDL-2002 package, comment out the generics and 
-  --  uncomment the following, it replaces a generic instance of the package.
-  --  As a result, you will have multiple copies of the entire package. 
-  --  Inconvenient, but ok as it still works the same.
-  subtype ExpectedType is integer ;
-  subtype ActualType   is integer ;
-  alias   Match is "=" [ActualType, ExpectedType return boolean] ;  -- for std_logic_vector
-  alias   expected_to_string is to_string [ExpectedType return string];  -- VHDL-2008
-  alias   actual_to_string   is to_string [ActualType   return string];  -- VHDL-2008
+--
+   --  For a VHDL-2002 package, comment out the generics and 
+   --  uncomment the following, it replaces a generic instance of the package.
+   --  As a result, you will have multiple copies of the entire package. 
+   --  Inconvenient, but ok as it still works the same.
+   subtype ExpectedType is integer ;
+   subtype ActualType   is integer ;
+   alias Match is "=" [ActualType, ExpectedType return boolean] ;  -- for std_logic_vector
+   alias expected_to_string is to_string [ExpectedType return string];  -- VHDL-2008
+   alias actual_to_string is to_string [ActualType return string];  -- VHDL-2008
 
   -- ScoreboardReportType is deprecated
   -- Replaced by Affirmations.  ERROR is the default.  ALL turns on PASSED flag
@@ -105,19 +111,67 @@ package ScoreBoardPkg_int is
     Id : integer_max ;
   end record ScoreboardIdType ; 
   type ScoreboardIdArrayType  is array (integer range <>) of ScoreboardIdType ;  
-  type ScoreboardIdMatrixType is array (integer range <>, integer range <>) of ScoreboardIdType ;  
+  type ScoreboardIdMatrixType is array (integer range <>, integer range <>) of ScoreboardIdType ;
+  
+  -- Preparation for refactoring - if that ever happens.  
+  subtype FifoIdType       is ScoreboardIdType ;
+  subtype FifoIdArrayType  is ScoreboardIdArrayType ;
+  subtype FifoIdMatrixType is ScoreboardIdMatrixType ;
 
   ------------------------------------------------------------
-  impure function NewID (Name : String ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDType ;
+  -- Used by Scoreboard Store
+  impure function NewID (
+    Name          : String ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ;
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIDType ;
+   
+  ------------------------------------------------------------
   -- Vector: 1 to Size
-  impure function NewID (Name : String ; Size : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType ;
-  -- Vector: X(X'Left) to X(X'Right)
-  impure function NewID (Name : String ; X : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType ;
-  -- Matrix: 1 to X, 1 to Y
-  impure function NewID (Name : String ; X, Y : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType ;
-  -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
-  impure function NewID (Name : String ; X, Y : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType ;
+  impure function NewID (
+    Name          : String ; 
+    Size          : positive ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIDArrayType ;
 
+  ------------------------------------------------------------
+  -- Vector: X(X'Left) to X(X'Right)
+  impure function NewID (
+    Name          : String ; 
+    X             : integer_vector ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIDArrayType ;
+
+  ------------------------------------------------------------
+  -- Matrix: 1 to X, 1 to Y
+  impure function NewID (
+    Name          : String ; 
+    X, Y          : positive ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIdMatrixType ;        
+   
+  ------------------------------------------------------------
+  -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
+  impure function NewID (
+    Name          : String ; 
+    X, Y          : integer_vector ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIdMatrixType ; 
+  
   ------------------------------------------------------------
   -- Push items into the scoreboard/FIFO
 
@@ -162,6 +216,34 @@ package ScoreBoardPkg_int is
     constant Tag          : in  string ;
     constant ActualData   : in  ActualType
   ) return boolean ;
+
+  ----------------------------------------------
+  -- Simple Scoreboard, no tag
+  procedure CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant ExpectedData : in  ActualType
+  ) ;
+  
+  -- Simple Tagged Scoreboard
+  procedure CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant Tag          : in  string ;
+    constant ExpectedData : in  ActualType
+  ) ;
+  
+  -- Simple Scoreboard, no tag
+  impure function CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant ExpectedData : in  ActualType
+  ) return boolean ; 
+  
+  -- Simple Tagged Scoreboard
+  impure function CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant Tag          : in  string ;
+    constant ExpectedData : in  ActualType
+  ) return boolean ;
+
 
 
   ------------------------------------------------------------
@@ -249,21 +331,21 @@ package ScoreBoardPkg_int is
     constant Tag    : in  string       
   ) return boolean ;                    -- Simple, Tagged
 
---  ------------------------------------------------------------
---  -- SetAlertLogID - associate an AlertLogID with a scoreboard to allow integrated error reporting
---  procedure SetAlertLogID(
---    constant ID              : in  ScoreboardIDType ;
---    constant Name            : in  string ; 
---    constant ParentID        : in  AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
---    constant CreateHierarchy : in  Boolean := TRUE ;
---    constant DoNotReport     : in  Boolean := FALSE
---  ) ;
---
---  -- Use when an AlertLogID is used by multiple items (Model or other Scoreboards).  See also AlertLogPkg.GetAlertLogID
---  procedure SetAlertLogID (
---    constant ID     : in  ScoreboardIDType ;
---    constant A      : AlertLogIDType
---  ) ; 
+--!!  ------------------------------------------------------------
+--!!  -- SetAlertLogID - associate an AlertLogID with a scoreboard to allow integrated error reporting
+--!!  procedure SetAlertLogID(
+--!!    constant ID              : in  ScoreboardIDType ;
+--!!    constant Name            : in  string ; 
+--!!    constant ParentID        : in  AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+--!!    constant CreateHierarchy : in  Boolean := TRUE ;
+--!!    constant DoNotReport     : in  Boolean := FALSE
+--!!  ) ;
+--!!
+--!!  -- Use when an AlertLogID is used by multiple items (Model or other Scoreboards).  See also AlertLogPkg.GetAlertLogID
+--!!  procedure SetAlertLogID (
+--!!    constant ID     : in  ScoreboardIDType ;
+--!!    constant A      : AlertLogIDType
+--!!  ) ; 
     
   impure function GetAlertLogID (
     constant ID     : in  ScoreboardIDType 
@@ -338,6 +420,11 @@ package ScoreBoardPkg_int is
   ) ; 
   
   ------------------------------------------------------------
+  -- Writing YAML Reports 
+  impure function GotScoreboards return boolean ;
+  procedure WriteScoreboardYaml (FileName : string := ""; OpenKind : File_Open_Kind := WRITE_MODE) ;
+
+  ------------------------------------------------------------
   -- Generally these are not required.  When a simulation ends and 
   -- another simulation is started, a simulator will release all allocated items.  
   procedure Deallocate (
@@ -388,18 +475,58 @@ package ScoreBoardPkg_int is
 
     ------------------------------------------------------------
     -- Used by Scoreboard Store
-    procedure SetPrintIndex (Enable : boolean := TRUE) ;
-    impure function NewID (Name : String ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDType ;
-    -- Vector: 1 to Size
-    impure function NewID (Name : String ; Size : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType ;
-    -- Vector: X(X'Left) to X(X'Right)
-    impure function NewID (Name : String ; X : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType ;
-    -- Matrix: 1 to X, 1 to Y
-    impure function NewID (Name : String ; X, Y : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType ;
-    -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
-    impure function NewID (Name : String ; X, Y : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType ;
+    impure function NewID (
+      Name          : String ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ;
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDType ;
+     
     ------------------------------------------------------------
+    -- Vector: 1 to Size
+    impure function NewID (
+      Name          : String ; 
+      Size          : positive ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDArrayType ;
 
+    ------------------------------------------------------------
+    -- Vector: X(X'Left) to X(X'Right)
+    impure function NewID (
+      Name          : String ; 
+      X             : integer_vector ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDArrayType ;
+
+    ------------------------------------------------------------
+    -- Matrix: 1 to X, 1 to Y
+    impure function NewID (
+      Name          : String ; 
+      X, Y          : positive ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIdMatrixType ;        
+     
+    ------------------------------------------------------------
+    -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
+    impure function NewID (
+      Name          : String ; 
+      X, Y          : integer_vector ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIdMatrixType ; 
+    
     ------------------------------------------------------------
     -- Emulate arrays of scoreboards 
     procedure SetArrayIndex(L, R : integer) ;  -- supports integer indices 
@@ -506,6 +633,15 @@ package ScoreBoardPkg_int is
       constant ActualData   : in  ActualType
     ) return boolean ;
 
+    -------------------------------
+    -- Array of Tagged Scoreboards
+    impure function CheckExpected (
+      constant Index        : in  integer ;
+      constant Tag          : in  string ;
+      constant ExpectedData : in  ActualType
+    ) return boolean ;
+
+
     ------------------------------------------------------------
     -- Pop the top item (FIFO) from the scoreboard/FIFO
     
@@ -608,6 +744,7 @@ package ScoreBoardPkg_int is
 
     ------------------------------------------------------------
     -- SetAlertLogID - associate an AlertLogID with a scoreboard to allow integrated error reporting
+    -- ReportMode := ENABLED when not DoNotReport else DISABLED ;
     procedure SetAlertLogID(Index : Integer; Name : string; ParentID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; CreateHierarchy : Boolean := TRUE; DoNotReport : Boolean := FALSE) ;
     procedure SetAlertLogID(Name : string; ParentID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; CreateHierarchy : Boolean := TRUE; DoNotReport : Boolean := FALSE) ;
     -- Use when an AlertLogID is used by multiple items (Model or other Scoreboards).  See also AlertLogPkg.GetAlertLogID
@@ -707,6 +844,11 @@ package ScoreBoardPkg_int is
     ) ; 
     
     ------------------------------------------------------------
+    -- Writing YAML Reports 
+    impure function GotScoreboards return boolean ;
+    procedure WriteScoreboardYaml (FileName : string := ""; OpenKind : File_Open_Kind := WRITE_MODE) ;
+    
+    ------------------------------------------------------------
     -- Generally these are not required.  When a simulation ends and 
     -- another simulation is started, a simulator will release all allocated items.  
     procedure Deallocate ;  -- Deletes all allocated items
@@ -757,6 +899,9 @@ package ScoreBoardPkg_int is
     -- Clear error counter.  Caution does not change AlertCounts, must also use AlertLogPkg.ClearAlerts
     procedure SetErrorCountZero ;                      -- Simple, with or without tags
     procedure SetErrorCountZero (Index  : integer) ;   -- Arrays, with or without tags 
+    -- Clear check counter. Caution does not change AffirmationCounters
+    procedure SetCheckCountZero ;                      -- Simple, with or without tags
+    procedure SetCheckCountZero (Index  : integer) ;   -- Arrays, with or without tags
     
     ------------------------------------------------------------
     ------------------------------------------------------------
@@ -796,8 +941,34 @@ package ScoreBoardPkg_int is
     procedure SetReportMode (ReportModeIn : ScoreboardReportType) ;
     impure function GetReportMode return ScoreboardReportType ;
 
+    ------------------------------------------------------------
+    ------------------------------------------------------------
+--    -- Deprecated Interface to NewID
+--    impure function NewID (Name : String; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDType ;
+--    -- Vector: 1 to Size
+--    impure function NewID (Name : String; Size : positive; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType ;
+--    -- Vector: X(X'Left) to X(X'Right)
+--    impure function NewID (Name : String; X : integer_vector; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType ;
+--    -- Matrix: 1 to X, 1 to Y
+--    impure function NewID (Name : String; X, Y : positive; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType ;
+--    -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
+--    impure function NewID (Name : String; X, Y : integer_vector; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType ;
+
 
   end protected ScoreBoardPType ;
+  
+  ------------------------------------------------------------
+  -- Deprecated Interface to NewID
+  impure function NewID (Name : String; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDType ;
+  -- Vector: 1 to Size
+  impure function NewID (Name : String; Size : positive; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType ;
+  -- Vector: X(X'Left) to X(X'Right)
+  impure function NewID (Name : String; X : integer_vector; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType ;
+  -- Matrix: 1 to X, 1 to Y
+  impure function NewID (Name : String; X, Y : positive; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType ;
+  -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
+  impure function NewID (Name : String; X, Y : integer_vector; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType ;
+
 
 end ScoreBoardPkg_int ;
 
@@ -882,6 +1053,9 @@ package body ScoreBoardPkg_int is
     variable FirstIndexVar   : integer := 1 ;
     
     variable PrintIndexVar   : boolean := TRUE ; 
+    
+    variable CalledNewID     : boolean := FALSE ; 
+    variable LocalNameStore  : NameStorePType ; 
 
     ------------------------------------------------------------
     -- Used by ScoreboardStore
@@ -911,114 +1085,198 @@ package body ScoreBoardPkg_int is
     end function NormalizeArraySize ;
     
     ------------------------------------------------------------
-    -- Used by Scoreboard Store
-    impure function NewID (Name : String ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDType is
+    -- Package Local
+    procedure GrowNumberItems (
     ------------------------------------------------------------
-      variable Result : ScoreboardIDType ; 
-      variable MinNewNumItems : integer ;
+      variable NumItems         : InOut integer ;
+      constant GrowAmount       : in integer ;
+      constant MinNumItems      : in integer 
+    ) is
+      variable NewNumItems : integer ;
     begin
-      SetPrintIndex(FALSE) ; 
-      MinNewNumItems := NumItems + 1 ; 
-      if MinNewNumItems > HeadPointer'length then
-        SetArrayIndex(1, NormalizeArraySize(MinNewNumItems, MIN_NUM_ITEMS)) ;
+      NewNumItems := NumItems + GrowAmount ;
+      if NewNumItems > HeadPointer'length then
+        SetArrayIndex(1, NormalizeArraySize(NewNumItems, MinNumItems)) ;
       end if ;
-      Result.ID := MinNewNumItems ; 
-      SetAlertLogID(Result.ID, Name, ParentAlertLogID, not DoNotReport, DoNotReport) ; 
-      NumItems  := MinNewNumItems ;
-      return Result ; 
-    end function NewID ;
+      NumItems := NewNumItems ; 
+    end procedure GrowNumberItems ;  
+    
+    ------------------------------------------------------------
+    -- Local/Private to package
+    impure function LocalNewID (
+      Name          : String ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ;
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDType is
+    ------------------------------------------------------------
+      variable NameID              : integer ; 
+    begin
+      NameID := LocalNameStore.find(Name, ParentID, Search) ; 
+
+      -- Share the scoreboards if they match
+      if NameID /= ID_NOT_FOUND.ID then
+        return ScoreboardIDType'(ID => NameID) ; 
+      else
+        -- Resize Data Structure as necessary
+        GrowNumberItems(NumItems, GrowAmount => 1, MinNumItems => MIN_NUM_ITEMS) ; 
+        -- Create AlertLogID
+        AlertLogIDVar(NumItems) := NewID(Name, ParentID, ReportMode, PrintParent, CreateHierarchy => FALSE) ;
+        -- Add item to NameStore
+        NameID := LocalNameStore.NewID(Name, ParentID, Search) ;
+        AlertIfNotEqual(AlertLogIDVar(NumItems), NameID, NumItems, "ScoreboardPkg: Index of LocalNameStore /= ScoreboardID") ;  
+        return ScoreboardIDType'(ID => NumItems) ; 
+      end if ; 
+    end function LocalNewID ;
 
     ------------------------------------------------------------
-    -- Vector. Assumes valid range (done by NewID)
-    impure function LocalNewID (Name : String ; X : integer_vector ; ArrayParentID : AlertLogIDType; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType is
+    -- Used by Scoreboard Store
+    impure function NewID (
+      Name          : String ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ;
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDType is
     ------------------------------------------------------------
-      variable Result         : ScoreboardIDArrayType(X(X'left) to X(X'right)) ; 
-      variable MinNewNumItems : integer ;
+      variable ResolvedSearch      : NameSearchType ; 
+      variable ResolvedPrintParent : AlertLogPrintParentType ; 
     begin
-      SetPrintIndex(FALSE) ; 
-      MinNewNumItems := NumItems + X(X'right) - X(X'left) + 1 ; 
-      if MinNewNumItems > HeadPointer'length then
-        SetArrayIndex(1, NormalizeArraySize(MinNewNumItems, MIN_NUM_ITEMS)) ;
-      end if ;
+      CalledNewID := TRUE ;
+      SetPrintIndex(FALSE) ;  -- historic, but needed
+      
+      ResolvedSearch      := ResolveSearch     (ParentID /= OSVVM_SCOREBOARD_ALERTLOG_ID, Search) ; 
+      ResolvedPrintParent := ResolvePrintParent(ParentID /= OSVVM_SCOREBOARD_ALERTLOG_ID, PrintParent) ; 
+      
+      return LocalNewID(Name, ParentID, ReportMode, ResolvedSearch, ResolvedPrintParent) ; 
+      
+    end function NewID ;
+    
+    ------------------------------------------------------------
+    -- Vector. Assumes valid range (done by NewID)
+    impure function LocalNewID (
+      Name          : String ; 
+      X             : integer_vector ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDArrayType is
+    ------------------------------------------------------------
+      variable Result          : ScoreboardIDArrayType(X(X'left) to X(X'right)) ; 
+      variable ResolvedSearch  : NameSearchType ; 
+      variable ResolvedPrintParent : AlertLogPrintParentType ; 
+--      variable ArrayParentID       : AlertLogIDType ; 
+    begin
+      CalledNewID := TRUE ;
+      SetPrintIndex(FALSE) ;  -- historic, but needed
+      
+      ResolvedSearch      := ResolveSearch     (ParentID /= OSVVM_SCOREBOARD_ALERTLOG_ID, Search) ; 
+      ResolvedPrintParent := ResolvePrintParent(ParentID /= OSVVM_SCOREBOARD_ALERTLOG_ID, PrintParent) ; 
+--      ArrayParentID       := NewID(Name, ParentID, ReportMode, ResolvedPrintParent, CreateHierarchy => FALSE) ;
+
       for i in Result'range loop
-        NumItems := NumItems + 1 ;
-        Result(i).ID := NumItems ; 
-        SetAlertLogID(Result(i).ID, Name & "(" & to_string(i) & ")", ArrayParentID, not DoNotReport, DoNotReport) ; 
+        Result(i) := LocalNewID(Name & "(" & to_string(i) & ")", ParentID, ReportMode, ResolvedSearch, ResolvedPrintParent) ; 
       end loop ;
---      NumItems  := MinNewNumItems ;
       return Result ; 
     end function LocalNewID ;
     
     ------------------------------------------------------------
     -- Vector: 1 to Size
-    impure function NewID (Name : String ; Size : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType is
+    impure function NewID (
+      Name          : String ; 
+      Size          : positive ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDArrayType is
     ------------------------------------------------------------
-      variable ArrayParentID  : AlertLogIDType ; 
     begin
-      ArrayParentID := GetAlertLogID(Name, ParentAlertLogID, not DoNotReport, DoNotReport) ; 
-      -- AlertIf(ArrayParentID, Size < 1, "Size parameter is " & to_string(Size) & ".  Required to be >= 1", FAILURE) ; 
-      return LocalNewID(Name, (1, Size) , ArrayParentID, DoNotReport) ; 
+      return LocalNewID(Name, (1, Size) , ParentID, ReportMode, Search, PrintParent) ; 
     end function NewID ;
 
     ------------------------------------------------------------
     -- Vector: X(X'Left) to X(X'Right)
-    impure function NewID (Name : String ; X : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType is
+    impure function NewID (
+      Name          : String ; 
+      X             : integer_vector ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIDArrayType is
     ------------------------------------------------------------
-      variable ArrayParentID  : AlertLogIDType ; 
     begin
-      ArrayParentID := GetAlertLogID(Name, ParentAlertLogID, not DoNotReport, DoNotReport) ; 
-      AlertIf(ArrayParentID, X'length /= 2, "X parameter has " & to_string(X'length) & "dimensions.  Required to be 2", FAILURE) ; 
-      AlertIf(ArrayParentID, X(X'Left) > X(X'right), "X(X'left): " & to_string(X'Left) & " must be <= X(X'right): " & to_string(X(X'right)), FAILURE) ; 
-      return LocalNewID(Name, X, ArrayParentID, DoNotReport) ; 
+      AlertIf(ParentID, X'length /= 2, "ScoreboardPkg.NewID Array parameter X has " & to_string(X'length) & "dimensions.  Required to be 2", FAILURE) ; 
+      AlertIf(ParentID, X(X'Left) > X(X'right), "ScoreboardPkg.NewID Array parameter X(X'left): " & to_string(X'Left) & " must be <= X(X'right): " & to_string(X(X'right)), FAILURE) ; 
+      return LocalNewID(Name, X, ParentID, ReportMode, Search, PrintParent) ; 
     end function NewID ;
 
     ------------------------------------------------------------
     -- Matrix. Assumes valid indices (done by NewID)
-    impure function LocalNewID (Name : String ; X, Y : integer_vector ; ArrayParentID : AlertLogIDType; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType is
+    impure function LocalNewID (
+      Name          : String ; 
+      X, Y          : integer_vector ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIdMatrixType is
     ------------------------------------------------------------
-      variable Result         : ScoreboardIdMatrixType(X(X'left) to X(X'right), Y(Y'left) to Y(Y'right)) ; 
-      variable MinNewNumItems : integer ;
+      variable Result          : ScoreboardIdMatrixType(X(X'left) to X(X'right), Y(Y'left) to Y(Y'right)) ; 
+      variable ResolvedSearch  : NameSearchType ; 
+      variable ResolvedPrintParent : AlertLogPrintParentType ; 
+--      variable ArrayParentID       : AlertLogIDType ; 
     begin
+      CalledNewID := TRUE ;
       SetPrintIndex(FALSE) ; 
-      MinNewNumItems := NumItems + ( (X(X'right) - X(X'left) + 1) * (Y(Y'right) - Y(Y'left) + 1) ) ; 
-      if MinNewNumItems > HeadPointer'length then
-        SetArrayIndex(1, NormalizeArraySize(MinNewNumItems, MIN_NUM_ITEMS)) ;
-      end if ;
+      
+      ResolvedSearch      := ResolveSearch     (ParentID /= OSVVM_SCOREBOARD_ALERTLOG_ID, Search) ; 
+      ResolvedPrintParent := ResolvePrintParent(ParentID /= OSVVM_SCOREBOARD_ALERTLOG_ID, PrintParent) ; 
+--      ArrayParentID       := NewID(Name, ParentID, ReportMode, ResolvedPrintParent, CreateHierarchy => FALSE) ;
+      
       for i in X(X'left) to X(X'right) loop
         for j in Y(Y'left) to Y(Y'right) loop
-          NumItems := NumItems + 1 ;
-          Result(i, j).ID := NumItems ; 
-          SetAlertLogID(Result(i,j).ID, Name & "(" & to_string(i) & ", " & to_string(j) & ")", ArrayParentID, not DoNotReport, DoNotReport) ; 
+          Result(i, j) := LocalNewID(Name & "(" & to_string(i) & ", " & to_string(j) & ")", ParentID, ReportMode, ResolvedSearch, ResolvedPrintParent) ; 
         end loop ;
       end loop ;
-      -- NumItems  := MinNewNumItems ;
       return Result ; 
     end function LocalNewID ;        
-    
+
     ------------------------------------------------------------
     -- Matrix: 1 to X, 1 to Y
-    impure function NewID (Name : String ; X, Y : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType is
+    impure function NewID (
+      Name          : String ; 
+      X, Y          : positive ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIdMatrixType is
     ------------------------------------------------------------
-      variable ArrayParentID  : AlertLogIDType ; 
     begin
-      ArrayParentID := GetAlertLogID(Name, ParentAlertLogID) ; 
---      AlertIf(ArrayParentID, X < 1, "X parameter is " & to_string(X) & ".  Required to be >= 1", FAILURE) ; 
---      AlertIf(ArrayParentID, Y < 1, "Y parameter is " & to_string(Y) & ".  Required to be >= 1", FAILURE) ; 
-      return LocalNewID(Name, (1,X), (1,Y), ArrayParentID, DoNotReport) ; 
+      return LocalNewID(Name, (1,X), (1,Y), ParentID, ReportMode, Search, PrintParent) ; 
     end function NewID ;        
      
     ------------------------------------------------------------
     -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
-    impure function NewID (Name : String ; X, Y : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType is
+    impure function NewID (
+      Name          : String ; 
+      X, Y          : integer_vector ; 
+      ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+      ReportMode    : AlertLogReportModeType  := ENABLED ; 
+      Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+      PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+    ) return ScoreboardIdMatrixType is
     ------------------------------------------------------------
-      variable ArrayParentID  : AlertLogIDType ; 
     begin
-      ArrayParentID := GetAlertLogID(Name, ParentAlertLogID, DoNotReport) ; 
-      AlertIf(ArrayParentID, X'length /= 2, "X parameter has " & to_string(X'length) & "dimensions.  Required to be 2", FAILURE) ; 
-      AlertIf(ArrayParentID, Y'length /= 2, "Y parameter has " & to_string(Y'length) & "dimensions.  Required to be 2", FAILURE) ; 
-      AlertIf(ArrayParentID, X(X'Left) > X(X'right), "X(X'left): " & to_string(X'Left) & " must be <= X(X'right): " & to_string(X(X'right)), FAILURE) ; 
-      AlertIf(ArrayParentID, Y(Y'Left) > Y(Y'right), "Y(Y'left): " & to_string(Y'Left) & " must be <= Y(Y'right): " & to_string(Y(Y'right)), FAILURE) ; 
-      return LocalNewID(Name, X, Y, ArrayParentID, DoNotReport) ; 
+      AlertIf(ParentID, X'length /= 2, "ScoreboardPkg.NewID Matrix parameter X has " & to_string(X'length) & "dimensions.  Required to be 2", FAILURE) ; 
+      AlertIf(ParentID, Y'length /= 2, "ScoreboardPkg.NewID Matrix parameter Y has " & to_string(Y'length) & "dimensions.  Required to be 2", FAILURE) ; 
+      AlertIf(ParentID, X(X'Left) > X(X'right), "ScoreboardPkg.NewID Matrix parameter X(X'left): " & to_string(X'Left) & " must be <= X(X'right): " & to_string(X(X'right)), FAILURE) ; 
+      AlertIf(ParentID, Y(Y'Left) > Y(Y'right), "ScoreboardPkg.NewID Matrix parameter Y(Y'left): " & to_string(Y'Left) & " must be <= Y(Y'right): " & to_string(Y(Y'right)), FAILURE) ; 
+      return LocalNewID(Name, X, Y, ParentID, ReportMode, Search, PrintParent) ; 
     end function NewID ; 
     
     ------------------------------------------------------------
@@ -1204,6 +1462,8 @@ package body ScoreBoardPkg_int is
       NameVar.Deallocate ; 
       
       ArrayLengthVar := 0 ; 
+      NumItems       := 0 ;
+      CalledNewID    := FALSE ;
     end procedure Deallocate ; 
 
     ------------------------------------------------------------
@@ -1245,15 +1505,19 @@ package body ScoreBoardPkg_int is
     ------------------------------------------------------------
     procedure SetAlertLogID(Index : Integer; Name : string; ParentID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; CreateHierarchy : Boolean := TRUE; DoNotReport : Boolean := FALSE) is
     ------------------------------------------------------------
+      variable ReportMode : AlertLogReportModeType ;
     begin
-      AlertLogIDVar(Index) := GetAlertLogID(Name, ParentID, CreateHierarchy, DoNotReport) ;
+      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+      AlertLogIDVar(Index) := NewID(Name, ParentID, ReportMode => ReportMode, PrintParent => PRINT_NAME, CreateHierarchy => CreateHierarchy) ;
     end procedure SetAlertLogID ;
     
     ------------------------------------------------------------
     procedure SetAlertLogID(Name : string; ParentID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; CreateHierarchy : Boolean := TRUE; DoNotReport : Boolean := FALSE) is
     ------------------------------------------------------------
+      variable ReportMode : AlertLogReportModeType ;
     begin
-      AlertLogIDVar(FirstIndexVar) := GetAlertLogID(Name, ParentID, CreateHierarchy, DoNotReport) ;
+      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+      AlertLogIDVar(FirstIndexVar) := NewID(Name, ParentID, ReportMode => ReportMode, PrintParent => PRINT_NAME, CreateHierarchy => CreateHierarchy) ;
     end procedure SetAlertLogID ;
     
     ------------------------------------------------------------
@@ -1478,9 +1742,10 @@ package body ScoreBoardPkg_int is
     -- Local Only
     procedure LocalCheck (
     ------------------------------------------------------------
-      constant Index        : in  integer ;
-      constant ActualData   : in ActualType ;
-      variable FoundError   : inout boolean  
+      constant Index          : in    integer ;
+      constant ActualData     : in    ActualType ;
+      variable FoundError     : inout boolean ;
+      constant ExpectedInFIFO : in    boolean := TRUE
     ) is
       variable ExpectedPtr    : ExpectedPointerType ;
       variable CurrentItem  : integer ;
@@ -1516,9 +1781,16 @@ package body ScoreBoardPkg_int is
         if ArrayLengthVar > 1 and PrintIndexVar then 
           write(WriteBuf, " (" & to_string(Index) & ") ") ; 
         end if ; 
-        write(WriteBuf, "   Received: " & actual_to_string(ActualData)) ;
-        if FoundError then 
-          write(WriteBuf, "   Expected: " & expected_to_string(ExpectedPtr.all)) ;
+        if ExpectedInFIFO then 
+          write(WriteBuf, "   Received: " & actual_to_string(ActualData)) ;
+          if FoundError then 
+            write(WriteBuf, "   Expected: " & expected_to_string(ExpectedPtr.all)) ;
+          end if ; 
+        else
+          write(WriteBuf, "   Received: " & expected_to_string(ExpectedPtr.all)) ;
+          if FoundError then 
+            write(WriteBuf, "   Expected: " & actual_to_string(ActualData)) ;
+          end if ; 
         end if ; 
         if PopListPointer(Index).TagPtr.all /= "" then
           write(WriteBuf, "   Tag: " & PopListPointer(Index).TagPtr.all) ;
@@ -1656,6 +1928,24 @@ package body ScoreBoardPkg_int is
       LocalCheck(FirstIndexVar, ActualData, FoundError) ; 
       return not FoundError ; 
     end function Check ;
+    
+    ------------------------------------------------------------
+    -- Scoreboard Store.  Index. Tag.
+    impure function CheckExpected (
+    ------------------------------------------------------------
+      constant Index        : in  integer ;
+      constant Tag          : in  string ;
+      constant ExpectedData : in  ActualType
+    ) return boolean is
+      variable FoundError   : boolean ;
+    begin
+      if LocalOutOfRange(Index, "Function Check") then 
+        return FALSE ; -- error reporting in LocalOutOfRange
+      end if ; 
+      LocalPop(Index, Tag, "Check") ; 
+      LocalCheck(Index, ExpectedData, FoundError, ExpectedInFIFO => FALSE) ; 
+      return not FoundError ; 
+    end function CheckExpected ;
 
     ------------------------------------------------------------
     -- Array of Tagged Scoreboards
@@ -2076,6 +2366,20 @@ package body ScoreBoardPkg_int is
     end procedure SetErrorCountZero ;
 
     ------------------------------------------------------------
+    procedure SetCheckCountZero (Index  : integer) is
+    ------------------------------------------------------------
+    begin
+      CheckCountVar(Index) := 0;
+    end procedure SetCheckCountZero ;
+
+    ------------------------------------------------------------
+    procedure SetCheckCountZero is
+    ------------------------------------------------------------
+    begin
+      CheckCountVar(FirstIndexVar) := 0;
+    end procedure SetCheckCountZero ;
+
+    ------------------------------------------------------------
     impure function GetItemCount (Index  : integer) return integer is
     ------------------------------------------------------------
     begin
@@ -2368,6 +2672,62 @@ package body ScoreBoardPkg_int is
       Flush(FirstIndexVar, ItemNumber) ;
     end procedure Flush ; 
     
+    
+    ------------------------------------------------------------
+    impure function GotScoreboards return boolean is
+    ------------------------------------------------------------
+    begin
+      return CalledNewID ; 
+    end function GotScoreboards ;
+    
+
+    ------------------------------------------------------------
+    --  pt local
+    procedure WriteScoreboardYaml (Index : integer; file CovYamlFile : text) is
+    ------------------------------------------------------------
+      variable buf       : line ;
+      constant NAME_PREFIX : string := "  " ; 
+    begin
+      write(buf, NAME_PREFIX & "- Name:         " & '"' & string'(GetAlertLogName(AlertLogIDVar(Index))) & '"' & LF) ; 
+      write(buf, NAME_PREFIX & "  ItemCount:    " & '"' & to_string(ItemNumberVar(Index))       & '"' & LF) ; 
+      write(buf, NAME_PREFIX & "  ErrorCount:   " & '"' & to_string(ErrCntVar(Index))           & '"' & LF) ; 
+      write(buf, NAME_PREFIX & "  ItemsChecked: " & '"' & to_string(CheckCountVar(Index))       & '"' & LF) ; 
+      write(buf, NAME_PREFIX & "  ItemsPopped:  " & '"' & to_string(PopCountVar(Index))         & '"' & LF) ; 
+      write(buf, NAME_PREFIX & "  ItemsDropped: " & '"' & to_string(DropCountVar(Index))        & '"' & LF) ; 
+
+      writeline(CovYamlFile, buf) ;
+    end procedure WriteScoreboardYaml ;
+
+    ------------------------------------------------------------
+    procedure WriteScoreboardYaml (FileName : string := ""; OpenKind : File_Open_Kind := WRITE_MODE) is
+    ------------------------------------------------------------
+      constant RESOLVED_FILE_NAME : string := IfElse(FileName = "", "./reports/" & GetAlertLogName & "_sb.yml", FileName) ; 
+      file SbYamlFile : text open OpenKind is RESOLVED_FILE_NAME ;
+      variable buf : line ;
+    begin
+      if AlertLogIDVar = NULL or AlertLogIDVar'length <= 0 then
+        Alert("Scoreboard.WriteScoreboardYaml: no scoreboards defined ", ERROR) ;
+        return ; 
+      end if ; 
+      
+      swrite(buf, "Version: 1.0" & LF) ; 
+      swrite(buf, "TestCase: " & '"' & GetAlertLogName & '"' & LF) ; 
+      swrite(buf, "Scoreboards: ") ; 
+      writeline(SbYamlFile, buf) ; 
+      if CalledNewID then 
+        -- Used by singleton
+        for i in 1 to NumItems loop
+          WriteScoreboardYaml(i, SbYamlFile) ; 
+        end loop ; 
+      else
+        -- Used by PT method, but not singleton
+        for i in AlertLogIDVar'range loop
+          WriteScoreboardYaml(i, SbYamlFile) ; 
+        end loop ; 
+      end if ; 
+      file_close(SbYamlFile) ;
+    end procedure WriteScoreboardYaml ;
+    
     ------------------------------------------------------------
     ------------------------------------------------------------
     -- Remaining Deprecated.     
@@ -2428,49 +2788,141 @@ package body ScoreBoardPkg_int is
       -- return Message.all ;
       return GetName("Scoreboard") ;
     end function GetMessage ;
+    
+--!!    ------------------------------------------------------------
+--!!    -- Deprecated Call to NewID, refactored to call new version of NewID
+--!!    impure function NewID (Name : String ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDType is
+--!!    ------------------------------------------------------------
+--!!      variable ReportMode : AlertLogReportModeType ;
+--!!    begin
+--!!      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+--!!      return NewID(Name, ParentAlertLogID, ReportMode => ReportMode) ; 
+--!!    end function NewID ;
+--!!
+--!!    ------------------------------------------------------------
+--!!    -- Deprecated Call to NewID, refactored to call new version of NewID
+--!!    -- Vector: 1 to Size
+--!!    impure function NewID (Name : String ; Size : positive ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType is
+--!!    ------------------------------------------------------------
+--!!      variable ReportMode : AlertLogReportModeType ;
+--!!    begin
+--!!      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+--!!      return NewID(Name, (1, Size) , ParentAlertLogID, ReportMode => ReportMode) ; 
+--!!    end function NewID ;
+--!!
+--!!    ------------------------------------------------------------
+--!!    -- Deprecated Call to NewID, refactored to call new version of NewID
+--!!    -- Vector: X(X'Left) to X(X'Right)
+--!!    impure function NewID (Name : String ; X : integer_vector ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType is
+--!!    ------------------------------------------------------------
+--!!      variable ReportMode     : AlertLogReportModeType ;
+--!!    begin
+--!!      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+--!!      return NewID(Name, X, ParentAlertLogID, ReportMode => ReportMode) ; 
+--!!    end function NewID ;
+--!!
+--!!    ------------------------------------------------------------
+--!!    -- Deprecated Call to NewID, refactored to call new version of NewID
+--!!    -- Matrix: 1 to X, 1 to Y
+--!!    impure function NewID (Name : String ; X, Y : positive ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType is
+--!!    ------------------------------------------------------------
+--!!      variable ReportMode     : AlertLogReportModeType ;
+--!!    begin
+--!!      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+--!!      return NewID(Name, X, Y, ParentAlertLogID, ReportMode => ReportMode) ; 
+--!!    end function NewID ;        
+--!!     
+--!!    ------------------------------------------------------------
+--!!    -- Deprecated Call to NewID, refactored to call new version of NewID
+--!!    -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
+--!!    impure function NewID (Name : String ; X, Y : integer_vector ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType is
+--!!    ------------------------------------------------------------
+--!!      variable ReportMode     : AlertLogReportModeType ;
+--!!    begin
+--!!      ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+--!!      return NewID(Name, X, Y, ParentAlertLogID, ReportMode => ReportMode) ; 
+--!!    end function NewID ; 
+        
   end protected body ScoreBoardPType ;
   
   shared variable ScoreboardStore : ScoreBoardPType ;
   
   ------------------------------------------------------------
-  impure function NewID (Name : String ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDType is
+  -- Used by Scoreboard Store
+  impure function NewID (
+    Name          : String ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ;
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIDType is
   ------------------------------------------------------------
   begin
-    return ScoreboardStore.NewID(Name, ParentAlertLogID, DoNotReport) ; 
+    return ScoreboardStore.NewID(Name, ParentID, ReportMode, Search, PrintParent) ; 
   end function NewID ;
 
   ------------------------------------------------------------
   -- Vector: 1 to Size
-  impure function NewID (Name : String ; Size : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType is
+  impure function NewID (
+    Name          : String ; 
+    Size          : positive ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIDArrayType is
   ------------------------------------------------------------
   begin
-    return ScoreboardStore.NewID(Name, Size, ParentAlertLogID, DoNotReport) ; 
+    return ScoreboardStore.NewID(Name, Size, ParentID, ReportMode, Search, PrintParent) ; 
   end function NewID ;
-  
+
   ------------------------------------------------------------
   -- Vector: X(X'Left) to X(X'Right)
-  impure function NewID (Name : String ; X : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIDArrayType is
+  impure function NewID (
+    Name          : String ; 
+    X             : integer_vector ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIDArrayType is
   ------------------------------------------------------------
   begin
-    return ScoreboardStore.NewID(Name, X, ParentAlertLogID, DoNotReport) ; 
+    return ScoreboardStore.NewID(Name, X, ParentID, ReportMode, Search, PrintParent) ; 
   end function NewID ;
-  
+
   ------------------------------------------------------------
   -- Matrix: 1 to X, 1 to Y
-  impure function NewID (Name : String ; X, Y : positive ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType is
+  impure function NewID (
+    Name          : String ; 
+    X, Y          : positive ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIdMatrixType is
   ------------------------------------------------------------
   begin
-    return ScoreboardStore.NewID(Name, X, Y, ParentAlertLogID, DoNotReport) ; 
+    return ScoreboardStore.NewID(Name, X, Y, ParentID, ReportMode, Search, PrintParent) ; 
   end function NewID ;        
    
   ------------------------------------------------------------
   -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
-  impure function NewID (Name : String ; X, Y : integer_vector ; ParentAlertLogID : AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID; DoNotReport : Boolean := FALSE) return ScoreboardIdMatrixType is
+  impure function NewID (
+    Name          : String ; 
+    X, Y          : integer_vector ; 
+    ParentID      : AlertLogIDType          := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+    ReportMode    : AlertLogReportModeType  := ENABLED ; 
+    Search        : NameSearchType          := NAME_AND_PARENT_ELSE_PRIVATE ;
+    PrintParent   : AlertLogPrintParentType := PRINT_NAME_AND_PARENT
+  ) return ScoreboardIdMatrixType is
   ------------------------------------------------------------
   begin
-    return ScoreboardStore.NewID(Name, X, Y, ParentAlertLogID, DoNotReport) ; 
+    return ScoreboardStore.NewID(Name, X, Y, ParentID, ReportMode, Search, PrintParent) ; 
   end function NewID ; 
+  
 
+  
   ------------------------------------------------------------
   -- Push items into the scoreboard/FIFO
 
@@ -2536,6 +2988,47 @@ package body ScoreBoardPkg_int is
     return ScoreboardStore.Check(ID.ID, Tag, ActualData) ; 
   end function Check ;
 
+  -------------
+  ----------------------------------------------
+  -- Simple Scoreboard, no tag
+  procedure CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant ExpectedData : in  ActualType
+  ) is
+    variable Passed : boolean ; 
+  begin
+    Passed := ScoreboardStore.CheckExpected(ID.ID, "", ExpectedData) ; 
+  end procedure CheckExpected ; 
+  
+  -- Simple Tagged Scoreboard
+  procedure CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant Tag          : in  string ;
+    constant ExpectedData : in  ActualType
+  ) is
+    variable Passed : boolean ; 
+  begin
+    Passed := ScoreboardStore.CheckExpected(ID.ID, Tag, ExpectedData) ; 
+  end procedure CheckExpected ; 
+  
+  -- Simple Scoreboard, no tag
+  impure function CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant ExpectedData : in  ActualType
+  ) return boolean is
+  begin
+    return ScoreboardStore.CheckExpected(ID.ID, "", ExpectedData) ; 
+  end function CheckExpected ; 
+  
+  -- Simple Tagged Scoreboard
+  impure function CheckExpected (
+    constant ID           : in  ScoreboardIDType ;
+    constant Tag          : in  string ;
+    constant ExpectedData : in  ActualType
+  ) return boolean is
+  begin
+    return ScoreboardStore.CheckExpected(ID.ID, Tag, ExpectedData) ; 
+  end function CheckExpected ;
 
   ------------------------------------------------------------
   -- Pop the top item (FIFO) from the scoreboard/FIFO
@@ -2616,7 +3109,7 @@ package body ScoreBoardPkg_int is
   begin
 --      return ScoreboardStore.Peek(Tag) ;
     log("Issues compiling return later");
-    return ScoreboardStore.Peek(ID.ID) ; 
+    return ScoreboardStore.Peek(Index => ID.ID, Tag => Tag) ; 
   end function Peek ;
 
   -- Simple Scoreboard
@@ -2624,7 +3117,7 @@ package body ScoreBoardPkg_int is
     constant ID     : in  ScoreboardIDType 
   ) return ExpectedType is
   begin
-    return ScoreboardStore.Peek(ID.ID) ; 
+    return ScoreboardStore.Peek(Index => ID.ID) ; 
   end function Peek ;
   
   ------------------------------------------------------------
@@ -2662,27 +3155,27 @@ package body ScoreBoardPkg_int is
     return ScoreboardStore.Empty(ID.ID, Tag) ; 
   end function Empty ;
   
-  ------------------------------------------------------------
-  -- SetAlertLogID - associate an AlertLogID with a scoreboard to allow integrated error reporting
-  procedure SetAlertLogID(
-    constant ID              : in  ScoreboardIDType ;
-    constant Name            : in  string ; 
-    constant ParentID        : in  AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
-    constant CreateHierarchy : in  Boolean := TRUE ;
-    constant DoNotReport     : in  Boolean := FALSE
-  ) is
-  begin
-    ScoreboardStore.SetAlertLogID(ID.ID, Name, ParentID, CreateHierarchy, DoNotReport) ; 
-  end procedure SetAlertLogID ;
-
-  -- Use when an AlertLogID is used by multiple items (Model or other Scoreboards).  See also AlertLogPkg.GetAlertLogID
-  procedure SetAlertLogID (
-    constant ID     : in  ScoreboardIDType ;
-    constant A      : AlertLogIDType
-  ) is
-  begin
-    ScoreboardStore.SetAlertLogID(ID.ID, A) ; 
-  end procedure SetAlertLogID ; 
+--!!  ------------------------------------------------------------
+--!!  -- SetAlertLogID - associate an AlertLogID with a scoreboard to allow integrated error reporting
+--!!  procedure SetAlertLogID(
+--!!    constant ID              : in  ScoreboardIDType ;
+--!!    constant Name            : in  string ; 
+--!!    constant ParentID        : in  AlertLogIDType := OSVVM_SCOREBOARD_ALERTLOG_ID ; 
+--!!    constant CreateHierarchy : in  Boolean := TRUE ;
+--!!    constant DoNotReport     : in  Boolean := FALSE
+--!!  ) is
+--!!  begin
+--!!    ScoreboardStore.SetAlertLogID(ID.ID, Name, ParentID, CreateHierarchy, DoNotReport) ; 
+--!!  end procedure SetAlertLogID ;
+--!!
+--!!  -- Use when an AlertLogID is used by multiple items (Model or other Scoreboards).  See also AlertLogPkg.GetAlertLogID
+--!!  procedure SetAlertLogID (
+--!!    constant ID     : in  ScoreboardIDType ;
+--!!    constant A      : AlertLogIDType
+--!!  ) is
+--!!  begin
+--!!    ScoreboardStore.SetAlertLogID(ID.ID, A) ; 
+--!!  end procedure SetAlertLogID ; 
     
   impure function GetAlertLogID (
     constant ID     : in  ScoreboardIDType 
@@ -2772,7 +3265,7 @@ package body ScoreBoardPkg_int is
   
   -- Simple Scoreboards
   procedure Flush (
-    constant ID          : in  ScoreboardIDType ;
+    constant ID          :  in  ScoreboardIDType ;
     constant ItemNumber  :  in  integer 
   ) is
   begin
@@ -2782,13 +3275,27 @@ package body ScoreBoardPkg_int is
 
   -- Tagged Scoreboards - only removes items that also match the tag
   procedure Flush (
-    constant ID          : in  ScoreboardIDType ;
+    constant ID          :  in  ScoreboardIDType ;
     constant Tag         :  in  string ; 
     constant ItemNumber  :  in  integer 
   ) is
   begin
     ScoreboardStore.Flush(ID.ID, Tag, ItemNumber) ; 
   end procedure Flush ; 
+  
+  
+  ------------------------------------------------------------
+  -- Scoreboard YAML Reports
+  impure function GotScoreboards return boolean is
+  begin
+    return ScoreboardStore.GotScoreboards ; 
+  end function GotScoreboards ; 
+  
+  ------------------------------------------------------------
+  procedure WriteScoreboardYaml (FileName : string := ""; OpenKind : File_Open_Kind := WRITE_MODE) is
+  begin
+    ScoreboardStore.WriteScoreboardYaml(FileName, OpenKind) ; 
+  end procedure WriteScoreboardYaml ; 
   
   ------------------------------------------------------------
   -- Generally these are not required.  When a simulation ends and 
@@ -2861,5 +3368,60 @@ package body ScoreBoardPkg_int is
 --    return ScoreboardStore.GetReportMode(ID.ID) ; 
 	return ScoreboardStore.GetReportMode ; 
   end function GetReportMode ; 
+  
+  --==========================================================
+  --!! Deprecated Subprograms
+  --==========================================================
+
+  ------------------------------------------------------------
+  -- Deprecated interface to NewID
+  impure function NewID (Name : String ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDType is
+  ------------------------------------------------------------
+    variable ReportMode : AlertLogReportModeType ;
+  begin
+    ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+    return ScoreboardStore.NewID(Name, ParentAlertLogID, ReportMode => ReportMode) ; 
+  end function NewID ;
+
+  ------------------------------------------------------------
+  -- Vector: 1 to Size
+  impure function NewID (Name : String ; Size : positive ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType is
+  ------------------------------------------------------------
+    variable ReportMode : AlertLogReportModeType ;
+  begin
+    ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+    return ScoreboardStore.NewID(Name, Size, ParentAlertLogID, ReportMode => ReportMode) ; 
+  end function NewID ;
+  
+  ------------------------------------------------------------
+  -- Vector: X(X'Left) to X(X'Right)
+  impure function NewID (Name : String ; X : integer_vector ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIDArrayType is
+  ------------------------------------------------------------
+    variable ReportMode : AlertLogReportModeType ;
+  begin
+    ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+    return ScoreboardStore.NewID(Name, X, ParentAlertLogID, ReportMode => ReportMode) ; 
+  end function NewID ;
+  
+  ------------------------------------------------------------
+  -- Matrix: 1 to X, 1 to Y
+  impure function NewID (Name : String ; X, Y : positive ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType is
+  ------------------------------------------------------------
+    variable ReportMode : AlertLogReportModeType ;
+  begin
+    ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+    return ScoreboardStore.NewID(Name, X, Y, ParentAlertLogID, ReportMode => ReportMode) ; 
+  end function NewID ;        
+   
+  ------------------------------------------------------------
+  -- Matrix: X(X'Left) to X(X'Right), Y(Y'Left) to Y(Y'Right)
+  impure function NewID (Name : String ; X, Y : integer_vector ; ParentAlertLogID : AlertLogIDType; DoNotReport : Boolean) return ScoreboardIdMatrixType is
+  ------------------------------------------------------------
+    variable ReportMode : AlertLogReportModeType ;
+  begin
+    ReportMode := ENABLED when not DoNotReport else DISABLED ;  
+    return ScoreboardStore.NewID(Name, X, Y, ParentAlertLogID, ReportMode => ReportMode) ; 
+  end function NewID ; 
+
   
 end ScoreBoardPkg_int ;

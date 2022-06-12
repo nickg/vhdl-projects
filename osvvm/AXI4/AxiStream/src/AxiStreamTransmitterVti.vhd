@@ -19,6 +19,10 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    03/2022   2022.03    Updated calls to NewID for AlertLogID and FIFOs
+--                         Updated handling of TStrb
+--    02/2022   2022.02    Replaced to_hstring to to_hxstring
+--    01/2022   2022.01    Moved MODEL_INSTANCE_NAME and MODEL_NAME to entity declarative region
 --    07/2021   2021.07    All FIFOs and Scoreboards now use the New Scoreboard/FIFO capability 
 --    06/2021   2021.06    Updated Burst FIFOs.
 --    02/2021   2021.02    Added Valid Delays.  Added MultiDriver Detect.  Updated Generics.
@@ -109,12 +113,14 @@ entity AxiStreamTransmitterVti is
     ParamFromModel(AXI_STREAM_PARAM_WIDTH-1 downto 0)
   ) ;
 
+  -- Use MODEL_ID_NAME Generic if set, otherwise,
+  -- use model instance label (preferred if set as entityname_1)
+  constant MODEL_INSTANCE_NAME : string :=
+    IfElse(MODEL_ID_NAME'length > 0, MODEL_ID_NAME, 
+      to_lower(PathTail(AxiStreamTransmitterVti'PATH_NAME))) ;
+
 end entity AxiStreamTransmitterVti ;
 architecture SimpleTransmitter of AxiStreamTransmitterVti is
-  constant MODEL_INSTANCE_NAME : string :=
-    -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
-    IfElse(MODEL_ID_NAME'length > 0, MODEL_ID_NAME, to_lower(PathTail(AxiStreamTransmitterVti'PATH_NAME))) ;
-
   signal ModelID, BusFailedID : AlertLogIDType ;
 --  signal ProtocolID, DataCheckID : AlertLogIDType ;
 
@@ -151,12 +157,12 @@ begin
     variable ID : AlertLogIDType ;
   begin
     -- Alerts
-    ID              := GetAlertLogID(MODEL_INSTANCE_NAME) ;
+    ID              := NewID(MODEL_INSTANCE_NAME) ;
     ModelID         <= ID ;
---    ProtocolID      <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Protocol Error", ID ) ;
---    DataCheckID     <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Data Check", ID ) ;
-    BusFailedID     <= GetAlertLogID(MODEL_INSTANCE_NAME & ": No response", ID ) ;
-    TransmitFifo    <= NewID(MODEL_INSTANCE_NAME & ": TransmitFifo", ID) ; 
+--    ProtocolID      <= NewID("Protocol Error", ID ) ;
+--    DataCheckID     <= NewID("Data Check", ID ) ;
+    BusFailedID     <= NewID("No response",  ID) ;
+    TransmitFifo    <= NewID("TransmitFifo", ID, ReportMode => DISABLED) ; 
     wait ;
   end process Initialize ;
 
@@ -230,7 +236,8 @@ begin
                       ParamID    => ParamID,
                       ParamDest  => ParamDest,
                       ParamUser  => ParamUser,
-                      ParamLast  => ParamLast,
+--Last                      ParamLast  => ParamLast,
+                      ParamLast  => 1,
                       Count      => ((TransmitRequestCount+1) - LastOffsetCount)
                     ) ;
           if BurstFifoByteMode then
@@ -240,7 +247,7 @@ begin
             NumberTransfers := TransRec.IntToModel ;
           end if ;
           TransmitRequestCount <= TransmitRequestCount + NumberTransfers ;
-  --        Last := '0' ;
+          Last := Param(0) ;
           for i in NumberTransfers-1 downto 0 loop
             case BurstFifoMode is
               when STREAM_BURST_BYTE_MODE =>
@@ -261,8 +268,8 @@ begin
               when others =>
                 Alert(ModelID, "BurstFifoMode: Invalid Mode: " & to_string(BurstFifoMode)) ;
             end case ;
-  --          Param(0) := '1' when i = 0 else Last ;  -- TLast
-            Param(0) := '1' when i = 0 else '0' ;  -- TLast
+--Last            Param(0) := '1' when i = 0 else '0' ;  -- TLast
+            Param(0) := Last when i = 0 else '0' ;  -- TLast
             Push(TransmitFifo, '1' & Data & Param) ;
           end loop ;
 
@@ -325,18 +332,15 @@ begin
 
             when others =>
               Alert(ModelID, "GetOptions, Unimplemented Option: " & to_string(AxiStreamOptionsType'val(TransRec.Options)), FAILURE) ;
-              wait for 0 ns ;
           end case ;
 
         when MULTIPLE_DRIVER_DETECT =>
-          Alert(ModelID, "AxiStreamTransmitterVti: Multiple Drivers on Transaction Record." & 
+          Alert(ModelID, "Multiple Drivers on Transaction Record." & 
                          "  Transaction # " & to_string(TransRec.Rdy), FAILURE) ;
-          wait for 0 ns ;  wait for 0 ns ;
 
         -- The End -- Done
         when others =>
           Alert(ModelID, "Unimplemented Transaction: " & to_string(TransRec.Operation), FAILURE) ;
-          wait for 0 ns ;
       end case ;
 
       -- Wait for 1 delta cycle, required if a wait is not in all case branches above
@@ -390,7 +394,7 @@ begin
       -- Calculate Strb. 1 when data else 0
       -- If Strb is unused it may be null range
       for i in Strb'range loop
-        if is_x(Data(i*8)) then
+        if Data(i*8) = 'W' or Data(i*8) = 'U' then
           Strb(i) := '0' ;
         else
           Strb(i) := '1' ;
@@ -418,12 +422,13 @@ begin
 
       Log(ModelID,
         "Axi Stream Send." &
-        "  TID: "       & to_hstring(ID) &
-        "  TDest: "     & to_hstring(Dest) &
-        "  TData: "     & to_hstring(Data) &
-        "  TUser: "     & to_hstring(User) &
-        "  TStrb: "     & to_string( Strb) &
-        "  TKeep: "     & to_string( Keep) &
+        "  TData: "     & to_hxstring(to_x01(Data)) &
+        IfElse(TStrb'length > 0, "  TStrb: "     & to_string( Strb), "") &
+        IfElse(TKeep'length > 0, "  TKeep: "     & to_string( Keep), "") &
+        IfElse(TID'length   > 0, "  TID: "       & to_hxstring(ID),   "") &
+        IfElse(TDest'length > 0, "  TDest: "     & to_hxstring(Dest), "") &
+        IfElse(TUser'length > 0, "  TUser: "     & to_hxstring(User), "") &
+        "  TLast: "     & to_string( Last) &
         -- Must be DoneCount and not RequestCount due to queuing/Async and burst operations
         "  Operation# " & to_string( TransmitDoneCount + 1),
         INFO
@@ -455,3 +460,4 @@ begin
     end loop TransmitLoop ;
   end process TransmitHandler ;
 end architecture SimpleTransmitter ;
+

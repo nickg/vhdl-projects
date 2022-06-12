@@ -19,6 +19,9 @@
 --
 --  Revision History:
 --    Date      Version    Description
+--    03/2022   2022.03    Updated calls to NewID for AlertLogID and FIFOs
+--    02/2022   2022.02    Replaced to_hstring with to_hxstring
+--    01/2022   2022.01    Moved MODEL_INSTANCE_NAME and MODEL_NAME to entity declarative region
 --    09/2021   2021.09    Minor fix to push WriteDataFifo 
 --    07/2021   2021.07    All FIFOs and Scoreboards now use the New Scoreboard/FIFO capability 
 --    06/2021   2021.06    Updates for GHDL.   
@@ -58,6 +61,7 @@ library OSVVM_Common ;
   context OSVVM_Common.OsvvmCommonContext ;
 
   use work.Axi4OptionsPkg.all ;
+  use work.Axi4InterfaceCommonPkg.all ;
   use work.Axi4InterfacePkg.all ;
   use work.Axi4ModelPkg.all ;
   use work.Axi4CommonPkg.all ;
@@ -111,14 +115,17 @@ port (
           DataToModel  (AXI_DATA_WIDTH-1 downto 0),
           DataFromModel(AXI_DATA_WIDTH-1 downto 0)
         ) ;
-        
+
+  -- Derive ModelInstance label from path_name
+  constant MODEL_INSTANCE_NAME : string :=
+    -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
+    IfElse(MODEL_ID_NAME /= "", MODEL_ID_NAME, PathTail(to_lower(Axi4SubordinateVti'PATH_NAME))) ;
+
+  constant MODEL_NAME : string := "Axi4SubordinateVti" ;
+
 end entity Axi4SubordinateVti ;
 
 architecture Transactor of Axi4SubordinateVti is
-
-  -- use MODEL_ID_NAME Generic if set, otherwise use instance label (preferred if set as entityname_1)
-  constant MODEL_INSTANCE_NAME : string :=
-    IfElse(MODEL_ID_NAME /= "", MODEL_ID_NAME, PathTail(to_lower(Axi4SubordinateVti'PATH_NAME))) ;
 
   signal ModelID, ProtocolID, DataCheckID, BusFailedID : AlertLogIDType ;
 
@@ -174,23 +181,23 @@ begin
     InitAxiOptions(Params) ;
 
     -- Alerts
-    ID                      := GetAlertLogID(MODEL_INSTANCE_NAME) ;
+    ID                      := NewID(MODEL_INSTANCE_NAME) ;
     ModelID                 <= ID ;
---    TransRec.AlertLogID     <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Transaction", ID ) ;
-    ProtocolID              <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Protocol Error", ID ) ;
-    DataCheckID             <= GetAlertLogID(MODEL_INSTANCE_NAME & ": Data Check", ID ) ;
-    BusFailedID             <= GetAlertLogID(MODEL_INSTANCE_NAME & ": No response", ID ) ;
+--    TransRec.AlertLogID     <= NewID("Transaction", ID ) ;
+    ProtocolID              <= NewID("Protocol Error", ID ) ;
+    DataCheckID             <= NewID("Data Check", ID ) ;
+    BusFailedID             <= NewID("No response", ID ) ;
 
-    -- FIFOs get an AlertLogID with NewID, however, it does not print in ReportAlerts (due to DoNotReport)
+    -- FIFOs get an AlertLogID with NewID, however, it does not print in ReportAlerts (due to ReportMode)
     --   FIFOS only generate usage type errors 
-    WriteAddressFifo           <= NewID(MODEL_INSTANCE_NAME & ": WriteAddressFIFO",             ID, DoNotReport => TRUE);
-    WriteDataFifo              <= NewID(MODEL_INSTANCE_NAME & ": WriteDataFifo",                ID, DoNotReport => TRUE);
-    WriteTransactionFifo       <= NewID(MODEL_INSTANCE_NAME & ": WriteTransactionFifo",         ID, DoNotReport => TRUE);
-    WriteResponseFifo          <= NewID(MODEL_INSTANCE_NAME & ": WriteResponseFifo",            ID, DoNotReport => TRUE);
+    WriteAddressFifo           <= NewID("WriteAddressFIFO",             ID, ReportMode => DISABLED);
+    WriteDataFifo              <= NewID("WriteDataFifo",                ID, ReportMode => DISABLED);
+    WriteTransactionFifo       <= NewID("WriteTransactionFifo",         ID, ReportMode => DISABLED);
+    WriteResponseFifo          <= NewID("WriteResponseFifo",            ID, ReportMode => DISABLED);
 
-    ReadAddressFifo            <= NewID(MODEL_INSTANCE_NAME & ": ReadAddressFifo",              ID, DoNotReport => TRUE);
-    ReadAddressTransactionFifo <= NewID(MODEL_INSTANCE_NAME & ": ReadAddressTransactionFifo",   ID, DoNotReport => TRUE);
-    ReadDataFifo               <= NewID(MODEL_INSTANCE_NAME & ": ReadDataFifo",                 ID, DoNotReport => TRUE);
+    ReadAddressFifo            <= NewID("ReadAddressFifo",              ID, ReportMode => DISABLED);
+    ReadAddressTransactionFifo <= NewID("ReadAddressTransactionFifo",   ID, ReportMode => DISABLED);
+    ReadDataFifo               <= NewID("ReadDataFifo",                 ID, ReportMode => DISABLED);
 
     wait ;
   end process Initalize ;
@@ -277,19 +284,15 @@ begin
 
       when GET_ALERTLOG_ID =>
         TransRec.IntFromModel <= integer(ModelID) ;
-        wait for 0 ns ;
 
       when GET_TRANSACTION_COUNT =>
-        TransRec.IntFromModel <= WriteAddressReceiveCount + ReadAddressReceiveCount ;
-        wait for 0 ns ;
+        TransRec.IntFromModel <= integer(TransRec.Rdy) ;
 
       when GET_WRITE_TRANSACTION_COUNT =>
         TransRec.IntFromModel <= WriteAddressReceiveCount ;
-        wait for 0 ns ;
 
       when GET_READ_TRANSACTION_COUNT =>
         TransRec.IntFromModel <= ReadAddressReceiveCount ;
-        wait for 0 ns ;
 
       when WRITE_OP | WRITE_ADDRESS | WRITE_DATA |
            ASYNC_WRITE | ASYNC_WRITE_ADDRESS | ASYNC_WRITE_DATA =>
@@ -373,9 +376,9 @@ begin
 --    -- Log this operation
 --    Log(ModelID,
 --      "Write Operation." &
---      "  AWAddr: "    & to_hstring(LocalAW.Addr) &
+--      "  AWAddr: "    & to_hxstring(LocalAW.Addr) &
 --      "  AWProt: "    & to_string(LocalAW.Prot) &
---      "  WData: "     & to_hstring(LocalWD.Data) &
+--      "  WData: "     & to_hxstring(LocalWD.Data) &
 --      "  WStrb: "     & to_string(LocalWD.Strb) &
 --      "  Operation# " & to_string(WriteReceiveCount),
 --      DEBUG
@@ -471,13 +474,12 @@ begin
         end if ;
         wait for 0 ns ; 
 
-      when MULTIPLE_DRIVER_DETECT =>
-        Alert(ModelID, "Axi4SubordinateVti: Multiple Drivers on Transaction Record." & 
-                       "  Transaction # " & to_string(TransactionCount), FAILURE) ;
-        wait for 0 ns ;  
+        when MULTIPLE_DRIVER_DETECT =>
+          Alert(ModelID, "Multiple Drivers on Transaction Record." & 
+                         "  Transaction # " & to_string(TransRec.Rdy), FAILURE) ;
 
       when others =>
-        Alert(ModelID, "Unimplemented Transaction", FAILURE) ;
+          Alert(ModelID, "Unimplemented Transaction: " & to_string(TransRec.Operation), FAILURE) ;
         wait for 0 ns ;
     end case ;
 
@@ -521,7 +523,7 @@ begin
       -- Log this operation
       Log(ModelID,
         "Write Address." &
-        "  AWAddr: "  & to_hstring(AW.Addr) &
+        "  AWAddr: "  & to_hxstring(AW.Addr) &
         "  AWProt: "  & to_string(AW.Prot) &
         "  Operation# " & to_string(WriteAddressReceiveCount + 1),
         INFO
@@ -573,7 +575,7 @@ begin
       -- Log this operation
       Log(ModelID,
         "Write Data." &
-        "  WData: "  & to_hstring(WD.Data) &
+        "  WData: "  & to_hxstring(WD.Data) &
         "  WStrb: "  & to_string(WD.Strb) &
         "  Operation# " & to_string(WriteDataReceiveCount + 1),
         INFO
@@ -624,7 +626,7 @@ begin
 
       Log(ModelID,
         "Write Response." &
-        "  BResp: "  & to_hstring(Local.Resp) &
+        "  BResp: "  & to_hxstring(Local.Resp) &
         "  Operation# " & to_string(WriteResponseDoneCount + 1),
         INFO
       ) ;
@@ -691,7 +693,7 @@ begin
 
       Log(ModelID,
         "Read Address." &
-        "  ARAddr: "  & to_hstring(AR.Addr) &
+        "  ARAddr: "  & to_hxstring(AR.Addr) &
         "  ARProt: "  & to_string(AR.Prot) &
         "  Operation# " & to_string(ReadAddressReceiveCount), -- adjusted for delay of ReadAddressReceiveCount
         INFO
@@ -746,8 +748,8 @@ begin
 
       Log(ModelID,
         "Read Data." &
-        "  RData: "  & to_hstring(Local.Data) &
-        "  RResp: "  & to_hstring(Local.Resp) &
+        "  RData: "  & to_hxstring(Local.Data) &
+        "  RResp: "  & to_hxstring(Local.Resp) &
         "  Operation# " & to_string(ReadDataDoneCount + 1),
         INFO
       ) ;
