@@ -11,9 +11,6 @@ R_OPTS="--stop-delta=3000"
 
 GHDL_OPTS=
 
-mkdir -p results
-mkdir -p reports
-
 analyse bitvis_uart/tb/uart_vvc_demo_th.vhd
 analyse bitvis_uart/tb/uart_vvc_demo_tb.vhd
 
