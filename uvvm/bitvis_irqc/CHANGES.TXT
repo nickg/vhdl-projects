@@ -1,0 +1,52 @@
+Bitvis IRQC - Overview on Versions and Changes
+==============================================================
+
+
+v1.0.12
+----------
+Released: 2021-10-22
+- Updated ghdl_compile_all_and_simulate.sh with new uvvm_util 
+  packages.
+
+v1.0.11
+----------
+Released: 2020-08-18
+- Removed dependencies reference from compile_src.do script.
+
+v1.0.10
+----------
+Released: 2020-02-16
+- Added missing Scoreboard VIP to IRQC dependencies list.
+
+v1.0.9
+----------
+Released: 2019-11-21
+- Update LICENSE.TXT
+
+v1.0.8
+----------
+Released: 2019-06-06
+- Minor changes to scripts.
+- Renamed demo testbench.
+
+v1.0.7
+----------
+Released: 2018-09-28
+- compile_bfm.do changed to compile_src.do in compile_tb_dep.do
+
+v1.0.6
+----------
+Released: 2018-08-30
+- Script updated to work with Riviera Pro
+
+v1.0.5
+----------
+Released: 2017-12-20
+- Removed log() overload from TB.
+
+v1.0.4
+----------
+Released: 2017-06-08
+- Renamed sim/compile_order.txt to compile_and_run.txt
+- Added compile order file to script folder
+

@@ -96,7 +96,33 @@ WORK=techmap analyse lib/techmap/gencomp/gencomp.vhd \
     lib/techmap/inferred/lpddr2_phy_inferred.vhd \
     lib/techmap/ec/memory_ec.vhd \
     lib/techmap/ec/ddr_ec.vhd \
-    lib/techmap/unisim/memory_kintex7.vhd \
+    lib/techmap/maps/techbuf.vhd \
+    lib/techmap/maps/clkgen.vhd \
+    lib/techmap/maps/clkmux.vhd \
+    lib/techmap/maps/clkinv.vhd \
+    lib/techmap/maps/clkand.vhd \
+    lib/techmap/maps/grgates.vhd \
+    lib/techmap/maps/ddr_ireg.vhd \
+    lib/techmap/maps/ddr_oreg.vhd \
+    lib/techmap/maps/clkpad.vhd \
+    lib/techmap/maps/clkpad_ds.vhd \
+    lib/techmap/maps/inpad.vhd \
+    lib/techmap/maps/inpad_ds.vhd \
+    lib/techmap/maps/iodpad.vhd \
+    lib/techmap/maps/iopad.vhd \
+    lib/techmap/maps/iopad_ds.vhd \
+    lib/techmap/maps/lvds_combo.vhd \
+    lib/techmap/maps/odpad.vhd \
+    lib/techmap/maps/outpad.vhd \
+    lib/techmap/maps/outpad_ds.vhd \
+    lib/techmap/maps/toutpad.vhd \
+    lib/techmap/maps/toutpad_ds.vhd \
+    lib/techmap/maps/skew_outpad.vhd \
+    lib/techmap/maps/ddrphy.vhd
+
+if false; then
+  # The following need vendor packages or are unused
+  WORK=techmap analyse lib/techmap/unisim/memory_kintex7.vhd \
     lib/techmap/unisim/memory_ultrascale.vhd \
     lib/techmap/unisim/memory_unisim.vhd \
     lib/techmap/unisim/buffer_unisim.vhd \
@@ -208,6 +234,7 @@ WORK=techmap analyse lib/techmap/gencomp/gencomp.vhd \
     lib/techmap/maps/toutpad_tm.vhd \
     lib/techmap/maps/memrwcol.vhd \
     lib/techmap/maps/cdcbus.vhd
+fi
 
 WORK=spw analyse lib/spw/comp/spwcomp.vhd \
     lib/spw/wrapper/grspw_gen.vhd \
