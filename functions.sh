@@ -52,7 +52,7 @@ run () {
     ghdl)
       time _ghdl -r -P.ghdl/ $GHDL_OPTS $_top \
 	   ${STOP_TIME+--stop-time=$STOP_TIME} \
-	   --max-stack-alloc=0
+	   --max-stack-alloc=0 $GHDL_R_OPTS
       ;;
     nvc)
       _nvc -r $_top --stats $R_OPTS \
