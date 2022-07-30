@@ -92,11 +92,8 @@ analyse test_fpfixed.vhdl \
         test_fp32.vhdl
 
 # test_fpfixed   <--- error about REAL'HIGH
-# test_fphdl     <--- missing vcode unit IEEE.FLOAT_GENERIC_PKG
 
-exit   # Temporarily disabled
-
-for TOP in test_fphdl128 test_fphdl16 test_fphdl64 test_fphdlbase \
+for TOP in test_fphdl test_fphdl128 test_fphdl16 test_fphdl64 test_fphdlbase \
            test_fixed2 test_fixed3 test_fixed_nr test_fixed_synth \
            test_fixed test_float_synth test_fp32; do
   elaborate
