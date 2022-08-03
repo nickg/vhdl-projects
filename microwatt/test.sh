@@ -56,12 +56,12 @@ analyse decode_types.vhdl \
         spi_rxtx.vhdl \
         spi_flash_ctrl.vhdl \
         dmi_dtm_xilinx.vhdl \
-        soc.vhdl \
-        sim_console.vhdl \
-        sim_pp_uart.vhdl \
         sim_jtag_socket.vhdl \
         sim_jtag.vhdl \
+        sim_console.vhdl \
         sim_16550_uart.vhdl \
+        sim_pp_uart.vhdl \
+        soc.vhdl \
         core_tb.vhdl
 
 elaborate
