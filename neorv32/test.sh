@@ -17,7 +17,7 @@ GHDL_R_OPTS="--ieee-asserts=disable --assert-level=error"
 
 WORK=neorv32
 TOP=neorv32_tb_simple
-STOP_TIME=10ms
+STOP_TIME=1200us
 
 analyse rtl/core/neorv32_package.vhd
 analyse rtl/core/neorv32_application_image.vhd
