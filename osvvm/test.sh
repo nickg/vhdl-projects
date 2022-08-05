@@ -10,6 +10,7 @@ E_OPTS=
 R_OPTS=
 
 GHDL_OPTS=
+NVC_OPTS="-H 64m"
 
 mkdir -p results
 mkdir -p reports
@@ -34,11 +35,10 @@ for TOP in TbUart_{SendGet1,SendGet2,Checkers1,Checkers2} \
   run
 done
 
-exit  # Not working yet
-
 WORK=osvvm_tbaxi4
 
-analyse AXI4/Axi4Lite/testbench/TestCtrl_e.vhd \
+analyse AXI4/Axi4Lite/testbench/OsvvmTestCommonPkg.vhd \
+        AXI4/Axi4Lite/testbench/TestCtrl_e.vhd \
         AXI4/Axi4Lite/testbench/TbAxi4.vhd \
         AXI4/Axi4Lite/testbench/TbAxi4_BasicReadWrite.vhd \
         AXI4/Axi4Lite/testbench/TbAxi4_MemoryReadWrite1.vhd \
