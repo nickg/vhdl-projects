@@ -11,6 +11,23 @@ R_OPTS="--stop-delta=3000 --exit-severity=failure"
 
 GHDL_OPTS=
 
+WORK=bitvis_uart
+
+analyse bitvis_uart/src/uart_pkg.vhd \
+        bitvis_uart/src/uart_pif_pkg.vhd \
+        bitvis_uart/src/uart_pif.vhd \
+        bitvis_uart/src/uart_core.vhd \
+        bitvis_uart/src/uart.vhd
+
+WORK=bitvis_irqc
+
+analyse bitvis_irqc/src/irqc_pif_pkg.vhd \
+        bitvis_irqc/src/irqc_pif.vhd \
+        bitvis_irqc/src/irqc_core.vhd \
+        bitvis_irqc/src/irqc.vhd
+
+WORK=uvvm_test
+
 analyse bitvis_uart/tb/uart_vvc_demo_th.vhd
 analyse bitvis_uart/tb/uart_vvc_demo_tb.vhd
 
