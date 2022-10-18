@@ -36,8 +36,15 @@ analyse bitvis_irqc/tb/irqc_demo_tb.vhd
 analyse bitvis_vip_uart/tb/uvvm_demo_th.vhd
 analyse bitvis_vip_uart/tb/uvvm_demo_tb.vhd
 
-for TOP in uart_vvc_demo_tb uart_vvc_demo_tb uvvm_demo_tb; do
-  elaborate
-  run
-done
+analyse bitvis_vip_ethernet/tb/ethernet_mac_pkg.vhd \
+        bitvis_vip_ethernet/tb/ethernet_mac.vhd \
+        bitvis_vip_ethernet/tb/ethernet_sbi_gmii_demo_th.vhd \
+        bitvis_vip_ethernet/tb/ethernet_sbi_gmii_demo_tb.vhd \
+        bitvis_vip_ethernet/tb/sbi_fifo.vhd \
+        bitvis_vip_ethernet/tb/ethernet_nvc_test.vhd
 
+for TOP in uart_vvc_demo_tb uart_vvc_demo_tb uvvm_demo_tb \
+           ethernet_sbi_gmii_demo_tb ethernet_nvc_tb; do
+   elaborate
+   run
+done
