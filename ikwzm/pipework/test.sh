@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd $(dirname $0)
-. ../functions.sh
+. ../../functions.sh
 
 STD=1993
 TOP=
@@ -122,8 +122,7 @@ analyse src/test/vhdl/chopper/chopper_function_model.vhd \
         src/test/vhdl/chopper/chopper_test_bench.vhd
 
 for TOP in chopper_test_bench; do
- elaborate
- run
+  run_jit
 done
 
 analyse src/test/vhdl/axi4_adapter/axi4_read_adapter.vhd \
@@ -133,16 +132,14 @@ analyse src/test/vhdl/axi4_adapter/axi4_read_adapter.vhd \
         src/test/vhdl/axi4_adapter/axi4_adapter_test_bench_4096_32_32.vhd
 
 for TOP in axi4_adapter_test_bench_4096_32_32; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/axi4_lite/axi4_lite_test_bench.vhd \
         src/test/vhdl/axi4_lite/axi4_lite_test_bench_32_32.vhd
 
 for TOP in axi4_lite_test_bench_32_32; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/axi4_master_to_stream/axi4_master_to_stream.vhd \
@@ -168,8 +165,7 @@ analyse src/test/vhdl/axi4_register_interface/axi4_register_interface_test_bench
 for TOP in axi4_register_interface_test_bench_32_32 \
              axi4_register_interface_test_bench_32_64 \
              axi4_register_interface_test_bench_64_32; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/image_stream_models/image_stream_player.vhd \
@@ -183,43 +179,37 @@ analyse src/test/vhdl/image_stream_models/image_stream_player.vhd \
 for TOP in convolution_parameter_buffer_test_bench_3x3x2x4 \
              image_stream_player_test_8x0x0x2x2 \
              image_stream_buffer_test_4_8_1x1x1_1x1x1x1; do
- elaborate
- run
+  run_jit
 done
 
 analyse src/test/vhdl/delay_register/delay_register_test_bench.vhd
 
 for TOP in delay_register_test_bench_all; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/pipeline_register/pipeline_register_test_bench.vhd
 
 for TOP in pipeline_register_test_bench_{0,1,2}; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/priority_encoder/test_bench.vhd
 
 for TOP in test_bench_all; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/queue_arbiter/test_bench.vhd
 
 for TOP in test_bench_one_hot_arch test_bench_integer_arch; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/queue_receiver/queue_receiver_test_bench.vhd
 
 for TOP in queue_receiver_test_bench_all; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse src/test/vhdl/sdpram/test_bench.vhd
@@ -232,6 +222,5 @@ for TOP in sdpram_test_bench_depth08_rd3_wd3_we0 \
              sdpram_test_bench_depth08_rd3_wd5_we0 \
              sdpram_test_bench_depth08_rd4_wd3_we0 \
              sdpram_test_bench_depth08_rd5_wd3_we0; do
-  elaborate
-  run
+  run_jit
 done

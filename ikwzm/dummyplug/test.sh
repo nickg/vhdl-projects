@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd $(dirname $0)
-. ../functions.sh
+. ../../functions.sh
 
 STD=1993
 WORK=dummy_plug
@@ -42,8 +42,6 @@ analyse src/test/vhdl/core/reader_test_1.vhd \
         src/test/vhdl/axi4/axi4_stream_test_1.vhd \
         src/test/vhdl/axi4/axi4_stream_test_1_1.vhd
 
-for TOP in DUMMY_PLUG_AXI4_TEST_1_{1,2,3,4} DUMMY_PLUG_AXI4_STREAM_TEST_1_1; do     
-  elaborate
-  run
+for TOP in DUMMY_PLUG_AXI4_TEST_1_{1,2,3,4} DUMMY_PLUG_AXI4_STREAM_TEST_1_1; do
+  run_jit
 done
-

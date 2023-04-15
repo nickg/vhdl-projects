@@ -60,3 +60,18 @@ run () {
       ;;
   esac
 }
+
+run_jit () {
+  local _top=${TOP:-$1}
+  _filter_test $_top || return
+  case ${SIM:-nvc} in
+    ghdl)
+      elaborate
+      run
+      ;;
+    nvc)
+      _nvc -e -V $E_OPTS $_top --no-save --jit -r --stats $R_OPTS \
+	   ${STOP_TIME+--stop-time=$STOP_TIME}
+      ;;
+  esac
+}

@@ -1,0 +1,498 @@
+---
+- OUT  : 
+  - OUT    : {GPO(0): 0, GPO(1): 0}
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1 Start.
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.1 SIZE=1 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x0000024E, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x0000024E, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.2 SIZE=2 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x00000118, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002A9, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x00000118, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002A9, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.3 SIZE=3 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x0000014F, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000099, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002EF, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x00000099, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000014F, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002EF, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.4 SIZE=4 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x00000137, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000016C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000012D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003CA, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x0000012D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000137, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000016C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003CA, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.5 SIZE=5 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x00000317, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001FA, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000001B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000312, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002C3, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x0000001B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001FA, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000312, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000317, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002C3, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.6 SIZE=6 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x000000ED, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000DC, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001C9, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000393, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000330, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002A0, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000000DC, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000ED, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001C9, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000393, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002A0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000330, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.7 SIZE=7 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x00000117, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003D2, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000034, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000205, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001DB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000101, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000388, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x00000034, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000117, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000205, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003D2, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000101, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001DB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000388, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.8 SIZE=8 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x000000E7, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000014A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002A4, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000227, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002B9, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000000D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000268, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000098, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000000E7, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000014A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000227, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002A4, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000000D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000098, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000268, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002B9, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.9 SIZE=9 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x0000023C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000FE, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003B4, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003FA, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000F5, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000012C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000239, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000046, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002E3, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000000FE, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000023C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003B4, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003FA, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000046, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000F5, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000012C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000239, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002E3, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.10 SIZE=10 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x000000AB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001FC, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002E0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000004B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000033A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001B6, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002F0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000B3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002C0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000309, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x0000004B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000AB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001FC, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002E0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000B3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001B6, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002F0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000033A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002C0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000309, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.11 SIZE=11 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x000001A9, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000022, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000034A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000264, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001BF, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001C0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000017B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000242, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000157, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003D9, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003AE, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x00000022, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001A9, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000264, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000034A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000017B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001BF, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001C0, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000242, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000157, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003AE, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003D9, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.12 SIZE=12 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x0000033D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000228, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000122, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003F2, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000188, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003DD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000239, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000002C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002F5, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003D2, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003EB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000088, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x00000122, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000228, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000033D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003F2, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000002C, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000188, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000239, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003DD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000088, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002F5, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003D2, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003EB, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.13 SIZE=13 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x00000326, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000353, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000022E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000E3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000A1, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000223, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000010, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000297, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000333, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000D3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000111, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000028D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001D6, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000000E3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000022E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000326, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000353, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000010, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000A1, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000223, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000297, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000D3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000111, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000028D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000333, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001D6, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.14 SIZE=14 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x00000249, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001AF, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003A8, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000274, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000030D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002B3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000A5, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000AD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000329, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000B8, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000228, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000007A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000276, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002DE, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000001AF, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000249, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000274, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003A8, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000A5, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000AD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002B3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000030D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000007A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000B8, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000228, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000329, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000276, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002DE, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.15 SIZE=15 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x000000DD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000031E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002AD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000EB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000001D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000016F, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000043, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000049, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000001B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003CF, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000011B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000171, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000335, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000031E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000E3, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000000DD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000EB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002AD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000031E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000001D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000043, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000049, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000016F, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000001B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000011B, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000171, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000003CF, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000E3, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000031E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000335, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1.16 SIZE=16 Start.
+- OUT  : 
+  - OUT    : {GPO(0): 1}
+  - WAIT   : {GPI(0): 1}
+  - OUT    : {GPO(0): 0}
+- STM_I  : 
+  - XFER   : {DATA: 0x000001FB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000000D1, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001B8, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000022F, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000248, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000018D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000212, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000127, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002E6, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000162, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000038E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000350, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000105, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000016A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000025A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001CD, USER: 0x0, LAST: 1}
+- OUT  : 
+  - XFER   : {DATA: 0x000000D1, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001B8, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001FB, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000022F, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000127, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000018D, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000212, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000248, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000162, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000002E6, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000350, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000038E, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x00000105, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000016A, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x000001CD, USER: 0x0, LAST: 0}
+  - XFER   : {DATA: 0x0000025A, USER: 0x0, LAST: 1}
+- OUT  : 
+  - OUT    : {GPO(1): 1}
+  - WAIT   : {GPI(1): 1}
+  - OUT    : {GPO(1): 0}
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 1 Done.
+---
+---
+- OUT  : 
+  - OUT    : {GPO(0): 0, GPO(1): 0}
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 2 Start.
+---
+- MARCHAL  : 
+  - SAY     : Merge_Sorter_Core(MRG_WAYS=4,MRG_WORDS=1,MRG_ENABLE=false,STM_ENABLE=true,STM_FEEDBACK=0) TEST 2 Done.
+---
