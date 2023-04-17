@@ -6,10 +6,10 @@ library Axcelerator;
 use Axcelerator.all;
 
 entity edac_RAM is 
-    port( axwdata : in std_logic_vector(17 downto 0); axrdata : 
-        out std_logic_vector(17 downto 0);axwe, axre : in 
-        std_logic; axwaddr : in std_logic_vector(7 downto 0); 
-        axraddr : in std_logic_vector(7 downto 0);clk : in 
+    port( axwdata : in std_logic_vector(35 downto 0); axrdata : 
+        out std_logic_vector(35 downto 0);axwe, axre : in 
+        std_logic; axwaddr : in std_logic_vector(10 downto 0); 
+        axraddr : in std_logic_vector(10 downto 0);clk : in 
         std_logic) ;
 end edac_RAM;
 
@@ -49,14 +49,14 @@ architecture DEF_ARCH of  edac_RAM is
     VCC_2_net : VCC port map(Y => VCC_1_net);
     GND_2_net : GND port map(Y => GND_1_net);
     RAMBLOCK_0_inst : RAM64K36
-      port map(WCLK => clk, RCLK => clk, DEPTH0 => GND_1_net, 
-        DEPTH1 => GND_1_net, DEPTH2 => GND_1_net, DEPTH3 => 
+      port map(WCLK => clk, RCLK => clk, DEPTH0 => VCC_1_net, 
+        DEPTH1 => VCC_1_net, DEPTH2 => VCC_1_net, DEPTH3 => 
         GND_1_net, WEN => axwe, WW0 => GND_1_net, WW1 => 
         GND_1_net, WW2 => VCC_1_net, WRAD0 => axwaddr(0), 
         WRAD1 => axwaddr(1), WRAD2 => axwaddr(2), WRAD3 => 
         axwaddr(3), WRAD4 => axwaddr(4), WRAD5 => axwaddr(5), 
         WRAD6 => axwaddr(6), WRAD7 => axwaddr(7), WRAD8 => 
-        GND_1_net, WRAD9 => GND_1_net, WRAD10 => GND_1_net, 
+        axwaddr(8), WRAD9 => axwaddr(9), WRAD10 => axwaddr(10), 
         WRAD11 => GND_1_net, WRAD12 => GND_1_net, WRAD13 => 
         GND_1_net, WRAD14 => GND_1_net, WRAD15 => GND_1_net, 
         WD0 => axwdata(0), WD1 => axwdata(1), WD2 => axwdata(2), 
@@ -76,8 +76,8 @@ architecture DEF_ARCH of  edac_RAM is
         axraddr(0), RDAD1 => axraddr(1), RDAD2 => axraddr(2), 
         RDAD3 => axraddr(3), RDAD4 => axraddr(4), RDAD5 => 
         axraddr(5), RDAD6 => axraddr(6), RDAD7 => axraddr(7), 
-        RDAD8 => GND_1_net, RDAD9 => GND_1_net, RDAD10 => 
-        GND_1_net, RDAD11 => GND_1_net, RDAD12 => GND_1_net, 
+        RDAD8 => axraddr(8), RDAD9 => axraddr(9), RDAD10 => 
+        axraddr(10), RDAD11 => GND_1_net, RDAD12 => GND_1_net, 
         RDAD13 => GND_1_net, RDAD14 => GND_1_net, RDAD15 => 
         GND_1_net, RD0 => axrdata(0), RD1 => axrdata(1), RD2 => 
         axrdata(2), RD3 => axrdata(3), RD4 => axrdata(4), RD5 => 
@@ -91,4 +91,49 @@ architecture DEF_ARCH of  edac_RAM is
         RD26 => OPEN , RD27 => OPEN , RD28 => OPEN , RD29 => 
         OPEN , RD30 => OPEN , RD31 => OPEN , RD32 => OPEN , 
         RD33 => OPEN , RD34 => OPEN , RD35 => OPEN );
+    RAMBLOCK_1_inst : RAM64K36
+      port map(WCLK => clk, RCLK => clk, DEPTH0 => VCC_1_net, 
+        DEPTH1 => VCC_1_net, DEPTH2 => VCC_1_net, DEPTH3 => 
+        GND_1_net, WEN => axwe, WW0 => GND_1_net, WW1 => 
+        GND_1_net, WW2 => VCC_1_net, WRAD0 => axwaddr(0), 
+        WRAD1 => axwaddr(1), WRAD2 => axwaddr(2), WRAD3 => 
+        axwaddr(3), WRAD4 => axwaddr(4), WRAD5 => axwaddr(5), 
+        WRAD6 => axwaddr(6), WRAD7 => axwaddr(7), WRAD8 => 
+        axwaddr(8), WRAD9 => axwaddr(9), WRAD10 => axwaddr(10), 
+        WRAD11 => GND_1_net, WRAD12 => GND_1_net, WRAD13 => 
+        GND_1_net, WRAD14 => GND_1_net, WRAD15 => GND_1_net, 
+        WD0 => axwdata(18), WD1 => axwdata(19), WD2 => 
+        axwdata(20), WD3 => axwdata(21), WD4 => axwdata(22), 
+        WD5 => axwdata(23), WD6 => axwdata(24), WD7 => 
+        axwdata(25), WD8 => axwdata(26), WD9 => axwdata(27), 
+        WD10 => axwdata(28), WD11 => axwdata(29), WD12 => 
+        axwdata(30), WD13 => axwdata(31), WD14 => axwdata(32), 
+        WD15 => axwdata(33), WD16 => axwdata(34), WD17 => 
+        axwdata(35), WD18 => GND_1_net, WD19 => GND_1_net, 
+        WD20 => GND_1_net, WD21 => GND_1_net, WD22 => GND_1_net, 
+        WD23 => GND_1_net, WD24 => GND_1_net, WD25 => GND_1_net, 
+        WD26 => GND_1_net, WD27 => GND_1_net, WD28 => GND_1_net, 
+        WD29 => GND_1_net, WD30 => GND_1_net, WD31 => GND_1_net, 
+        WD32 => GND_1_net, WD33 => GND_1_net, WD34 => GND_1_net, 
+        WD35 => GND_1_net, REN => axre, RW0 => GND_1_net, RW1 => 
+        GND_1_net, RW2 => VCC_1_net, RDAD0 => axraddr(0), 
+        RDAD1 => axraddr(1), RDAD2 => axraddr(2), RDAD3 => 
+        axraddr(3), RDAD4 => axraddr(4), RDAD5 => axraddr(5), 
+        RDAD6 => axraddr(6), RDAD7 => axraddr(7), RDAD8 => 
+        axraddr(8), RDAD9 => axraddr(9), RDAD10 => axraddr(10), 
+        RDAD11 => GND_1_net, RDAD12 => GND_1_net, RDAD13 => 
+        GND_1_net, RDAD14 => GND_1_net, RDAD15 => GND_1_net, 
+        RD0 => axrdata(18), RD1 => axrdata(19), RD2 => 
+        axrdata(20), RD3 => axrdata(21), RD4 => axrdata(22), 
+        RD5 => axrdata(23), RD6 => axrdata(24), RD7 => 
+        axrdata(25), RD8 => axrdata(26), RD9 => axrdata(27), 
+        RD10 => axrdata(28), RD11 => axrdata(29), RD12 => 
+        axrdata(30), RD13 => axrdata(31), RD14 => axrdata(32), 
+        RD15 => axrdata(33), RD16 => axrdata(34), RD17 => 
+        axrdata(35), RD18 => OPEN , RD19 => OPEN , RD20 => OPEN , 
+        RD21 => OPEN , RD22 => OPEN , RD23 => OPEN , RD24 => 
+        OPEN , RD25 => OPEN , RD26 => OPEN , RD27 => OPEN , 
+        RD28 => OPEN , RD29 => OPEN , RD30 => OPEN , RD31 => 
+        OPEN , RD32 => OPEN , RD33 => OPEN , RD34 => OPEN , 
+        RD35 => OPEN );
 end DEF_ARCH;

@@ -6,20 +6,20 @@ entity edac_tb is
 end entity;
 
 architecture test of edac_tb is
-    signal wdata           : std_logic_vector(7 downto 0) := X"00";
-    signal waddr           : std_logic_vector(7 downto 0) := X"00";
-    signal raddr           : std_logic_vector(7 downto 0) := X"00";
+    signal wdata           : std_logic_vector(15 downto 0) := X"0000";
+    signal waddr           : std_logic_vector(10 downto 0) := (others => '0');
+    signal raddr           : std_logic_vector(10 downto 0) := (others => '0');
     signal we              : std_logic := '0';
     signal re              : std_logic := '0';
     signal rstn            : std_logic := '0';
     signal clk             : std_logic := '0';
     signal stop_scrub      : std_logic := '1';
-    signal rdata           : std_logic_vector(7 downto 0);
+    signal rdata           : std_logic_vector(15 downto 0);
     signal slowdown        : std_logic;
     signal error           : std_logic;
     signal correctable     : std_logic;
     signal scrub_corrected : std_logic;
-    signal caddr           : std_logic_vector(7 downto 0);
+    signal caddr           : std_logic_vector(10 downto 0);
     signal scrub_done      : std_logic;
     signal tmoutflg        : std_logic;
 
@@ -48,7 +48,7 @@ begin
             tmoutflg        => tmoutflg );
 
     stim: process is
-        variable tmp : std_logic_vector(7 downto 0);
+        variable tmp : std_logic_vector(15 downto 0);
     begin
         wait for 100 ns;
         wait until falling_edge(clk);
@@ -60,8 +60,8 @@ begin
         for repeat in 1 to 10 loop
 
             for i in 0 to 255 loop
-                tmp := std_logic_vector(to_unsigned(i, 8));
-                waddr <= tmp;
+                tmp := std_logic_vector(to_unsigned(i, 16));
+                waddr <= tmp(10 downto 0);
                 wdata <= tmp;
                 wait until falling_edge(clk);
                 we <= '1';
@@ -69,9 +69,16 @@ begin
                 we <= '0';
             end loop;
 
+            wait until falling_edge(clk);
+            stop_scrub <= '0';
+            wait for 10 us;
+            wait until falling_edge(clk);
+            stop_scrub <= '1';
+            wait until falling_edge(clk);
+
             for i in 0 to 255 loop
-                tmp := std_logic_vector(to_unsigned(i, 8));
-                raddr <= tmp;
+                tmp := std_logic_vector(to_unsigned(i, 16));
+                raddr <= tmp(10 downto 0);
                 re <= '1';
                 wait until falling_edge(clk);
                 assert rdata = tmp;

@@ -10,9 +10,9 @@ A_OPTS=
 E_OPTS=
 R_OPTS=
 
-GHDL_OPTS=
+GHDL_OPTS="-frelaxed -fsynopsys"
 
-analyse edac_RAM.vhd edac.vhd edaci_18.vhd edac_tb.vhd
+analyse edac_RAM.vhd edac.vhd edaci_36.vhd edac_tb.vhd
 
 elaborate
 run
