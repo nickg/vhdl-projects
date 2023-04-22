@@ -31,8 +31,7 @@ analyse UART/testbench/OsvvmTestCommonPkg.vhd \
 
 for TOP in TbUart_{SendGet1,SendGet2,Checkers1,Checkers2} \
            TbUart_{Options1,Options2,Overload1,Scoreboard1}; do
-  elaborate
-  run
+  run_jit
 done
 
 WORK=osvvm_tbaxi4
@@ -53,6 +52,5 @@ analyse AXI4/Axi4Lite/testbench/OsvvmTestCommonPkg.vhd \
 for TOP in TbAxi4_{BasicReadWrite,ReadWriteAsync1,ReadWriteAsync2} \
            TbAxi4_{ReadWriteAsync3,RandomReadWrite,RandomReadWriteByte} \
            TbAxi4_{TimeOut,WriteOptions,MemoryReadWrite1}; do
-  elaborate
-  run
+  run_jit
 done
