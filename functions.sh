@@ -33,6 +33,7 @@ analyse () {
   case ${SIM:-nvc} in
     ghdl) _ghdl -a -P.ghdl/ $GHDL_OPTS $_files ;;
     nvc)  _nvc -a $A_OPTS $_files ;;
+    questa) _vcom $_files ;;
   esac
 }
 
@@ -54,6 +55,10 @@ run () {
 	   ${STOP_TIME+--stop-time=$STOP_TIME} \
 	   --max-stack-alloc=0 $GHDL_R_OPTS
       ;;
+    questa)
+      printf "run\nquit\n" >/tmp/questa.do
+      vsim -batch -do /tmp/questa.do $_top
+      ;;
     nvc)
       _nvc -r $_top --stats $R_OPTS \
 	   ${STOP_TIME+--stop-time=$STOP_TIME}
@@ -65,7 +70,7 @@ run_jit () {
   local _top=${TOP:-$1}
   _filter_test $_top || return
   case ${SIM:-nvc} in
-    ghdl)
+    ghdl|questa)
       elaborate
       run
       ;;

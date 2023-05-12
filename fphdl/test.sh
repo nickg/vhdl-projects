@@ -38,8 +38,7 @@ analyse standard_additions_c.vhdl \
 
 for TOP in numeric_bit_tb{1,2,3,4,5} numeric_std_tb{1,2,3,4,5} \
            real_tests complex_tests; do
-  elaborate
-  run
+  run_jit
 done
 
 STD=2008
@@ -68,8 +67,7 @@ for TOP in test_logical test_minmax test_nbuns test_nuns_su test_nuns \
            test_realstring test_std_textio_add test_standard_additions \
            test_std_logic_textio test_new1164 test_bstring test_bminmax \
            test_breduce_pack; do
-  elaborate
-  run
+  run_jit
 done
 
 analyse test_fpfixed.vhdl \
@@ -96,6 +94,5 @@ analyse test_fpfixed.vhdl \
 for TOP in test_fphdl test_fphdl128 test_fphdl16 test_fphdl64 test_fphdlbase \
            test_fixed2 test_fixed3 test_fixed_nr test_fixed_synth \
            test_fixed test_float_synth test_fp32; do
-  elaborate
-  run
+  run_jit
 done
