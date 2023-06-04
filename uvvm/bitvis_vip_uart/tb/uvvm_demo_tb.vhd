@@ -539,7 +539,7 @@ begin
     log(ID_LOG_HDR, "SIMULATION COMPLETED", C_SCOPE);
 
     -- Finish the simulation
-    std.env.stop;
+    std.env.stop(0);
     wait;  -- to stop completely
 
   end process p_main;
