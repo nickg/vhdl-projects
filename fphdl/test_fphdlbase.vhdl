@@ -1636,29 +1636,29 @@ begin  -- architecture testbench
         b_su := b;
         b_bv := bv4'(others => b);
 
-        assert STD_LOGIC_VECTOR(a_suv and b_su) = STD_LOGIC_VECTOR'(a_bv and b_bv)
+        assert to_slv(a_suv and b_su) = STD_LOGIC_VECTOR'(a_bv and b_bv)
           report "error in a_suv and b_su";
-        assert STD_LOGIC_VECTOR(b_su and a_suv) = STD_LOGIC_VECTOR'(b_bv and a_bv)
+        assert to_slv(b_su and a_suv) = STD_LOGIC_VECTOR'(b_bv and a_bv)
           report "error in b_su and a_suv";
-        assert STD_LOGIC_VECTOR(a_suv nand b_su) = STD_LOGIC_VECTOR'(a_bv nand b_bv)
+        assert to_slv(a_suv nand b_su) = STD_LOGIC_VECTOR'(a_bv nand b_bv)
           report "error in a_suv nand b_su";
-        assert STD_LOGIC_VECTOR(b_su nand a_suv) = STD_LOGIC_VECTOR'(b_bv nand a_bv)
+        assert to_slv(b_su nand a_suv) = STD_LOGIC_VECTOR'(b_bv nand a_bv)
           report "error in b_su nand a_suv";
-        assert STD_LOGIC_VECTOR(a_suv or b_su) = STD_LOGIC_VECTOR'(a_bv or b_bv)
+        assert to_slv(a_suv or b_su) = STD_LOGIC_VECTOR'(a_bv or b_bv)
           report "error in a_suv or b_su";
-        assert STD_LOGIC_VECTOR(b_su or a_suv) = STD_LOGIC_VECTOR'(b_bv or a_bv)
+        assert to_slv(b_su or a_suv) = STD_LOGIC_VECTOR'(b_bv or a_bv)
           report "error in b_su or a_suv";
-        assert STD_LOGIC_VECTOR(a_suv nor b_su) = STD_LOGIC_VECTOR'(a_bv nor b_bv)
+        assert to_slv(a_suv nor b_su) = STD_LOGIC_VECTOR'(a_bv nor b_bv)
           report "error in a_suv nor b_su";
-        assert STD_LOGIC_VECTOR(b_su nor a_suv) = STD_LOGIC_VECTOR'(b_bv nor a_bv)
+        assert to_slv(b_su nor a_suv) = STD_LOGIC_VECTOR'(b_bv nor a_bv)
           report "error in b_su nor a_suv";
-        assert STD_LOGIC_VECTOR(a_suv xor b_su) = STD_LOGIC_VECTOR'(a_bv xor b_bv)
+        assert to_slv(a_suv xor b_su) = STD_LOGIC_VECTOR'(a_bv xor b_bv)
           report "error in a_suv xor b_su";
-        assert STD_LOGIC_VECTOR(b_su xor a_suv) = STD_LOGIC_VECTOR'(b_bv xor a_bv)
+        assert to_slv(b_su xor a_suv) = STD_LOGIC_VECTOR'(b_bv xor a_bv)
           report "error in b_su xor a_suv";
-        assert STD_LOGIC_VECTOR(a_suv xnor b_su) = STD_LOGIC_VECTOR'(a_bv xnor b_bv)
+        assert to_slv(a_suv xnor b_su) = STD_LOGIC_VECTOR'(a_bv xnor b_bv)
           report "error in a_suv xnor b_su";
-        assert STD_LOGIC_VECTOR(b_su xnor a_suv) = STD_LOGIC_VECTOR'(b_bv xnor a_bv)
+        assert to_slv(b_su xnor a_suv) = STD_LOGIC_VECTOR'(b_bv xnor a_bv)
           report "error in b_su xnor a_suv";
         wait for 1 ns;
       end loop;
