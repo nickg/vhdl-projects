@@ -1,14 +1,35 @@
 #!/bin/bash
 
+_wrapper () {
+  echo $*
+  case "$TIME" in
+    hyperfine)
+      hyperfine -N -w 1 -m 5 -u millisecond -- "$*"
+      ;;
+    perf)
+      perf stat -- $*
+      ;;
+    time)
+      time -- $*
+      ;;
+    "")
+      $*
+      ;;
+    *)
+      echo "invalid timer: $_time"
+      exit 1
+      ;;
+  esac
+  [ $? = 0 ] || exit 1
+}
+
 _nvc () {
   local _work=${WORK:-work}
   local _libdirs=(${LIBS[@]/#/-L..\/})
   local _libs=${_libdirs[@]/%/\/.nvc}
   local _opts="--std=${STD:-1993} --work=.nvc/$_work -L.nvc $_libs $NVC_OPTS"
   mkdir -p .nvc
-  echo ${PERF+perf stat --} ${NVC:-nvc} $_opts $*
-  ${PERF+perf stat --} ${NVC:-nvc} $_opts  $*
-  [ $? = 0 ] || exit 1
+  _wrapper ${NVC:-nvc} $_opts $*
 }
 
 _ghdl () {
@@ -16,9 +37,7 @@ _ghdl () {
   shift
   mkdir -p .ghdl
   local _opts="--workdir=.ghdl ${WORK+--work=$WORK} --std=${STD: -2} -O2"
-  echo ${GHDL:-ghdl} $_cmd $_opts $*
-  ${GHDL:-ghdl} $_cmd $_opts $*
-  [ $? = 0 ] || exit 1
+  _wrapper ${GHDL:-ghdl} $_cmd $_opts $*
 }
 
 _vcom () {
@@ -56,8 +75,8 @@ _filter_test () {
 analyse () {
   local _files=$*
   case ${SIM:-nvc} in
-    ghdl) _ghdl -a -P.ghdl/ $GHDL_OPTS $_files ;;
-    nvc)  _nvc -a $A_OPTS $_files ;;
+    ghdl) TIME= _ghdl -a -P.ghdl/ $GHDL_OPTS $_files ;;
+    nvc)  TIME= _nvc -a $A_OPTS $_files ;;
     questa) _vcom $_files ;;
   esac
 }
@@ -66,8 +85,8 @@ elaborate () {
   local _top=${TOP:-$1}
   _filter_test $_top || return
   case ${SIM:-nvc} in
-    ghdl) _ghdl -e -P.ghdl/ $GHDL_OPTS $_top ;;
-    nvc)  _nvc -e -V $E_OPTS $_top ;;
+    ghdl) TIME= _ghdl -e -P.ghdl/ $GHDL_OPTS $_top ;;
+    nvc)  TIME= _nvc -e -V $E_OPTS $_top ;;
   esac
 }
 
@@ -76,7 +95,7 @@ run () {
   _filter_test $_top || return
   case ${SIM:-nvc} in
     ghdl)
-      time _ghdl -r -P.ghdl/ $GHDL_OPTS $_top \
+      _ghdl -r -P.ghdl/ $GHDL_OPTS $_top \
 	   ${STOP_TIME+--stop-time=$STOP_TIME} \
 	   --max-stack-alloc=0 $GHDL_R_OPTS
       ;;

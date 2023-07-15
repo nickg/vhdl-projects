@@ -5,11 +5,12 @@ cd $(dirname $0)
 
 STD=1993
 
-A_OPTS="--relax=prefer-explicit"
+A_OPTS="--relaxed"
 E_OPTS=
 R_OPTS="--ieee-warnings=off"
 
-GHDL_OPTS="-fexplicit -frelaxed -fsynopsys"  #--ieee-asserts=disable
+GHDL_OPTS="-fexplicit -frelaxed -fsynopsys"
+GHDL_R_OPTS="--ieee-asserts=disable"
 
 analyse lib/reg_file_struct/bist_pkg.vhd \
         lib/reg_file_struct/rf_pkg.vhd \
