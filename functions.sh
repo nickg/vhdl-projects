@@ -1,5 +1,8 @@
 #!/bin/bash
 
+FLAMEGRAPH=$HOME/src/FlameGraph
+PROF_LIBC=/opt/libc6-prof
+
 _wrapper () {
   echo $*
   case "$TIME" in
@@ -11,6 +14,14 @@ _wrapper () {
       ;;
     time)
       time -- $*
+      ;;
+    flamegraph)
+      export LD_LIBRARY_PATH=$PROF_LIBC/lib
+      perf record -F 5999 -e cycles:u -g -- $*
+      unset LD_LIBRARY_PATH
+      perf script | $FLAMEGRAPH/stackcollapse-perf.pl \
+	| $FLAMEGRAPH/flamegraph.pl > flamegraph.svg
+      x-www-browser flamegraph.svg &
       ;;
     "")
       $*
