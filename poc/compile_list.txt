@@ -15,6 +15,7 @@ src/sim/sim_protected.v08.vhdl
 src/sim/sim_global.v08.vhdl
 src/sim/sim_simulation.v08.vhdl
 src/sim/sim_waveform.vhdl
+src/sim/sim_random.v08.vhdl
 
 src/misc/sync/sync.pkg.vhdl
 src/misc/sync/sync_Bits.vhdl
@@ -23,9 +24,18 @@ src/mem/mem.pkg.vhdl
 src/mem/ocram/ocram.pkg.vhdl
 src/mem/ocram/ocram_tdp_sim.vhdl
 src/mem/ocram/ocram_sdp.vhdl
+src/mem/ocram/ocram_sp.vhdl
+src/mem/ocram/ocram_tdp.vhdl
+src/mem/ocram/ocram_tdp_wf.vhdl
+
+src/dstruct/dstruct.pkg.vhdl
+src/dstruct/dstruct_stack.vhdl
+src/dstruct/dstruct_deque.vhdl
 
 src/arith/arith.pkg.vhdl
 src/arith/arith_addw.vhdl
+src/arith/arith_firstone.vhdl
+src/arith/arith_div.vhdl
 
 src/io/io.pkg.vhdl
 src/io/io_Debounce.vhdl
@@ -36,6 +46,12 @@ src/io/uart/uart_rx.vhdl
 src/fifo/fifo_ic_assembly.vhdl
 
 tb/arith/arith_addw_tb.vhdl
+tb/arith/arith_firstone_tb.vhdl
+tb/arith/arith_div_tb.vhdl
 tb/io/io_Debounce_tb.vhdl
 tb/fifo/fifo_ic_assembly_tb.vhdl
 tb/io/uart/uart_rx_tb.vhdl
+tb/dstruct/dstruct_stack_tb.vhdl
+tb/dstruct/dstruct_deque_tb.vhdl
+tb/common/strings_tb.vhdl
+tb/common/physical_tb.vhdl

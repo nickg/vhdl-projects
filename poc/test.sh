@@ -18,9 +18,15 @@ analyse @compile_list.txt
 
 TESTS=(
   #arith_addw_tb
+  arith_firstone_tb
+  arith_div_tb
   io_debounce_tb
   fifo_ic_assembly_tb
   uart_rx_tb
+  dstruct_stack_tb
+  dstruct_deque_tb
+  strings_tb
+  physical_tb
 )   
 
 for TOP in ${TESTS[@]}; do
