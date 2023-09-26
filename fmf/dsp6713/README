@@ -1,0 +1,42 @@
+dsp6713
+
+Model of the Texas Instruments TMS320C6713 Digital
+Signal Processor.
+
+This model is a work in progress.  Updates will be posted
+at significant milestones.  If you would like to help,
+please contact Rick Munden (munden@FreeModelFoundry.com).
+
+STATUS:
+
+2005 DEC 14
+Revision 0.4
+Fixed coding style
+Added McASP1
+
+Files modified (from previous release)
+dsp6713.vhd
+tbdsp6713.vhd
+dsp6713.sdf
+dsp6713.ftm
+
+
+2003 NOV 02
+Revision 0.2
+Host Interface is complete
+EMIF 95% complete
+
+FILES:
+
+dsp6713.vhd     the model
+dsp6713.ftm     the timing file
+dsp6713.sdf     SDF file used by the testbench
+dsp6713.vec     a vector file used by the testbench
+tbdsp6713.vhd   the testbench
+km416s4030.vhd  an SDRAM model used by the testbench
+km416s4030.mem  a memory preload file for km416s4030
+sram1k16.vhd    an SRAM model used by the testbench
+sram1k8.vhd     an SRAM model used by the testbench
+conpack.vhd     a constant array used by the testbench
+
+
