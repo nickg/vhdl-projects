@@ -25,5 +25,4 @@ analyse conpack.vhd \
         km416s4030.vhd \
         tbdsp6713.vhd
 
-elaborate
 run_jit
