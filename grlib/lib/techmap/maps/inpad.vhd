@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -120,6 +120,9 @@ begin
   end generate;
   ut90nhbd : if (tech = ut90) generate
     x0 : ut90nhbd_inpad generic map (level, voltage, filter) port map(pad, o);
+  end generate;
+  nxus : if (tech = nexus) generate
+    x0: nexus_inpad port map (pad, o);
   end generate;
 end;
 

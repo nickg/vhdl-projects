@@ -1,0 +1,3 @@
+lib/work/debug/debug.vhd
+lib/work/debug/grtestmod.vhd
+lib/work/debug/cpu_disas.vhd

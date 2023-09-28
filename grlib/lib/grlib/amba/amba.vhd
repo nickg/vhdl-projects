@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -449,7 +449,6 @@ type apb_config_type is array (0 to NAPBCFG-1) of amba_config_word;
     qos    : std_logic_vector (3 downto 0);              -- arqos 
   end record;
 
-
 -- AXI interfaces (Combined AXI3/4)
   type axix_mosi_type is record -- Master Output Slave Input
     aw  : axix_aw_mosi_type;
@@ -468,7 +467,6 @@ type apb_config_type is array (0 to NAPBCFG-1) of amba_config_word;
     r   : axi_r_mosi_type;
   end record;
 
-
 -- AXI interfaces (Dedicated AXI4)
   type axi4_mosi_type is record -- Master Output Slave Input
     aw  : axi4_aw_mosi_type;
@@ -478,7 +476,12 @@ type apb_config_type is array (0 to NAPBCFG-1) of amba_config_word;
     r   : axi_r_mosi_type;
   end record;
 
-
+-- array types
+  type axi_mosi_vector_type is array (natural range <>) of axi_mosi_type;
+  type axi_somi_vector_type is array (natural range <>) of axi_somi_type;
+  type axix_mosi_vector_type is array (natural range <>) of axix_mosi_type;
+  type axi3_mosi_vector_type is array (natural range <>) of axi3_mosi_type;
+  type axi4_mosi_vector_type is array (natural range <>) of axi4_mosi_type;
 
 -- AXI constants
   constant XBURST_FIXED:          std_logic_vector(1 downto 0) := "00";
@@ -538,9 +541,6 @@ type apb_config_type is array (0 to NAPBCFG-1) of amba_config_word;
   constant amba_stat_none : amba_stat_type :=
     ('0', '0', '0', '0', '0', '0', (others => '0'),
      '0', '0', '0', '0', '0', (others => '0'));
-
-
-
 
 -------------------------------------------------------------------------------
 -- Subprograms
@@ -751,6 +751,10 @@ type apb_config_type is array (0 to NAPBCFG-1) of amba_config_word;
     shadow      : integer range 0 to 1 := 0;  -- Allow overlapping memory areas
     unmapslv    : integer := 0;
     ahbendian   : integer := GRLIB_ENDIAN
+-- pragma translate_off
+    ;
+    dbgtag      : string := "" -- Prefix for AHB trace printout
+-- pragma translate_on
   );
   port (
     rst     : in  std_ulogic;
@@ -878,9 +882,15 @@ component ahbxb is
     hindex1     : integer := 0;
     haddr1      : integer := 0;
     hmask1      : integer := 16#fff#;
+    hindex2     : integer := 0;
+    haddr2      : integer := 0;
+    hmask2      : integer := 16#fff#;
+    hindex3     : integer := 0;
+    haddr3      : integer := 0;
+    hmask3      : integer := 16#fff#;
     nslaves     : integer range 1 to NAPBSLV := NAPBSLV;
-    nports      : integer range 1 to 2 := 2;
-    wprot       : integer range 0 to 1 := 0;
+    nports      : integer range 1 to 4 := 2;
+    wprot       : integer range 0 to 2 := 0;
     debug       : integer range 0 to 2 := 2;   -- print config to console
     icheck      : integer range 0 to 1 := 1;
     enbusmon    : integer range 0 to 1 := 0;
@@ -911,7 +921,7 @@ component ahbxb is
     haddr1      : integer := 0;
     hmask1      : integer := 16#fff#;
     nslaves     : integer range 1 to NAPBSLV := NAPBSLV;
-    wprot       : integer range 0 to 1 := 0;
+    wprot       : integer range 0 to 2 := 0;
     debug       : integer range 0 to 2 := 2;   -- print config to console
     icheck      : integer range 0 to 1 := 1;
     enbusmon    : integer range 0 to 1 := 0;
@@ -942,7 +952,7 @@ component ahbxb is
     hmask       : integer := 16#fff#;
     nslaves     : integer range 1 to NAPBSLV := NAPBSLV;
     debug       : integer range 0 to 2 := 2;   -- print config to console
-    wprot       : integer range 0 to 1 := 0;
+    wprot       : integer range 0 to 2 := 0;
     icheck      : integer range 0 to 1 := 1;
     enbusmon    : integer range 0 to 1 := 0;
     asserterr   : integer range 0 to 1 := 0;
@@ -963,6 +973,84 @@ component ahbxb is
   );
   end component;
 
+  component apbctrl3p
+  generic (
+    hindex0     : integer := 0;
+    haddr0      : integer := 0;
+    hmask0      : integer := 16#fff#;
+    hindex1     : integer := 0;
+    haddr1      : integer := 0;
+    hmask1      : integer := 16#fff#;
+    nslaves     : integer range 1 to NAPBSLV := NAPBSLV;
+    wprot       : integer range 0 to 2 := 0;
+    debug       : integer range 0 to 2 := 2;   -- print config to console
+    icheck      : integer range 0 to 1 := 1;
+    enbusmon    : integer range 0 to 1 := 0;
+    asserterr   : integer range 0 to 1 := 0;
+    assertwarn  : integer range 0 to 1 := 0;
+    pslvdisable : integer := 0;
+    mcheck      : integer range 0 to 1 := 1;
+    ccheck      : integer range 0 to 1 := 1
+  );
+  port (
+    rst     : in  std_ulogic;
+    clk     : in  std_ulogic;
+    ahb0i   : in  ahb_slv_in_type;
+    ahb0o   : out ahb_slv_out_type;
+    ahb1i   : in  ahb_slv_in_type;
+    ahb1o   : out ahb_slv_out_type;
+    ahb2i   : in  ahb_slv_in_type;
+    ahb2o   : out ahb_slv_out_type;
+    apbi    : out apb_slv_in_vector;
+    apbo    : in  apb_slv_out_vector;
+    wp      : in  std_logic_vector(0 to 2) := (others => '0');
+    wpv     : in  std_logic_vector((256*3)-1 downto 0) := (others => '0')
+  );
+  end component;
+
+  component apbctrl4p
+    generic (
+      hindex0     : integer := 0;
+      haddr0      : integer := 0;
+      hmask0      : integer := 16#fff#;
+      hindex1     : integer := 0;
+      haddr1      : integer := 0;
+      hmask1      : integer := 16#fff#;
+      hindex2     : integer := 0;
+      haddr2      : integer := 0;
+      hmask2      : integer := 16#fff#;
+      hindex3     : integer := 0;
+      haddr3      : integer := 0;
+      hmask3      : integer := 16#fff#;
+      nslaves     : integer range 1 to NAPBSLV := NAPBSLV;
+      wprot       : integer range 0 to 2 := 0;
+      debug       : integer range 0 to 2 := 2;
+      icheck      : integer range 0 to 1 := 1;
+      enbusmon    : integer range 0 to 1 := 0;
+      asserterr   : integer range 0 to 1 := 0;
+      assertwarn  : integer range 0 to 1 := 0;
+      pslvdisable : integer := 0;
+      mcheck      : integer range 0 to 1 := 1;
+      ccheck      : integer range 0 to 1 := 1
+      );
+    port (
+      rst     : in  std_ulogic;
+      clk     : in  std_ulogic;
+      ahb0i   : in  ahb_slv_in_type;
+      ahb0o   : out ahb_slv_out_type;
+      ahb1i   : in  ahb_slv_in_type;
+      ahb1o   : out ahb_slv_out_type;
+      ahb2i   : in  ahb_slv_in_type;
+      ahb2o   : out ahb_slv_out_type;
+      ahb3i   : in  ahb_slv_in_type;
+      ahb3o   : out ahb_slv_out_type;
+      apbi    : out apb_slv_in_vector;
+      apbo    : in  apb_slv_out_vector;
+      wp      : in  std_logic_vector(0 to 3) := (others => '0');
+      wpv     : in  std_logic_vector((256*4)-1 downto 0) := (others => '0')
+    );
+  end component;
+  
   component apb3ctrl
   generic (
     hindex      : integer := 0;

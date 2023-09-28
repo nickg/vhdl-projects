@@ -1,0 +1,6 @@
+lib/fmf/utilities/conversions.vhd
+lib/fmf/utilities/gen_utils.vhd
+lib/fmf/fifo/idt7202.vhd
+lib/fmf/flash/flash.vhd
+lib/fmf/flash/s25fl064a.vhd
+lib/fmf/flash/m25p80.vhd

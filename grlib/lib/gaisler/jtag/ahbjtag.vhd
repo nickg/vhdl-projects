@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -51,7 +51,8 @@ entity ahbjtag is
     scantest : integer := 0;
     oepol  : integer := 1;
     tcknen : integer := 0;
-    versel : integer range 0 to 1 := 1);
+    versel : integer range 0 to 1 := 1;
+    taptecharg : integer := 0);
   port (
     rst         : in  std_ulogic;
     clk         : in  std_ulogic;
@@ -110,8 +111,8 @@ begin
     port map (rst, clk, dmai, dmao, ahbi, ahbo);
 
   tap0 : tap generic map (tech => tech, irlen => 6, idcode => idcode, 
-	manf => manf, part => part, ver => ver, scantest => scantest, oepol => oepol,
-        tcknen => tcknen)
+        manf => manf, part => part, ver => ver, scantest => scantest, oepol => oepol,
+        tcknen => tcknen, techarg => taptecharg)
     port map (trst, tck, tms, tdi, tdo, lltck, ltapo.tdi, ltapo.inst, ltapo.reset, ltapo.capt,
               ltapo.shift, lupd, ltapo.asel, ltapo.dsel, ltapi.en, ltapi.tdo, tapi_tdo,
               tapo_ninst, tapo_iupd, lltckn,

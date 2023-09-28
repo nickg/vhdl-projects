@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -427,6 +427,7 @@ begin
     variable iflush   : std_ulogic;
     variable v : dcache_control_type;
     variable eholdn : std_ulogic;                         -- external hold
+    variable elholdn  : std_ulogic;
     variable snoopwe  : std_ulogic;
     variable hcache   : std_ulogic;
     variable lramcs, lramen, lramrd, lramwr, ilramen  : std_ulogic;
@@ -521,6 +522,10 @@ begin
     ddiagwrite := '0'; tdiagwrite := '0'; v.holdn := '1'; mexc := '0';
     flush := '0'; v.icenable := '0'; iflush := '0';
     eholdn := ico.hold and fpuholdn; ddset := 0;
+    elholdn := eholdn;
+    if tlb_type = 0 then
+      elholdn := '1';
+    end if;
     vs.snoop := '0'; snoopwe := '0';
     snoopaddr := ahbsi.haddr(OFFSET_HIGH downto OFFSET_LOW);
     flushaddr := r.xaddress(OFFSET_HIGH downto OFFSET_LOW);
@@ -782,9 +787,9 @@ begin
         v.wb.read := dci.read; v.wb.data1 := dci.edata; v.wb.lock := dci.lock and not dci.nullify and ico.hold;
         v.wb.asi := dci.asi(3 downto 0); 
         if ((M_EN) and (dci.asi(4 downto 0) /= ASI_MMU_BP) and (r.mmctrl1.e = '1') and 
-           ((M_TLB_FASTWRITE /= 0) or ((dci.enaddr and eholdn and dci.lock and not dci.read) = '1')))
+           ((M_TLB_FASTWRITE /= 0) or ((dci.enaddr and elholdn and dci.lock and not dci.read) = '1')))
         then
-          if ((dci.enaddr and eholdn and dci.lock and not dci.read) = '1') or (r.mmctrl1.tlbdis = '1') then -- skip address translation on store in LDST
+          if ((dci.enaddr and elholdn and dci.lock and not dci.read) = '1') or (r.mmctrl1.tlbdis = '1') then -- skip address translation on store in LDST
             v.wb.addr := r.wb.addr(31 downto 8) & dci.maddress(7 downto 0);
             newptag := r.wb.addr(TAG_HIGH downto TAG_LOW);
           else 
@@ -1598,6 +1603,12 @@ begin
       v.lock_hold := '0';
     end if;
 
+    if DSNOOP2=3 then
+      senable := senable or enable;
+      if DCREADHOLD /= 0 then
+        senable := senable or ctpwrite;
+      end if;
+    end if;
     
 
     if dci.mmucacheclr='1' then

@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +38,7 @@ entity grgprbank is
     paddr  : integer := 0;
     pmask  : integer := 16#fff#;
     regbits: integer range 1 to 32 := 32;
-    nregs  : integer  range 1 to 32 := 1;
+    nregs  : integer  range 1 to 512 := 1;
     rstval : integer := 0;
     extrst : integer := 0;
     rdataen: integer := 0;
@@ -82,6 +82,7 @@ begin
     variable o: apb_slv_out_type;
     variable rd: regbank;
     variable wprotx: std_logic_vector(nregsp2-1 downto 0);
+    variable paddrm: unsigned(23 downto 2);
   begin
     -- Init vars
     v := r;
@@ -94,14 +95,20 @@ begin
     wprotx := (others => '0');
     wprotx(nregs-1 downto 0) := wprot;
     -- APB Interface
+    paddrm(23 downto 12) := unsigned(apbi.paddr(23 downto 12)) and not to_unsigned(pmask,12);
+    paddrm(11 downto 2) := unsigned(apbi.paddr(11 downto 2));
     if nregs > 1 then
-      o.prdata(regbits-1 downto 0) := r.regs(to_integer(unsigned(apbi.paddr(1+log2(nregs) downto 2))));
-      if rdataen /= 0 then
-        o.prdata(regbits-1 downto 0) := rd(to_integer(unsigned(apbi.paddr(1+log2(nregs) downto 2))));
+      if notx(apbi.paddr) then
+        o.prdata(regbits-1 downto 0) := r.regs(to_integer(paddrm(1+log2(nregs) downto 2)));
+        if rdataen /= 0 then
+          o.prdata(regbits-1 downto 0) := rd(to_integer(paddrm(1+log2(nregs) downto 2)));
+        end if;
+      else
+        setx(o.prdata);
       end if;
       if apbi.penable='1' and apbi.psel(pindex)='1' and apbi.pwrite='1' then
         if wproten=0 or (wprotx(to_integer(unsigned(apbi.paddr(1+log2(nregs) downto 2))))='0') then
-          v.regs(to_integer(unsigned(apbi.paddr(1+log2(nregs) downto 2)))) := apbi.pwdata(regbits-1 downto 0);
+          v.regs(to_integer(paddrm(1+log2(nregs) downto 2))) := apbi.pwdata(regbits-1 downto 0);
         end if;
       end if;
     else

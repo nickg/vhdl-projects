@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,31 +39,52 @@ package leon5 is
 
   type ahb_config_array is array(NAHBSLV-1 downto 0) of ahb_config_type;
 
+  type leon5_bretry_addrlist is array(0 to 7) of std_logic_vector(31 downto 0);
+
+  type leon5_bretry_in_type is record
+    addrlist: leon5_bretry_addrlist;
+    addrvalid: std_logic_vector(0 to 7);
+    noswitch: std_ulogic;
+  end record;
+
+  type leon5_bretry_out_type is record
+    curent: std_logic_vector(2 downto 0);
+    bootctr: std_logic_vector(3 downto 0);
+  end record;
+
+  constant leon5_bretry_in_none : leon5_bretry_in_type := (
+    addrlist => (others => (others => '0')),
+    addrvalid => (others => '0'),
+    noswitch => '0'
+    );
+
   component leon5sys is
     generic (
-      fabtech : integer;
-      memtech : integer;
-      ncpu    : integer;
-      nextmst : integer;
-      nextslv : integer;
-      nextapb : integer;
-      ndbgmst : integer;
-      cached  : integer;
-      wbmask  : integer;
-      busw    : integer;
-      memmap  : integer := 0;
-      ahbsplit: integer := 0;
-      cmemconf: integer := 0;
-      rfconf  : integer := 0;
-      fpuconf : integer;
-      tcmconf : integer := 0;
-      perfcfg : integer := 0;
-      mulimpl : integer := 0;
-      disas   : integer;
-      ahbtrace: integer;
-      devid   : integer := 0;
-      cgen    : integer := 0;
-      scantest: integer := 0
+      fabtech  : integer;
+      memtech  : integer;
+      ncpu     : integer;
+      nextmst  : integer;
+      nextslv  : integer;
+      nextapb  : integer;
+      ndbgmst  : integer;
+      cached   : integer;
+      wbmask   : integer;
+      busw     : integer;
+      memmap   : integer := 0;
+      ahbsplit : integer := 0;
+      cmemconf : integer := 0;
+      rfconf   : integer := 0;
+      fpuconf  : integer;
+      tcmconf  : integer := 0;
+      perfcfg  : integer := 0;
+      mulimpl  : integer := 0;
+      statcfg  : integer := 0;
+      breten   : integer := 0;
+      disas    : integer;
+      ahbtrace : integer;
+      devid    : integer := 0;
+      cgen     : integer := 0;
+      scantest : integer := 0
       );
     port (
       clk      : in  std_ulogic;
@@ -71,6 +92,11 @@ package leon5 is
       -- Clock gating support (used only if cgen generic is set)
       gclk     : in  std_logic_vector(0 to ncpu-1) := (others => '0');
       gclken   : out std_logic_vector(0 to ncpu-1);
+      -- Reset for boot auto-retry function
+      bretclk  : in  std_ulogic := '0';
+      bretrstn : in  std_ulogic := '1';
+      -- Reset request from debug link
+      rstreqn  : out std_ulogic;
       -- AHB bus interface for other masters (DMA units)
       ahbmi    : out ahb_mst_in_type;
       ahbmo    : in  ahb_mst_out_vector_type(ncpu+nextmst-1 downto ncpu);
@@ -88,9 +114,16 @@ package leon5 is
       dsuen    : in  std_ulogic;
       dsubreak : in  std_ulogic;
       cpu0errn : out std_ulogic;
+      sysstat  : in  std_logic_vector(15 downto 0) := (others => '0');
+      dbgtstop : out std_ulogic;
+      dbgtime  : out std_logic_vector(31 downto 0);
       -- UART connection
       uarti    : in  uart_in_type;
       uarto    : out uart_out_type;
+      -- Auto-retry signals
+      bretin   : in  leon5_bretry_in_type := leon5_bretry_in_none;
+      bretout  : out leon5_bretry_out_type;
+      -- DFT signals propagating to ahbctrl
       testen   : in  std_ulogic := '0';
       testrst  : in  std_ulogic := '1';
       scanen   : in  std_ulogic := '0';

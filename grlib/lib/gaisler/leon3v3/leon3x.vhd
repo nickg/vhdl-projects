@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -218,14 +218,14 @@ begin
 
      -- instruction trace buffer memory
      tbmem_gen : if (tbuf /= 0) generate
-       tbmem_1p : if (tbuf <= 64) generate
+       tbmem_1p : if ((tbuf <= 64) or (tbuf > 16#10000#)) generate
          tbmem0 : tbufmem
            generic map (tech => MEMTECH_MOD, tbuf => tbuf, dwidth => 32, testen => scantest)
            port map (gclk2, tbi, tbo, ahbi.testin
                      );
          tbo_2p <= tracebuf_2p_out_type_none;
        end generate;
-       tbmem_2p: if (tbuf > 64) generate
+       tbmem_2p: if ((tbuf > 64) and (tbuf < 16#10000#)) generate
          tbmem0 : tbufmem_2p
            generic map (tech => MEMTECH_MOD, tbuf => (tbuf-64), dwidth => 32, testen => scantest)
            port map (gclk2, tbi_2p, tbo_2p, ahbi.testin

@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,24 +27,27 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+library techmap;
+use techmap.gencomp.all;
 library grlib;
 use grlib.config_types.all;
 use grlib.config.all;
-use grlib.stdlib.all;
-library techmap;
-use techmap.gencomp.all;
+use grlib.stdlib.tost;
 library gaisler;
 use gaisler.noelv.all;
 use gaisler.noelvint.all;
 use gaisler.utilnv.all_0;
 use gaisler.utilnv.to_bit;
+use gaisler.utilnv.u2i;
+use gaisler.utilnv.get_hi;
 
 entity div64 is
   generic (
     fabtech   : integer range 0 to NTECH := 0;
     scantest  : integer := 0;
     hiperf    : integer := 0;
-    small     : integer := 0
+    small     : integer := 0;
+    in_pipe  : integer  := 1
     );
   port (
     clk       : in  std_ulogic;
@@ -65,7 +68,7 @@ architecture rtl of div64 is
   constant RESET_ALL    : boolean := true;
   constant ASYNC_RESET  : boolean := GRLIB_CONFIG_ARRAY(grlib_async_reset_enable) = 1;
 
-  subtype divtype is std_logic_vector(bits - 1 downto 0);
+  subtype divtype is unsigned(bits - 1 downto 0);
 
   type regtype is record
     -- Wrapper
@@ -84,6 +87,10 @@ architecture rtl of div64 is
     stopping     : std_ulogic;
     shifting     : std_ulogic;
     signo        : std_ulogic;
+    latch_in     : std_ulogic;
+    op1          : divtype;
+    op2          : divtype;
+    sign_in      : std_ulogic;
   end record;
 
   constant RES : regtype := (
@@ -102,7 +109,11 @@ architecture rtl of div64 is
     running     => '0',
     stopping    => '0',
     shifting    => '0',
-    signo       => '0'
+    signo       => '0',
+    latch_in    => '0',
+    op1         => (others => '0'),
+    op2         => (others => '0'),
+    sign_in     => '0'
     );
 
   -- Signals ----------------------------------------------------
@@ -140,37 +151,64 @@ begin
            rstn    when ASYNC_RESET else '1';
 
   comb : process (r, divi)
-    variable v       : regtype;
-    variable sign    : std_ulogic;
-    variable divisor : divtype;
-    variable op1     : divtype;
-    variable op2     : divtype;
-    variable result  : divtype;
-    variable start   : std_ulogic;
-    variable dshift  : integer range 0 to bits - 1;
-    variable dushift : integer range 0 to bits - 1;
-    variable ddshift : integer range 0 to bits - 1;
-    variable neg     : std_ulogic;
+    variable v         : regtype;
+    variable sign      : std_ulogic;
+    variable divisor   : divtype;
+    variable op1       : divtype;
+    variable op2       : divtype;
+    variable result    : divtype;
+    variable start     : std_ulogic;
+    variable dshift    : integer range 0 to bits - 1;
+    variable dushift   : integer range 0 to bits - 1;
+    variable ddshift   : integer range 0 to bits - 1;
+    variable neg       : std_ulogic;
+    variable divi_ctrl : std_logic_vector(2 downto 0);
+    variable divi_op1  : divtype;
+    variable divi_op2  : divtype;
   begin
     v := r;
 
     -- Latch input signals
-    start    := '0';
+    start          := '0';
+    v.latch_in     := '0';
     if (r.ready and not divi.flush) = '1' then
-      v.ctrl := divi.ctrl;
-      start  := '1';
+      v.ctrl       := divi.ctrl;
+      if in_pipe /= 0 then
+        v.ready    := '0';
+        v.latch_in := '1';
+        v.op1      := unsigned(divi.op1);
+        v.op2      := unsigned(divi.op2);
+        v.sign_in  := not divi.ctrl(0);
+      else
+        start      := '1';
+      end if;
+    end if;
+
+    if (r.latch_in = '1' and in_pipe /= 0 ) then
+      start := '1';
     end if;
 
     -- Add signed operations
-    op1  := divi.op1;
-    op2  := divi.op2;
-    sign := not divi.ctrl(0);
+    op1         := unsigned(divi.op1);
+    op2         := unsigned(divi.op2);
+    sign        := not divi.ctrl(0);
+    divi_ctrl   := divi.ctrl;
+    divi_op1    := unsigned(divi.op1);
+    divi_op2    := unsigned(divi.op2);
+    if in_pipe /= 0 then
+      op1       := r.op1;
+      op2       := r.op2;
+      sign      := r.sign_in;
+      divi_ctrl := r.ctrl;
+      divi_op1  := r.op1;
+      divi_op2  := r.op2;
+    end if;
 
     -- This is div/rem[u]w, which does not exist for RV32.
-    if bits = 64 and divi.ctrl(2) = '1' then
+    if bits = 64 and divi_ctrl(2) = '1' then
       if sign = '1' then
-        op1(bits - 1 downto bits - 32) := (others => divi.op1(31));
-        op2(bits - 1 downto bits - 32) := (others => divi.op2(31));
+        op1(bits - 1 downto bits - 32) := (others => op1(31));
+        op2(bits - 1 downto bits - 32) := (others => op2(31));
       else
         op1(bits - 1 downto bits - 32) := (others => '0');
         op2(bits - 1 downto bits - 32) := (others => '0');
@@ -182,12 +220,13 @@ begin
       -- Operation Started
       v.running    := '1';
       v.ready      := '0';
+      v.latch_in   := '0';
       -- Output Sign
       -- Different signs for div?
-      if ((divi.ctrl(1 downto 0) = "00" and
+      if ((divi_ctrl(1 downto 0) = "00" and
            (op1(bits - 1) /= op2(bits - 1))) and (not all_0(op2))) or
          -- Negative numerator for rem?
-         (op1(bits - 1) = '1' and divi.ctrl(1 downto 0) = "10") then
+         (op1(bits - 1) = '1' and divi_ctrl(1 downto 0) = "10") then
         v.signo    := '1';
       else
         v.signo    := '0';
@@ -200,7 +239,7 @@ begin
       end if;
       -- Divisor
       neg     := sign and op2(bits - 1);
-      divisor := ((op2'range => neg) xor op2) + neg;
+      divisor := ((op2'range => neg) xor op2) + u2i(neg);
       if small = 1 then
         dshift     := 0;
         v.shifting := '1';
@@ -209,9 +248,10 @@ begin
       else
         v.shifting := '0';
         -- Compute the amount to shift in order to speed-up the division
-        dushift    := firstone(v.dividend);
-        ddshift    := firstone(divisor);
+        dushift    := firstone(std_logic_vector(v.dividend));
+        ddshift    := firstone(std_logic_vector(divisor));
         if dushift >= ddshift then
+          -- Due to the condition above, the subtraction is always in range.
           dshift   := dushift - ddshift;
         else
           dshift   := 0;
@@ -220,27 +260,16 @@ begin
           -- Need even shift amount for two bits at a time!
           dshift   := (dshift / 2) * 2;
         end if;
-        v.divisor  := std_logic_vector(shift_left(unsigned(divisor), dshift));
+        v.divisor  := shift_left(divisor, dshift);
       end if;
       -- Quotient
       v.quotient      := (others => '0');
       v.quotient_msk  := (others => '0');
       v.quotient_msk(dshift) := '1';
-      -- Already calculated (rem following div)?
       if hiperf = 1 and small = 0 then
-        -- Rem matching last completed div?
-        if r.div_valid = '1' and divi.ctrl(1) = '1' and
-              r.ctrl(2) = divi.ctrl(2) and r.ctrl(0) = divi.ctrl(0) and
-              divi.op1 = r.div_op1 and divi.op2 = r.div_op2 then
-          v.quotient  := r.dividend;
-          v.shifting  := '0';
-          v.stopping  := '1';
-        else
-          -- Non-related operation
-          v.div_valid := '0';         -- Assert later if operation finishes.
-          v.div_op1   := divi.op1;
-          v.div_op2   := divi.op2;
-        end if;
+        v.div_valid := '0';         -- Assert later if operation finishes.
+        v.div_op1   := divi_op1;
+        v.div_op2   := divi_op2;
       else
         v.div_valid   := '0';
         v.div_op1     := (others => '0');
@@ -250,7 +279,7 @@ begin
       if all_0(op2) then
         v.shifting     := '0';
         v.stopping     := '1';
-        if divi.ctrl(1) = '0' then    -- div op
+        if divi_ctrl(1) = '0' then    -- div op
           v.signo      := '0';
           if small = 1 then
             v.dividend := (others => '1');
@@ -266,9 +295,9 @@ begin
 
     -- Shift as needed, if small divider.
     elsif small = 1 and r.shifting = '1' then
-      if r.divisor <= r.dividend and r.divisor(r.divisor'high) = '0' then
-        v.divisor      := std_logic_vector(shift_left(unsigned(r.divisor), 1));
-        v.quotient_msk := std_logic_vector(shift_left(unsigned(r.quotient_msk), 1));
+      if r.divisor <= r.dividend and get_hi(r.divisor) = '0' then
+        v.divisor      := shift_left(r.divisor, 1);
+        v.quotient_msk := shift_left(r.quotient_msk, 1);
       else
         v.shifting     := '0';
       end if;
@@ -307,11 +336,11 @@ begin
       end if;
       -- Shift to prepare for next iteration.
       if hiperf = 1 then
-        v.divisor      := std_logic_vector(shift_right(unsigned(r.divisor),      2));
-        v.quotient_msk := std_logic_vector(shift_right(unsigned(r.quotient_msk), 2));
+        v.divisor      := shift_right(r.divisor,      2);
+        v.quotient_msk := shift_right(r.quotient_msk, 2);
       else
-        v.divisor      := std_logic_vector(shift_right(unsigned(r.divisor),      1));
-        v.quotient_msk := std_logic_vector(shift_right(unsigned(r.quotient_msk), 1));
+        v.divisor      := shift_right(r.divisor,      1);
+        v.quotient_msk := shift_right(r.quotient_msk, 1);
       end if;
     end if;
 
@@ -321,16 +350,17 @@ begin
       v.shifting      := '0';
       v.ready         := '1';
       v.stopping      := '0';
+      v.latch_in      := '0';
       --Possibly negate result
       neg             := r.signo;
       if small = 1 then
-        v.result      := ((r.dividend'range => neg) xor r.dividend) + neg;
+        v.result      := ((r.dividend'range => neg) xor r.dividend) + u2i(neg);
       elsif r.stopping = '1' then
         if hiperf = 1 then
           -- Only remember results for actually finished divides.
           v.div_valid := not r.ctrl(1);
         end if;
-        v.result      := ((r.quotient'range => neg) xor r.quotient) + neg;
+        v.result      := ((r.quotient'range => neg) xor r.quotient) + u2i(neg);
         -- Keep around for possible reuse with rem after div.
         v.dividend    := r.dividend;
       end if;
@@ -346,7 +376,7 @@ begin
     rin         <= v;
 
     -- Drive Outputs
-    divo.result <= result;
+    divo.result <= std_logic_vector(result);
     divo.nready <= not v.ready;
     divo.icc    <= (others => '0');
   end process;

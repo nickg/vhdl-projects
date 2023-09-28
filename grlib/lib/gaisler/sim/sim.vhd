@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -172,7 +172,8 @@ package sim is
       pagesize: integer range 1 to 2 := 1;  -- 1K/2K page size (controls tRRD)
       changeendian: integer range 0 to 32 := 0;
       initbyte: integer := 0;
-      jitter_tol: integer := 50
+      jitter_tol: integer := 50;
+      mprmode: integer range 0 to 8 := 0
       );
     port (
       ck: in std_ulogic;
@@ -279,40 +280,6 @@ package sim is
     );
   end component;
 
-  component phy_sgmii is
-    generic (
-      INSTANCE_NUMBER          : integer := 0
-    );
-    port (
-      -- Physical Interface (Transceiver)
-      --------------------------------
-      txp                     : in  std_logic;
-      txn                     : in  std_logic;
-      rxp                     : out std_logic;
-      rxn                     : out std_logic;
-      -- GMII Interface
-      -----------------
-      gmii_tx_clk             : out std_logic;
-      gmii_rx_clk             : in std_logic;
-      gmii_txd                : out std_logic_vector(7 downto 0);
-      gmii_tx_en              : out std_logic;
-      gmii_tx_er              : out std_logic;
-      gmii_rxd                : in std_logic_vector(7 downto 0);
-      gmii_rx_dv              : in std_logic;
-      gmii_rx_er              : in std_logic;
-      -- Test bench speed selection
-      -----------------------------
-      speed_is_10_100         : in std_logic;
-      speed_is_100            : in std_logic;
-      -- Test Bench Semaphores
-      ------------------------
-      configuration_finished  : in  boolean;
-      tx_monitor_finished     : out boolean;
-      rx_monitor_finished     : out boolean
-      );
-  end component;
-
-
   procedure leon3_subtest(subtest : integer);
   procedure mctrl_subtest(subtest : integer);
   procedure gptimer_subtest(subtest : integer);
@@ -339,7 +306,8 @@ package sim is
     hindex  : integer := 0;
     haddr   : integer := 0;
     hmask   : integer := 16#fff#;
-    halt    : integer := 1); 
+    halt    : integer := 1;
+    delay_stop : integer := 0); 
   port (
     rst     : in  std_ulogic;
     clk     : in  std_ulogic;
@@ -485,6 +453,37 @@ package sim is
       );
   end component;
 
+  component delay_wire2
+    generic(
+      dab  : time := 10 ps;
+      dba  : time := 10 ps;
+      pull : integer range 0 to 2 := 0       -- 0=none, 1=pull-up, 2=pull-down
+      );
+    port(
+      a : inout std_logic;
+      b : inout std_logic;
+      eiab : in std_ulogic := '0';
+      eiba : in std_ulogic := '0';
+      col : out std_ulogic
+      );
+  end component;
+
+  component delay_wire2_bus
+    generic(
+      width  : integer := 8;
+      dab  : time := 10 ps;
+      dba  : time := 10 ps;
+      pull : integer range 0 to 2 := 0
+      );
+    port(
+      a : inout std_logic_vector(width-1 downto 0);
+      b : inout std_logic_vector(width-1 downto 0);
+      eiab: in std_logic_vector(width-1 downto 0) := (others => '0');
+      eiba: in std_logic_vector(width-1 downto 0) := (others => '0');
+      col : out std_logic_vector(width-1 downto 0)
+      );
+  end component;
+
   component spi_flash
     generic (
       ftype      : integer := 0;               -- Flash type
@@ -493,12 +492,17 @@ package sim is
       readcmd    : integer := 16#0B#;          -- SPI memory device read command
       dummybyte  : integer := 1;
       dualoutput : integer := 0;
+      quadoutput : integer := 0;
+      dualinput  : integer := 0;
+      quadinput  : integer := 0;
       memoffset  : integer := 0);
     port (
       sck : in    std_ulogic;
       di  : inout std_logic;
       do  : inout std_logic;
       csn : inout std_logic;
+      io2 : inout std_logic;
+      io3 : inout std_logic;
       -- Test control inputs
       sd_cmd_timeout  : in std_ulogic := '0';
       sd_data_timeout : in std_ulogic := '0'
@@ -675,7 +679,6 @@ component spwtrace is
     kbytes      : integer := 1;
     pipe        : integer := 0;
     maccsz      : integer := AHBDW;
-    endianness  : integer := 0;
     fname       : string  := "ram.dat"
    );
   port (
@@ -799,6 +802,218 @@ component spwtrace is
       txd: in std_ulogic
       );
   end component;
+
+  component canfdsim is
+    port(
+      -- Timing parameters
+      nom_syn_seg         : in  time;
+      nom_ph1_seg         : in  time;
+      nom_ph2_seg         : in  time;
+      data_syn_seg        : in  time;
+      data_ph1_seg        : in  time;
+      data_ph2_seg        : in  time;
+      -- Frame control
+      start               : in  std_ulogic;                    -- Start TX/RX
+      mode                : in  std_ulogic;                    -- TX(1); RX(0)
+      -- Frame description
+      id                  : in  std_logic_vector(28 downto 0);
+      ide                 : in  std_ulogic;
+      rtr                 : in  std_ulogic;
+      fdf                 : in  std_ulogic;
+      brs                 : in  std_ulogic;
+      esi                 : in  std_ulogic;
+      dlc                 : in  std_logic_vector(3 downto 0);
+      data                : in  std_logic_vector(511 downto 0);
+      -- Exception generation (only as a RX for GRCANFD)
+      srr_dom             : in  std_ulogic;                    -- SRR transmitted dominant
+      rrs_rec             : in  std_ulogic;                    -- RRS transmitted recessive
+      r0_rec              : in  std_ulogic;                    -- r0 transmitted recessive
+      res_rec             : in  std_ulogic;                    -- res transmitted recessive
+      -- Exception generation (only as a TX for GRCANFD)
+      ack_long            : in  std_ulogic;                    -- ACK 2 bit times long
+      -- Error insertion (only for TX)
+      crc_err_msk         : in  std_logic_vector(20 downto 0); -- CRC error mask
+      bstuff_err_sel      : in  std_logic_vector(2 downto 0);  -- Field with stuff errors
+      stuffcnt_err_msk    : in  std_logic_vector(3 downto 0);  -- Stuff cnt error mask
+      fxdstuff_err_sel    : in  std_logic_vector(2 downto 0);  -- Fixed stuff err sel
+      -- TX/RX outputs
+      frm_completed       : out std_ulogic;                    -- End of TX/RX
+      tx_frm_ackd         : out std_ulogic;                    -- TX frame acknowledged
+      tx_arb_lost         : out std_ulogic;                    -- Arbitration lost
+      err_frm_gen         : out std_ulogic;                    -- EF generated
+      -- CAN interface
+      can_rx_bit          : in  std_ulogic;
+      can_tx_bit          : out std_ulogic
+      );
+  end component canfdsim;
+
+  component tlk2711_sim is
+    port (
+      -- Control interface
+      enable    : in  std_ulogic;
+      loop_en   : in  std_ulogic;
+      -- Host interface
+      tx_clk    : in  std_ulogic;
+      tx_data   : in  std_logic_vector(15 downto 0);
+      tx_kflags : in  std_logic_vector(1 downto 0);
+      rx_clk    : out std_ulogic;
+      rx_data   : out std_logic_vector(15 downto 0);
+      rx_kflags : out std_logic_vector(1 downto 0);
+      -- Serial interface
+      dout_txp  : out std_ulogic;
+      dout_txn  : out std_ulogic;
+      din_rxp   : in  std_ulogic;
+      din_rxn   : in  std_ulogic
+      );
+  end component tlk2711_sim;
+
+  component dfi_phy_sim is
+    generic (
+      -- DDR type
+      ddrtype     : integer range 2 to 3 := 2;
+      -- For DDR vectors, if low or high half is taken first
+      -- 1=low half first, 0=high half first
+      dfi_lowfirst : integer range 0 to 1 := 1;
+      -- DFI widths
+      dfi_addr_width          : integer := 13;
+      dfi_bank_width          : integer := 3;
+      dfi_cs_width            : integer := 1;
+      dfi_data_width          : integer := 64;
+      dfi_data_en_width       : integer := 1;
+      dfi_rdata_valid_width   : integer := 1;
+      -- DFI timings
+      -- Note: timings relative to CAS latency are given as 100+T
+      tctrl_delay : integer := 2;
+      tphy_wrdata : integer := 1;
+      tphy_wrlat  : integer := 100-1;
+      trddata_en  : integer := 100-2
+      );
+    port (
+      -- Master reset for PHY
+      phy_resetn : in std_ulogic;
+      -- DFI clock
+      dfi_clk    : in std_ulogic;
+      --DFI control
+      dfi_address            : in    std_logic_vector(dfi_addr_width-1 downto 0);
+      dfi_bank               : in    std_logic_vector(dfi_bank_width-1 downto 0);
+      dfi_cas_n              : in    std_ulogic;
+      dfi_cke                : in    std_logic_vector(dfi_cs_width-1 downto 0);
+      dfi_cs_n               : in    std_logic_vector(dfi_cs_width-1 downto 0);
+      dfi_odt                : in    std_logic_vector(dfi_cs_width-1 downto 0);
+      dfi_ras_n              : in    std_ulogic;
+      dfi_reset_n            : in    std_logic_vector(dfi_cs_width-1 downto 0);
+      dfi_we_n               : in    std_ulogic;
+      --DFI write data interface
+      dfi_wrdata             : in    std_logic_vector(dfi_data_width-1 downto 0);
+      dfi_wrdata_en          : in    std_logic_vector(dfi_data_en_width-1 downto 0);
+      dfi_wrdata_mask        : in    std_logic_vector((dfi_data_width/8)-1 downto 0);
+                                        --DFI read data interface
+      dfi_rddata_en          : in    std_logic_vector(dfi_data_en_width-1 downto 0);
+      dfi_rddata             : out   std_logic_vector(dfi_data_width-1 downto 0);
+      dfi_rddata_dnv         : out   std_logic_vector((dfi_data_width/8)-1 downto 0);  --LPDDR2 specific
+      dfi_rddata_valid       : out   std_logic_vector(dfi_rdata_valid_width-1 downto 0);
+                                        --DFI update interface
+      dfi_ctrlupd_req        : in    std_ulogic;
+      dfi_ctrlupd_ack        : out   std_ulogic;
+      dfi_phyupd_req         : out   std_ulogic;
+      dfi_phyupd_type        : out   std_logic_vector(1 downto 0);
+      dfi_phyupd_ack         : in    std_ulogic;
+                                        --DFI status interface
+      dfi_data_byte_disable  : in    std_logic_vector((dfi_data_width/16)-1 downto 0);
+      dfi_dram_clk_disable   : in    std_logic_vector(dfi_cs_width-1 downto 0);
+      dfi_init_complete      : out   std_ulogic;
+      dfi_init_start         : in    std_ulogic;
+                                        --DDR2/3 ports
+      ddr_ck                 : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_ckn                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_cke                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_csn                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_odt                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_rasn               : out   std_logic;
+      ddr_casn               : out   std_logic;
+      ddr_wen                : out   std_logic;
+      ddr_dm                 : out   std_logic_vector((dfi_data_width/2)/8-1 downto 0);
+      ddr_ba                 : out   std_logic_vector(dfi_bank_width-1 downto 0);
+      ddr_a                  : out   std_logic_vector(dfi_addr_width-1 downto 0);
+      ddr_resetn             : out   std_logic_vector(dfi_cs_width-1 downto 0);  --DDR3 specific
+      ddr_dq                 : inout std_logic_vector((dfi_data_width/2)-1 downto 0);
+      ddr_dqs                : inout std_logic_vector((dfi_data_width/2)/8-1 downto 0);
+      ddr_dqsn               : inout std_logic_vector((dfi_data_width/2)/8-1 downto 0)
+      );
+  end component;
+
+  component dfi_phy_sim_fr is
+    generic (
+      freqratio               : integer range 1 to 4 := 1;
+      -- Generics to dfi_phy_sim PHY model
+      ddrtype     : integer range 2 to 3 := 2;
+      dfi_lowfirst : integer range 0 to 1 := 1;
+      dfi_addr_width          : integer := 13;
+      dfi_bank_width          : integer := 3;
+      dfi_cs_width            : integer := 1;
+      dfi_data_width          : integer := 64;
+      dfi_data_en_width       : integer := 1;
+      dfi_rdata_valid_width   : integer := 1;
+      tctrl_delay : integer := 2;
+      tphy_wrdata : integer := 1;
+      tphy_wrlat  : integer := 100-1;
+      trddata_en  : integer := 100-2
+      );
+    port (
+      -- Master reset for PHY
+      phy_resetn : in std_ulogic;
+      -- DFI clock
+      dfi_clk    : in std_ulogic;
+      --DFI control
+      dfi_address            : in    std_logic_vector(freqratio*dfi_addr_width-1 downto 0);
+      dfi_bank               : in    std_logic_vector(freqratio*dfi_bank_width-1 downto 0);
+      dfi_cas_n              : in    std_logic_vector(freqratio-1 downto 0);
+      dfi_cke                : in    std_logic_vector(freqratio*dfi_cs_width-1 downto 0);
+      dfi_cs_n               : in    std_logic_vector(freqratio*dfi_cs_width-1 downto 0);
+      dfi_odt                : in    std_logic_vector(freqratio*dfi_cs_width-1 downto 0);
+      dfi_ras_n              : in    std_logic_vector(freqratio-1 downto 0);
+      dfi_reset_n            : in    std_logic_vector(freqratio*dfi_cs_width-1 downto 0);
+      dfi_we_n               : in    std_logic_vector(freqratio-1 downto 0);
+      --DFI write data interface
+      dfi_wrdata             : in    std_logic_vector(freqratio*dfi_data_width-1 downto 0);
+      dfi_wrdata_en          : in    std_logic_vector(freqratio*dfi_data_en_width-1 downto 0);
+      dfi_wrdata_mask        : in    std_logic_vector(freqratio*(dfi_data_width/8)-1 downto 0);
+      --DFI read data interface
+      dfi_rddata_en          : in    std_logic_vector(freqratio*dfi_data_en_width-1 downto 0);
+      dfi_rddata             : out   std_logic_vector(freqratio*dfi_data_width-1 downto 0);
+      dfi_rddata_dnv         : out   std_logic_vector(freqratio*(dfi_data_width/8)-1 downto 0);  --LPDDR2 specific
+      dfi_rddata_valid       : out   std_logic_vector(freqratio*dfi_rdata_valid_width-1 downto 0);
+      --DFI update interface
+      dfi_ctrlupd_req        : in    std_logic;
+      dfi_ctrlupd_ack        : out   std_logic;
+      dfi_phyupd_req         : out   std_logic;
+      dfi_phyupd_type        : out   std_logic_vector(1 downto 0);
+      dfi_phyupd_ack         : in    std_logic;
+      --DFI status interface
+      dfi_data_byte_disable  : in    std_logic_vector((dfi_data_width/16)-1 downto 0);
+      dfi_dram_clk_disable   : in    std_logic_vector(dfi_cs_width-1 downto 0);
+      dfi_freq_ratio         : in    std_logic_vector(1 downto 0);
+      dfi_init_complete      : out   std_logic;
+      dfi_init_start         : in    std_logic;
+      --DDR2/3 ports
+      ddr_ck                 : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_ckn                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_cke                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_csn                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_odt                : out   std_logic_vector(dfi_cs_width-1 downto 0);
+      ddr_rasn               : out   std_ulogic;
+      ddr_casn               : out   std_ulogic;
+      ddr_wen                : out   std_ulogic;
+      ddr_dm                 : out   std_logic_vector((dfi_data_width/2)/8-1 downto 0);
+      ddr_ba                 : out   std_logic_vector(dfi_bank_width-1 downto 0);
+      ddr_a                  : out   std_logic_vector(dfi_addr_width-1 downto 0);
+      ddr_resetn             : out   std_logic_vector(dfi_cs_width-1 downto 0);  --DDR3 specific
+      ddr_dq                 : inout std_logic_vector((dfi_data_width/2)-1 downto 0);
+      ddr_dqs                : inout std_logic_vector((dfi_data_width/2)/8-1 downto 0);
+      ddr_dqsn               : inout std_logic_vector((dfi_data_width/2)/8-1 downto 0)
+      );
+  end component;
+
 end;
 
 package body sim is
@@ -879,8 +1094,8 @@ package body sim is
 
   procedure leon5_subtest(subtest : integer) is
   begin
-
     case (subtest mod 16) is
+      when 1 => print("  CPU#" & (tost(subtest/16)) & " write combining");
       when 2 => print("  CPU#" & (tost(subtest/16)) & " tightly coupled memory");
       when others => leon3_subtest(subtest);
     end case;
@@ -1100,6 +1315,9 @@ package body sim is
     when 4 => print("  4 byte Data Descriptor test");
     when 5 => print("  16 byte Data Descriptor test");
     when 6 => print("  32 byte Data Descriptor test");
+    when 7 => print("  4 byte SHA Descriptor test");
+    when 8 => print("  16 byte SHA Descriptor test");
+    when 9 => print("  32 byte SHA Descriptor test");
     when others => print("  sub-system test " & tost(subtest));
     end case;
 

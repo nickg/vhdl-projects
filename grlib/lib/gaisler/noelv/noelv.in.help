@@ -4,11 +4,25 @@ CONFIG_PROC_NUM
   The number of processor cores.
 
 Select standard configuration
-CONFIG_NOELV_TIN
-  Tiny: RV32im
-  MIN: RV64/32ima
-  GPP: RV64/32imafd (signle or dual issue)
-  HPP: RV64/32imafd (target for ASIC)
+CONFIG_NOELV_HP
+  HP: RV64/32GCH (target for ASIC)
+  GP: RV64/32GCH (signle or dual issue)
+  MC: RV64/32imac(fd) (signle issue)
+
+Select Full/Lite configuration
+CONFIG_NOELV_FULL
+  Full: Standard version
+  Lite: Limited (scaled-down) version
+
+Select Single-/Dual-issue configuration
+CONFIG_NOELV_SISSU
+  Single-issue: Pipeline is single-issue
+  Dual-issue: Pipeline is Dual-issue
+
+Select FPU configuration
+CONFIG_NOELV_FPU
+  FPU-enable: Enable FPU
+  FPU-disable: Disable FPU
 
 IU assembly printing
 CONFIG_IU_DISAS
@@ -18,3 +32,14 @@ NOEL-V subsystem GPL settings
 CONFIG_PROC_NODBUS
   Remove IPs not included in the GPL release.
 
+Select number of APLIC domains
+CONFIG_DOMAINS_NUM
+  Number of supported APLIC interrupt domains.
+
+Select number of External Interrupt Identities
+CONFIG_EIID_NUM
+  Number of supported External Interrupt Identities:
+
+  It is the number of interrupt identities supported by 
+  an IMSIC interrupt file. It must be one less than a multiple 
+  of 64, and must be a minimum of 63 and a maximum of 2047.

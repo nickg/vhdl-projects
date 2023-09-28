@@ -10,8 +10,20 @@
 #define CONFIG_PROC_NUM 1
 #endif
 
-#ifndef CONFIG_PROC_CFG
-#define CONFIG_PROC_CFG 0
+#ifndef CONFIG_PROC_TYP
+#define CONFIG_PROC_TYP 4
+#endif
+
+#ifndef CONFIG_PROC_LITE
+#define CONFIG_PROC_LITE 0
+#endif
+
+#ifndef CONFIG_PROC_S
+#define CONFIG_PROC_S 0
+#endif
+
+#ifndef CONFIG_PROC_NOFPU
+#define CONFIG_PROC_NOFPU 0
 #endif
 
 #ifndef CONFIG_PROC_NODBUS
@@ -22,3 +34,10 @@
 #define CONFIG_IU_DISAS 0
 #endif
 
+#ifndef CONFIG_DOMAINS_NUM
+#define CONFIG_DOMAINS_NUM 4
+#endif
+
+#ifndef CONFIG_EIID_NUM
+#define CONFIG_EIID_NUM 63
+#endif

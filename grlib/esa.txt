@@ -1,0 +1,4 @@
+lib/esa/pci/pcicomp.vhd
+lib/esa/pci/pci_arb_pkg.vhd
+lib/esa/pci/pci_arb.vhd
+lib/esa/pci/pciarb.vhd

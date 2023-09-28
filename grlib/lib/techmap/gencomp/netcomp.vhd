@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -314,7 +314,7 @@ package netcomp is
       scantest        : integer range 0 to 1 := 0;
       ports           : integer range 1 to 2 := 1;
       dmachan         : integer range 1 to 4 := 1;
-      tech            : integer;
+      tech            : integer := 0;
       input_type      : integer range 0 to 6 := 0;
       output_type     : integer range 0 to 2 := 0;
       rxtx_sameclk    : integer range 0 to 1 := 0;
@@ -354,6 +354,7 @@ package netcomp is
       hready       : in  std_ulogic;
       hresp        : in  std_logic_vector(1 downto 0);
       hrdata       : in  std_logic_vector(31 downto 0);
+      endian       : in  std_ulogic;
       --ahb mst out
       hbusreq      : out  std_ulogic;
       hlock        : out  std_ulogic;
@@ -457,7 +458,7 @@ package netcomp is
       output_type  : integer range 0 to 2;
       rxtx_sameclk : integer range 0 to 1;
       fifosize     : integer range 16 to 2048;
-      tech         : integer;
+      tech         : integer := 0;
       scantest     : integer range 0 to 1;
       techfifo     : integer range 0 to 1;
       ft           : integer range 0 to 2;

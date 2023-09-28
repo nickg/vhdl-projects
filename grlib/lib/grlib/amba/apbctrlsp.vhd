@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,8 +20,8 @@
 -----------------------------------------------------------------------------   
 -- Entity:      apbctrl
 -- File:        apbctrl.vhd
--- Author:      Jiri Gaisler - Gaisler Research
--- Description: AMBA AHB/APB bridge with plug&play support
+-- Author:      Nils Wessman - Gisler
+-- Description: Single-port wrapper for AMBA AHB/APB bridge
 ------------------------------------------------------------------------------ 
 
 library ieee;
@@ -38,7 +38,7 @@ entity apbctrlsp is
     haddr       : integer := 0;
     hmask       : integer := 16#fff#;
     nslaves     : integer range 1 to NAPBSLV := NAPBSLV;
-    wprot       : integer range 0 to 1 := 0;
+    wprot       : integer range 0 to 2 := 0;
     debug       : integer range 0 to 2 := 2;
     icheck      : integer range 0 to 1 := 1;
     enbusmon    : integer range 0 to 1 := 0;
@@ -80,6 +80,12 @@ begin
       hindex1     => 0,
       haddr1      => 0,
       hmask1      => 0,
+      hindex2     => 0,
+      haddr2      => 0,
+      hmask2      => 0,
+      hindex3     => 0,
+      haddr3      => 0,
+      hmask3      => 0,
       nslaves     => nslaves,
       nports      => 1,
       wprot       => wprot,

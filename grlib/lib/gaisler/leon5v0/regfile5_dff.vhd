@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -118,10 +118,26 @@ begin
       v.entry(to_integer(unsigned(waddr2)))(31 downto 0) := wdata2(31 downto 0);
     end if;
 
-    rdata1v := r.entry(to_integer(unsigned(r.raddr1)));
-    rdata2v := r.entry(to_integer(unsigned(r.raddr2)));
-    rdata3v := r.entry(to_integer(unsigned(r.raddr3)));
-    rdata4v := r.entry(to_integer(unsigned(r.raddr4)));
+    if notx(r.raddr1) then
+      rdata1v := r.entry(to_integer(unsigned(r.raddr1)));
+    else
+      setx(rdata1v);
+    end if;
+    if notx(r.raddr2) then
+      rdata2v := r.entry(to_integer(unsigned(r.raddr2)));
+    else
+      setx(rdata2v);
+    end if;
+    if notx(r.raddr3) then
+      rdata3v := r.entry(to_integer(unsigned(r.raddr3)));
+    else
+      setx(rdata3v);
+    end if;
+    if notx(r.raddr4) then
+      rdata4v := r.entry(to_integer(unsigned(r.raddr4)));
+    else
+      setx(rdata4v);
+    end if;
 
     if waddr1 = r.raddr1 then
       if we1(0) = '1' then

@@ -1,0 +1,2 @@
+lib/micron/sdram/components.vhd
+lib/micron/sdram/mt48lc16m16a2.vhd

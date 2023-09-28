@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -689,6 +689,14 @@ package leon3 is
     (active => '0', tstop => '0', pwd => (others => '0'),
      astat => dsu_astat_none);
   
+  type dsu_ext_ctrl_type is record
+    set_bn  : std_logic_vector(15 downto 0);
+    clr_bn  : std_logic_vector(15 downto 0);
+  end record;                        
+  constant dsu_ext_ctrl_none : dsu_ext_ctrl_type := (
+    set_bn => (others => '0'),
+    clr_bn => (others => '0'));
+  
   component dsu3 
   generic (
     hindex  : integer := 0;
@@ -759,7 +767,8 @@ package leon3 is
     clk2x   : integer range 0 to 1 := 0;
     testen  : integer := 0;
     bwidth  : integer := 32;
-    ahbpf   : integer := 0
+    ahbpf   : integer := 0;
+    ectrlen : integer := 0
   );
   port (
     rst    : in  std_ulogic;
@@ -774,7 +783,8 @@ package leon3 is
     dbgo   : out l3_debug_in_vector(0 to NCPU-1);
     dsui   : in dsu_in_type;
     dsuo   : out dsu_out_type;
-    hclken : in std_ulogic
+    hclken : in std_ulogic;
+    extctrl: in  dsu_ext_ctrl_type := dsu_ext_ctrl_none
   );
   end component;
 

@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -72,8 +72,8 @@ begin
 
   gnd <= '0'; vcc <= '1';
   
-  x0 : dsu3x generic map (hindex, haddr, hmask, ncpu, tbits, tech, irq, kbytes, 0, testen, bwidth, ahbpf)
-    port map (rst, gnd, clk, clk, ahbmi, ahbsi, ahbso, tahbsi, dbgi, dbgo, dsui, dsuo, vcc
+  x0 : dsu3x generic map (hindex, haddr, hmask, ncpu, tbits, tech, irq, kbytes, 0, testen, bwidth, ahbpf, 0)
+    port map (rst, gnd, clk, clk, ahbmi, ahbsi, ahbso, tahbsi, dbgi, dbgo, dsui, dsuo, vcc, dsu_ext_ctrl_none
               );  
   
 end;

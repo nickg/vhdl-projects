@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -70,6 +70,28 @@ component apbuart
     uarti  : in  uart_in_type;
     uarto  : out uart_out_type);
 end component;
+
+
+component apbuart_16550
+  generic (
+    pindex   : integer := 0; 
+    paddr    : integer := 0;
+    pmask    : integer := 16#fff#;
+    console  : integer := 0; 
+    pirq     : integer := 0;
+    flow     : integer := 1;
+    fifomode : integer := 1;
+    abits    : integer := 6;
+    sbits    : integer range 12 to 32 := 16);
+  port (
+    rst    : in  std_ulogic;
+    clk    : in  std_ulogic;
+    apbi   : in  apb_slv_in_type;
+    apbo   : out apb_slv_out_type;
+    uarti  : in  uart_in_type;
+    uarto  : out uart_out_type);
+end component;
+
 
 component ahbuart
   generic (

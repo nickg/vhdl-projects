@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -67,6 +67,7 @@ entity grdmac2_ctrl is
     active        : in  std_ulogic;                     -- Core enabled after reset?
     trst          : in  grdmac2_trst_reg_type;          -- Timer reset value for timeout mechanism
     err_status    : in  std_ulogic;                     -- Core error status from APB status register    
+    irqf_clr_sts      : in std_ulogic;                        -- IRQ flag clear status when no error and desc completed
     curr_desc_out : out curr_des_out_type;              -- Current descriptor field out for debug display
     curr_desc_ptr : out std_logic_vector(31 downto 0);  -- Current descriptor pointer for debug display
     status        : out status_out_type;                -- Status signals
@@ -82,7 +83,7 @@ entity grdmac2_ctrl is
     b2m_bm_in     : in  bm_ctrl_reg_type;               -- BM signals from B2M through control module
     b2m_bm_out    : out bm_out_type;                    -- BM signals to B2M through control module
     -- data descriptor out for M2B and B2M
-    d_desc_out    : out data_dsc_strct_type;            -- Data descriptor passed to M2B, ACC and B2M
+    d_desc_out    : out data_dsc_strct_type;            -- Data descriptor passed to M2B and B2M
     ctrl_rst      : out std_ulogic;                     -- Reset signal from APB interface, to M2B and B2M
     err_sts_out   : out std_ulogic;                     -- Core APB status reg error bit. Passed to M2B and B2M
     -- M2B control signals
@@ -93,10 +94,10 @@ entity grdmac2_ctrl is
     b2m_sts_in    : in  d_ex_sts_out_type;              -- B2M status signals
     b2m_start     : out std_logic;                      -- B2M start signal
     b2m_resume    : out std_ulogic;                     -- B2M resume signal
-    acc_sts_in    : in d_ex_sts_out_type;               -- ACC status signals
-    acc_start     : out std_ulogic;                     -- ACC start signal
-    acc_resume    : out std_ulogic;                     -- ACC resume signal
-    acc_desc_out  : out acc_dsc_strct_type              -- ACC descriptor passed to ACC
+    acc_sts_in    : in d_ex_sts_out_type;
+    acc_start     : out std_ulogic;
+    acc_resume    : out std_ulogic;
+    acc_desc_out  : out acc_dsc_strct_type
   );
 end entity grdmac2_ctrl;
 
@@ -138,6 +139,7 @@ architecture rtl of grdmac2_ctrl is
   constant POLL_IRQ                : std_logic_vector(3 downto 0) := "0011";
   constant AES                     : std_logic_vector(3 downto 0) := "0100"; -- Descriptor type 4
   constant ACC_UPDATE              : std_logic_vector(3 downto 0) := "0101"; -- Descriptor type 5
+  constant SHA                     : std_logic_vector(3 downto 0) := "0110"; -- Descriptor type 6
   constant POLL_SZ                 : std_logic_vector(9 downto 0) := "0000000011";  -- 3+1 bytes to be fetched(1 word)
   constant DESC_BYTES              : std_logic_vector(9 downto 0) := "0000011100";  -- 28 bytes to be fetched(7 words)
   constant WB_SZ                   : std_logic_vector(9 downto 0) := "0000000011";  -- 3+1 bytes to be written(1 word)
@@ -247,7 +249,6 @@ architecture rtl of grdmac2_ctrl is
     i            : integer range 0 to 7;            -- Register for index increment
     rd_desc      : std_logic_vector(223 downto 0);  -- Register for descriptor read from BM
     cur_desc     : std_ulogic;                      -- Current descriptor type
-    aes_en       : std_ulogic;                      -- Encryption enable
     acc_en       : std_ulogic;                      -- Update values enable
     cnt_start    : std_ulogic;                      -- counting between polls started
     tm_start     : std_ulogic;                      -- Timeout counter decrement started
@@ -277,6 +278,8 @@ architecture rtl of grdmac2_ctrl is
     bmst_rd_busy : std_ulogic;                      -- bus master read busy
     bmst_rd_err  : std_ulogic;                      -- bus master read error
     err_status   : std_ulogic;                      -- register to find the falling edge of err_status input signal
+    irqf_clr_sts : std_ulogic;                    -- register to find the falling edge of interrupt flag in status reg, when desc is completed without any errors
+    irqf_clrd    : std_ulogic;                      -- desc comp IRQ clear flag
     sts          : status_out_type;                 -- Status register   
   end record;
   -- Reset value for grdmac2_ctrl local reg type
@@ -287,7 +290,6 @@ architecture rtl of grdmac2_ctrl is
     i            => 0,
     rd_desc      => (others => '0'),
     cur_desc     => '0',
-    aes_en       => '0',
     acc_en       => '0',
     cnt_start    => '0',
     tm_start     => '0',
@@ -317,6 +319,8 @@ architecture rtl of grdmac2_ctrl is
     bmst_rd_busy => '0',
     bmst_rd_err  => '0',
     err_status   => '0',
+    irqf_clr_sts => '0',
+    irqf_clrd    => '0',
     sts          => STATUS_OUT_RST
     );
 
@@ -375,7 +379,7 @@ begin  -- rtl
   -----------------------------------------------------------------------------
   -- Combinational logic
   ----------------------------------------------------------------------------- 
-  comb : process (r, ctrl, des_ptr, active, trst, m2b_sts_in, b2m_sts_in, acc_sts_in, m2b_bm_in, b2m_bm_in, trigger, err_status, bm_in, d_des, c_des, acc_des, bmst)
+  comb : process (r, ctrl, des_ptr, active, trst, m2b_sts_in, b2m_sts_in, acc_sts_in, m2b_bm_in, b2m_bm_in, trigger, err_status, irqf_clr_sts, bm_in, d_des, c_des, acc_des, bmst)
 
     variable v           : ctrl_reg_type; 
     variable remainder   : integer range 0 to 96;          -- Variable for BM read_data handling
@@ -433,6 +437,12 @@ begin  -- rtl
     -- Falling edge of err_status signal
     if (r.err_status = '1' and err_status = '0') then
       v.err_flag := '0';
+    end if;
+
+    v.irqf_clr_sts := irqf_clr_sts;
+    -- Rising edge of irqf_clr_sts signal
+    if (r.irqf_clr_sts = '0' and irqf_clr_sts = '1') then
+      v.irqf_clrd := '1';
     end if;
 
     -- Input trigger latching
@@ -497,6 +507,7 @@ begin  -- rtl
           if active = '0' or r.sts.restart = '1' then
             -- Initial starting after reset. Or restart request is received
             -- Start descriptor read from first descriptor pointer
+            v.irqf_clrd     := '0';
             v.sts.timeout   := '0';
             v.desc_skip     := '0';
             v.sts.restart   := '0';
@@ -507,6 +518,7 @@ begin  -- rtl
             v.rd_desc       := (others => '0');
             v.state         := fetch_desc;
           elsif r.sts.ongoing = '1' or r.sts.kick = '1' or v.sts.kick = '1' then
+            v.irqf_clrd := '0';
             if r.init_error = '1' then  -- Taking up the same descriptor to fetch again since previously
                                         -- it encountered an error before reaching decoding state
               v.sts.ongoing := '1';
@@ -533,6 +545,7 @@ begin  -- rtl
                 v.sts.timeout   := '0';
                 v.desc_ptr      := d_des.nxt_des.ptr;
                 v.dcomp_flg     := '0';
+                v.irqf_clrd     := '0';
                 v.sts.ongoing   := '1';
                 v.sts.comp      := '0';
                 v.rd_desc       := (others => '0');
@@ -545,6 +558,7 @@ begin  -- rtl
                 v.desc_ptr      := c_des.f_nxt_des.ptr;
                 v.sts.ongoing   := '1';
                 v.dcomp_flg     := '0';
+                v.irqf_clrd     := '0';
                 v.sts.comp      := '0';
                 v.desc_skip     := '0';
                 v.rd_desc       := (others => '0');
@@ -571,6 +585,7 @@ begin  -- rtl
                 v.sts.timeout   := '0';
                 v.sts.ongoing   := '1';
                 v.dcomp_flg     := '0';
+                v.irqf_clrd     := '0';
                 v.sts.comp      := '0';
                 v.desc_skip     := '0';
                 v.rd_desc       := (others => '0');
@@ -609,6 +624,7 @@ begin  -- rtl
                 end if;
                 v.desc_ptr      := bm_in.rd_data(127 downto 97) & "0";
                 v.dcomp_flg     := '0';
+                v.irqf_clrd     := '0';
                 v.sts.ongoing   := '1';
                 v.sts.comp      := '0';
                 v.desc_skip     := '0';
@@ -709,6 +725,19 @@ begin  -- rtl
               v.state     := idle;
             end if;
 
+          -- A type of data descriptor used for authentication
+          when SHA =>
+            v.cur_desc := '0';
+            v.acc_en   := '1';
+            v.bm_num   := r.rd_desc(198);
+            if r.rd_desc(192) = '1' then  -- enabled descriptor
+              v.m2b_start := '1';
+              v.state     := m2b;
+            else  -- Disabled descriptor. go to idle. No write back
+              v.desc_skip := '1';
+              v.state     := idle;
+            end if;
+
           -- A type of data descriptor used for encryption
           when AES =>
             v.cur_desc := '0';
@@ -722,7 +751,7 @@ begin  -- rtl
               v.state     := idle;
             end if;
 
-          -- A special descriptor used for updating registers in accelerator
+          -- A special descriptor used for updating values in accelerator
           when ACC_UPDATE =>
             v.cur_desc := '0';
             v.acc_en   := '1';
@@ -1042,6 +1071,20 @@ begin  -- rtl
           v.bm_num := d_des.ctrl.dest_bm_num;
           v.state := b2m;
 
+        elsif ((r.acc_resume or r.acc_start) = '0' and acc_sts_in.paused = '1' and d_des.ctrl.desc_type = X"6") then
+          --Resume M2b and fetch remaining data
+          v.acc_paused := '1';
+          v.m2b_resume := '1';
+          v.bm_num     := d_des.ctrl.src_bm_num;
+          v.state      := m2b;
+          v.m2b_paused := '0';
+        elsif ((r.acc_resume or r.acc_start) = '0' and acc_sts_in.comp = '1' and d_des.ctrl.desc_type = X"6") then
+          v.b2m_start := '1';
+          v.rd_desc(223 downto 203) := std_logic_vector(to_unsigned(32, 21));
+          v.bm_num := d_des.ctrl.dest_bm_num;
+          v.state := b2m;
+
+
         -- IF DESCRIPTOR TYPE 5, DATA USED TO UPDATE ACCELERATOR AND SHOULD GO BACK TO M2B OR FINISH DESCRIPTOR
         ----------------------------------------------------------------------------------------------------------
         elsif ((r.acc_resume or r.acc_start) = '0' and acc_sts_in.paused = '1' and d_des.ctrl.desc_type = X"5") then
@@ -1052,7 +1095,7 @@ begin  -- rtl
           v.state      := m2b;
           v.m2b_paused := '0';
         elsif ((r.acc_resume or r.acc_start) = '0' and acc_sts_in.comp = '1' and d_des.ctrl.desc_type = X"5") then
-          -- ACC completed. current data descriptor completed
+          -- ACC completed. current descriptor completed
           v.sts.desc_comp := '1';
           v.dcomp_flg     := '1';
           -- go to write back if it is enabled, else go to idle
@@ -1116,7 +1159,11 @@ begin  -- rtl
         if r.bmst_wr_busy = '0' then
           -- The status of the descriptor is written to memory
           -- Single access of 4 bytes
-          bmst.wr_addr <= r.desc_ptr + 16;  -- Status word of descriptor (offset 0x10)
+          if (d_des.ctrl.desc_type = X"5") then
+            bmst.wr_addr <= r.desc_ptr + 12;  -- Status word of descriptor (offset 0x0C)
+          else
+            bmst.wr_addr <= r.desc_ptr + 16;  -- Status word of descriptor (offset 0x10)
+          end if;
           bmst.wr_size <= WB_SZ;        -- Write back size is always 4 bytes
           bmst_wr_req  := '1';
           if r.cur_desc = '0' then
@@ -1258,17 +1305,34 @@ begin  -- rtl
     end if;
     
     -- Drive IRQ flag
-    if (r.sts.err = '1' or err_status = '1') then
-      irq_flag_sts <= ctrl.irq_en and ctrl.irq_err;
-    elsif r.dcomp_flg = '1' then
-      if r.cur_desc = '0' then
-        irq_flag_sts <= d_des.ctrl.irq_en and ctrl.irq_en and (not ctrl.irq_msk);
-      else
-        irq_flag_sts <= c_des.ctrl.irq_en and ctrl.irq_en and (not ctrl.irq_msk);
-      end if;
-    else
+    if v.irqf_clrd = '1' or r.irqf_clrd = '1' then      
       irq_flag_sts <= '0';
+    else
+      if (r.err_flag = '1' or err_status = '1') then
+        irq_flag_sts <= ctrl.irq_en and ctrl.irq_err;     
+      elsif r.dcomp_flg = '1' then
+        if r.cur_desc = '0' then
+          irq_flag_sts <= d_des.ctrl.irq_en and ctrl.irq_en and (not ctrl.irq_msk);
+        else
+          irq_flag_sts <= c_des.ctrl.irq_en and ctrl.irq_en and (not ctrl.irq_msk);
+        end if;
+      else
+        irq_flag_sts <= '0';
+      end if;
     end if;
+
+
+   -- if (r.err_flag = '1' or err_status = '1') then
+   --   irq_flag_sts <= ctrl.irq_en and ctrl.irq_err;     
+   -- elsif r.irqf_clrd = '1' or r.dcomp_flg = '1' then
+   --   if r.cur_desc = '0' then
+   --     irq_flag_sts <= d_des.ctrl.irq_en and ctrl.irq_en and (not ctrl.irq_msk);
+   --   else
+   --     irq_flag_sts <= c_des.ctrl.irq_en and ctrl.irq_en and (not ctrl.irq_msk);
+   --   end if;
+   -- else
+   --   irq_flag_sts <= '0';
+   -- end if;
 
     rin                    <= v;
     status.err             <= r.sts.err;

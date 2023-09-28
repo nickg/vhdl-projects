@@ -1,0 +1,4 @@
+lib/spw/comp/spwcomp.vhd
+lib/spw/wrapper/grspw_gen.vhd
+lib/spw/wrapper/grspw2_gen.vhd
+lib/spw/wrapper/grspw_codec_gen.vhd

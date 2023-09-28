@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,12 +26,16 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+library techmap;
+use techmap.gencomp.all;
 library grlib;
 use grlib.config_types.all;
 use grlib.config.all;
 use grlib.amba.all;
-use grlib.stdlib.all;
 use grlib.devices.all;
+use grlib.stdlib.log2x;
+use grlib.stdlib.orv;
 library gaisler;
 use gaisler.noelv.XLEN;
 use gaisler.noelv.nv_dm_in_type;
@@ -45,8 +49,10 @@ use gaisler.noelvint.nv_progbuf_out_none;
 use gaisler.noelvint.word;
 use gaisler.noelvint.word64;
 use gaisler.noelvint.zerow;
-library techmap;
-use techmap.gencomp.all;
+use gaisler.utilnv.to_bit;
+use gaisler.utilnv.u2i;
+use gaisler.utilnv.u2slv;
+use gaisler.utilnv.uadd;
 
 entity rvdmx is
   generic (
@@ -122,7 +128,7 @@ architecture rtl of rvdmx is
   constant hconfig : ahb_config_type := (
     0 => ahb_device_reg ( VENDOR_GAISLER, GAISLER_RVDM, 0, RVDM_VERSION, 0),
     4 => ahb_membar(haddr, '0', '0', hmask),
-    others => zero32);
+    others => zerow);
   -- Add register to improve timing paths. Adds one wait-state on
   -- Read and write accesses.
   constant pipe         : boolean := true;
@@ -180,6 +186,14 @@ architecture rtl of rvdmx is
     write       => '0',
     regno       => (others => '0')
   );
+  type autoexec_type is record
+    data    : std_logic_vector(DATACOUNT-1 downto 0);
+    progbuf : std_logic_vector(PROGBUFSIZE-1 downto 0);
+  end record;
+  constant autoexec_reset : autoexec_type := (
+    data    => (others => '0'),
+    progbuf => (others => '0')
+  );
 
   type reg_type is record
     -- DSU Interface
@@ -195,6 +209,7 @@ architecture rtl of rvdmx is
     data        : data_type;
     control     : dmcontrol_type;
     cmd         : abscommand_type;
+    autoexec    : autoexec_type;
     busy        : std_ulogic;
     accerr      : std_ulogic;
     cmderr      : std_logic_vector(2 downto 0);
@@ -232,6 +247,7 @@ architecture rtl of rvdmx is
     data        => (others => zerow),
     control     => dmcontrol_reset,
     cmd         => abscommand_reset,
+    autoexec    => autoexec_reset,
     busy        => '0',
     accerr      => '0',
     cmderr      => (others => '0'),
@@ -277,6 +293,7 @@ begin
     variable abstractcs         : word;
     variable command            : word;
     variable sbcs               : word;
+    variable cap                : word;
     variable ihartselraw        : integer range 0 to (2**HARTSELLEN)-1;
     variable hartselmaskraw     : std_logic_vector((2**HARTSELLEN)-1 downto 0);
     variable hartselmask        : std_logic_vector(NHARTS-1 downto 0);
@@ -342,7 +359,7 @@ begin
     -- hasel is hard-wired to 0
     hartsel_hi_lo               := (others => '0');
     hartselmaskraw              := (others => '0');
-    ihartselraw                 := conv_integer(r.control.hartsel);
+    ihartselraw                 := u2i(r.control.hartsel);
     hartselmaskraw(ihartselraw) := '1';
     hartselmask                 := hartselmaskraw(NHARTS-1 downto 0);
     if r.control.hasel = '1' then
@@ -458,15 +475,15 @@ begin
     -- Hart Info (hartinfo, at 0x12)
 
     hartinfo                    := zerow;
-    hartinfo(23 downto 20)      := conv_std_logic_vector(NSCRATCH, 4);
+    hartinfo(23 downto 20)      := u2slv(NSCRATCH, 4);
 
     -- Abstract Control and Status (abstractcs, at 0x16)
 
     abstractcs                  := zerow;
-    abstractcs(28 downto 24)    := conv_std_logic_vector(PROGBUFSIZE, 5);
+    abstractcs(28 downto 24)    := u2slv(PROGBUFSIZE, 5);
     abstractcs(12)              := r.busy;
     abstractcs(10 downto 8)     := r.cmderr;
-    abstractcs(3 downto 0)      := conv_std_logic_vector(DATACOUNT, 4); -- datacount
+    abstractcs(3 downto 0)      := u2slv(DATACOUNT, 4); -- datacount
 
     -- Abstract Command (command, at 0x17)
 
@@ -484,6 +501,15 @@ begin
     -- Device Tree Addr 0 (devtreeaddr0, at 0x19)
 
     -- Next Debug Module (nextdm, at 0x1d)
+
+    -- Custom Feature (custom, at 0x1f)
+
+    cap                         := zerow;
+    cap(31 downto 24)           := u2slv(nharts - 1, 8);
+    cap(23          )           := to_bit(nharts <= 256);
+    cap(21 downto 19)           := dbgi(0).cap(2 downto 0);
+    --cap(           7)           := RESERVED
+    cap( 6 downto  0)           := dbgi(0).cap(9 downto 3);
 
     -- Abstract Data 0 (data0, at 0x04)
 
@@ -539,14 +565,14 @@ begin
     end if;
 
     -- Read access
-    if r.hsel(0) = '1' then
+    if r.hsel(0) = '1' and r.hwrite = '0' then
       case r.haddr(ADDR_H downto 6) is
 
         when "0000" => -- Abstract Data 0 - Abstract Data 12
           case r.haddr(5 downto 2) is
             when "0000" | "0001" | "0010" | "0011" => null;
             when others =>
-              iregindex := conv_integer(r.haddr(5 downto 2)) - 4;
+              iregindex := u2i(r.haddr(5 downto 2)) - 4;
               -- Accessing these registers while an abstract command is executing causes cmderr
               -- to be set to 1 (busy) if it is 0.
               if r.busy = '1' and r.cmderr = CMDERR_NONE then
@@ -555,6 +581,10 @@ begin
               end if;
               if iregindex < DATACOUNT then
                 rdata           := r.data(iregindex);
+                -- Automatically rerun abstract command when data is accessed
+                if r.busy = '0' and r.autoexec.data(iregindex) = '1' and r.cmderr = CMDERR_NONE then
+                  v.cmd.valid := '1';
+                end if;
               end if;
           end case; --r.haddr(5 downto 2);
         when "0001" =>
@@ -586,20 +616,26 @@ begin
             when "0111" => -- Abstract Command
               rdata             := command;
             when "1000" => -- Abstract Command Autoexec
-              -- This register is not implemented
-              null;
+              rdata(16+PROGBUFSIZE-1 downto  16)  := r.autoexec.progbuf;
+              rdata(DATACOUNT-1 downto 0)         := r.autoexec.data;
             when "1001" | "1010" | "1011" | "1100" => -- Device Tree Addr 0 - 3
               -- This registers are not implemented
               null;
             when "1101" => -- Next Debug Module
               -- This entire register is read-only
               null;
+            when "1111" => -- Custom Feature
+              rdata             := cap;
             when others => null;
           end case; -- r.haddr(5 downto 2)
         when "0010" => -- Program Buffer 0 - Program Buffer 15
-          iregindex     := conv_integer(r.haddr(5 downto 2));
+          iregindex     := u2i(r.haddr(5 downto 2));
           if iregindex < PROGBUFSIZE then
             rdata       := pbo(ihartsel).data;
+            -- Automatically rerun abstract command when program buffer is accessed
+            if r.busy = '0' and r.autoexec.progbuf(iregindex) = '1' and r.cmderr = CMDERR_NONE then
+              v.cmd.valid := '1';
+            end if;
           end if;
           -- Accessing these registers while an abstract command is executing causes cmderr
           -- to be set to 1 (busy) if it is 0.
@@ -634,11 +670,15 @@ begin
           case r.haddr(5 downto 2) is
             when "0000" | "0001" | "0010" | "0011" => null;
             when others =>
-              iregindex := conv_integer(r.haddr(5 downto 2)) - 4;
+              iregindex := u2i(r.haddr(5 downto 2)) - 4;
               if r.busy = '0' then
                 -- Attempts to write them while busy is set does not change their value.
                 if iregindex < DATACOUNT then
                   v.data(iregindex)     := wdata;
+                  -- Automatically rerun abstract command when data is accessed
+                  if r.autoexec.data(iregindex) = '1' and r.cmderr = CMDERR_NONE then
+                    v.cmd.valid := '1';
+                  end if;
                 end if;
               end if;
               -- Accessing these registers while an abstract command is executing causes cmderr
@@ -679,11 +719,9 @@ begin
             when "0110" => -- Abstract Control and Status
               -- Writing this register while an abstract command is executing causes cmderr
               -- to be set to 1 (busy) if it is 0.
-              if r.cmderr = CMDERR_NONE then
-                if r.busy = '1' then
-                  v.cmderr    := CMDERR_BUSY;
-                  v.accerr    := '1';
-                end if;
+              if r.busy = '1' then
+                v.cmderr    := CMDERR_BUSY;
+                v.accerr    := '1';
               elsif wdata(10 downto 8) = "111" then
                 v.cmderr      := CMDERR_NONE;
               end if;
@@ -707,10 +745,14 @@ begin
                 end if;
               end if;
             when "1000" => -- Abstract Command Autoexec
-              -- This register is not implemented
               -- Writing this register while an abstract command is executing causes cmderr
               -- to be set to 1 (busy) if it is 0.
-              null;
+              if r.busy = '1' then
+                v.cmderr      := CMDERR_BUSY;
+                v.accerr      := '1';
+              end if;
+              v.autoexec.progbuf := wdata(16+PROGBUFSIZE-1 downto  16);
+              v.autoexec.data    := wdata(DATACOUNT-1 downto 0);
             when "1001" | "1010" | "1011" | "1100" => -- Device Tree Addr 0 - 3
               -- This registers are not implemented
               null;
@@ -720,10 +762,14 @@ begin
             when others => null;
           end case; -- r.haddr(5 downto 2)
         when "0010" => -- Program Buffer 0 - Program Buffer 15
-          iregindex     := conv_integer(r.haddr(5 downto 2));
+          iregindex     := u2i(r.haddr(5 downto 2));
           if iregindex < PROGBUFSIZE then
             if r.busy = '0' then
               pbwrite(ihartsel) := '1';
+              -- Automatically rerun abstract command when program buffer is accessed
+              if r.autoexec.progbuf(iregindex) = '1' and r.cmderr = CMDERR_NONE then
+                v.cmd.valid := '1';
+              end if;
             end if;
           end if;
           -- Accessing these registers while an abstract command is executing causes cmderr
@@ -878,12 +924,12 @@ begin
     -- HALTING
 
     -- Check the running and halted signals from the selected hart
-    -- If it does not replay within the timout, set the unavalable hart bit
+    -- If it does not replay within the timout, set the unavailable hart bit
     if hartselvalid = '1' and (haltreq(ihartsel) and r.en(ihartsel)) = '1' then
       if r.halted(ihartsel) = '1' and r.running(ihartsel) = '0' then
         v.unavailcnt    := (others => '0');
       else
-        v.unavailcnt    := r.unavailcnt + 1;
+        v.unavailcnt    := uadd(r.unavailcnt, 1);
       end if;
     end if;
 
@@ -1051,6 +1097,7 @@ begin
       dbgo(i).resume    <= resumereq(i);        -- Resume Request
       dbgo(i).reset     <= hartreset(i);        -- Reset Request
       dbgo(i).haltonrst <= r.haltonrst(i);      -- Halt-on-reset
+      dbgo(i).freeze    <= '0';                 -- Hold CPU
       dbgo(i).denable   <= denable(i);          -- Command Enable
       dbgo(i).dcmd      <= dcmd;                -- Command Type
       dbgo(i).dwrite    <= dwrite;              -- Write Enable

@@ -1,0 +1,4 @@
+lib/cypress/ssram/components.vhd
+lib/cypress/ssram/package_utility.vhd
+lib/cypress/ssram/cy7c1354b.vhd
+lib/cypress/ssram/cy7c1380d.vhd

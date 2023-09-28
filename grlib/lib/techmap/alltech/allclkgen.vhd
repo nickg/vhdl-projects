@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -376,6 +376,15 @@ component clkand_gf22fdx
     en     :  in  std_ulogic;
     clko   :  out std_ulogic;
     testen :  in  std_ulogic
+  );
+end component;
+
+component clkand_rhs28
+  port(
+    i   :  in  std_ulogic;
+    en  :  in  std_ulogic;
+    o   :  out std_ulogic;
+    tsten: in  std_ulogic
   );
 end component;
 
@@ -870,7 +879,9 @@ component sim_pll is
     clkphase4: integer := 0;
     -- Frequency limits in kHz, for checking only
     minfreq: integer := 0;
-    maxfreq: integer := 10000000
+    maxfreq: integer := 10000000;
+    -- Lock tolerance in ps
+    locktol: integer := 2
     );
   port (
     i: in std_logic;

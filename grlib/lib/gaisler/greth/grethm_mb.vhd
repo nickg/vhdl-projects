@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -48,7 +48,7 @@ entity grethm_mb is
     slot_time      : integer := 128;
     mdcscaler      : integer range 0 to 255 := 25; 
     enable_mdio    : integer range 0 to 1 := 0;
-    fifosize       : integer range 4 to 64 := 8;
+    fifosize       : integer range 4 to 512 := 8;
     nsync          : integer range 1 to 2 := 2;
     edcl           : integer range 0 to 3 := 0;
     edclbufsz      : integer range 1 to 64 := 1;

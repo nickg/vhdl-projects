@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,8 +45,7 @@ entity ahbram is
     kbytes      : integer := 1;
     pipe        : integer := 0;
     maccsz      : integer := AHBDW;
-    scantest    : integer := 0;
-    endianness  : integer := GRLIB_CONFIG_ARRAY(grlib_little_endian));
+    scantest    : integer := 0);
   port (
     rst     : in  std_ulogic;
     clk     : in  std_ulogic;
@@ -57,12 +56,12 @@ end;
 
 architecture rtl of ahbram is
 
-constant abits : integer := log2ext(kbytes) + 8 - maccsz/64;
+constant abits : integer := log2ext(kbytes) + 8 - log2(maccsz/32);
 
 constant dw : integer := maccsz;
-
+--AHBRAM-like cores use the version Plug&Play field to indicate memory size.
 constant hconfig : ahb_config_type := (
-  0 => ahb_device_reg ( VENDOR_GAISLER, GAISLER_AHBRAM, 0, abits+2+maccsz/64, 0),
+  0 => ahb_device_reg ( VENDOR_GAISLER, GAISLER_AHBRAM, 0, abits+2+log2(maccsz/32), 0),
   4 => ahb_membar(haddr, '1', '1', hmask),
   others => zero32);
 
@@ -245,7 +244,7 @@ begin
     -- Endianness conversion
     wdata := ahbsi.hwdata;
 
-    if endianness = 1 then
+    if ahbsi.endian = '1' then
       hrdata    := reversedata(hrdata, 8);
       wdata     := reversedata(wdata, 8);
     end if;

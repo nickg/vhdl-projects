@@ -1,0 +1,16 @@
+lib/techmap/gencomp/gencomp.vhd
+lib/techmap/gencomp/netcomp.vhd
+lib/techmap/alltech/allclkgen.vhd
+lib/techmap/alltech/allddr.vhd
+lib/techmap/alltech/allmem.vhd
+lib/techmap/alltech/allmul.vhd
+lib/techmap/alltech/allpads.vhd
+lib/techmap/alltech/alltap.vhd
+lib/techmap/inferred/memory_inferred.vhd
+lib/techmap/inferred/ddr_inferred.vhd
+lib/techmap/inferred/mul_inferred.vhd
+lib/techmap/inferred/ddr_phy_inferred.vhd
+lib/techmap/inferred/ddrphy_datapath.vhd
+lib/techmap/inferred/fifo_inferred.vhd
+lib/techmap/inferred/sim_pll.vhd
+lib/techmap/inferred/lpddr2_phy_inferred.vhd

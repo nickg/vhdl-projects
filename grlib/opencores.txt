@@ -1,0 +1,6 @@
+lib/opencores/can/cancomp.vhd
+lib/opencores/can/can_top.vhd
+lib/opencores/i2c/i2c_master_bit_ctrl.vhd
+lib/opencores/i2c/i2c_master_byte_ctrl.vhd
+lib/opencores/i2c/i2coc.vhd
+lib/opencores/ge_1000baseX/ge_1000baseX_comp.vhd

@@ -1,0 +1,9 @@
+lib/eth/comp/ethcomp.vhd
+lib/eth/core/greth_pkg.vhd
+lib/eth/core/eth_rstgen.vhd
+lib/eth/core/eth_edcl_ahb_mst.vhd
+lib/eth/core/eth_ahb_mst.vhd
+lib/eth/core/greth_tx.vhd
+lib/eth/core/greth_rx.vhd
+lib/eth/core/grethc.vhd
+lib/eth/wrapper/greth_gen.vhd

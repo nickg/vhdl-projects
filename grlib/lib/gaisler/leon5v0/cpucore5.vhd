@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -68,8 +68,10 @@ entity cpucore5 is
     dbgi  : in  l5_debug_in_type;
     dbgo  : out l5_debug_out_type;
     tpo   : out trace_port_out_type;
+    tco   : in  trace_control_out_type; 
     fpuo  : in  grfpu5_out_type;
-    fpui  : out grfpu5_in_type
+    fpui  : out grfpu5_in_type;
+    perf  : out std_logic_vector(63 downto 0)
     );
 end;
 
@@ -150,6 +152,8 @@ architecture hier of cpucore5 is
   signal fpc_retire : std_logic;
   signal fpc_retid  : std_logic_vector(4 downto 0);
   signal c2c_mosi   : l5_intreg_mosi_type;
+  signal c_perf     : std_logic_vector(31 downto 0);
+  signal iu_perf    : std_logic_vector(63 downto 0);
 
 begin
 
@@ -196,13 +200,15 @@ begin
       fpu5o       => fpco,
       fpu5i       => fpci,
       tpo         => tpo,
+      tco         => tco,
       fpc_retire  => fpc_retire,
       fpc_rfwen   => fprfi.wen,
       fpc_rfwdata => fprfi.wdata,
       fpc_retid   => fpc_retid,
       testen      => ahbsi.testen,
       testrst     => ahbsi.testrst,
-      testin      => ahbsi.testin
+      testin      => ahbsi.testin,
+      perf        => iu_perf
       );
 
   -- multiply and divide units
@@ -220,7 +226,7 @@ begin
     c2c_mosi   => c2c_mosi
     );
 
-  gclken <= not xdbgo.idle;
+  gclken <= not xdbgo.idle or not rstn;
 
   ----------------------------------------------------------------------------
   -- Cache controller and MMU
@@ -268,7 +274,8 @@ begin
       c2c_miso => dbgi.c2c_miso,
       freeze   => dbgi.freeze,
       bootword => dbgi.boot_word,
-      smpflush => dbgi.smpflush
+      smpflush => dbgi.smpflush,
+      perf => c_perf
       );
 
   ----------------------------------------------------------------------------
@@ -650,5 +657,7 @@ begin
     xfpuo <= fpuo;
   end generate;
 
+  perf(58 downto 0)  <= iu_perf(58 downto 0);
+  perf(63 downto 59) <= c_perf(4 downto 0);
 
 end;

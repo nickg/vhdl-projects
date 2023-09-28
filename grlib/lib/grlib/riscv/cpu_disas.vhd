@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,10 +36,11 @@ library grlib;
 use grlib.stdlib.all;
 use grlib.riscv.all;
 use grlib.riscv_disas.all;
-
 entity cpu_disas is
+
+
 generic (
-  disasg : in integer range 0 to 3 := 1
+  disasg : in integer range 0 to 4 := 1
   );
 port (
   clk           : in  std_ulogic;
@@ -54,18 +55,21 @@ port (
   pc            : in  std_logic_vector;                 -- PC
   wregen        : in  std_ulogic;                       -- Regfile Write Enable
   wregdata      : in  std_logic_vector;                 -- Regfile Write Data
+  fsd           : in  std_ulogic;                       -- RV32 and fsd
+  fsd_hi        : in  std_logic_vector;                 -- High half of fsd on RV32
   wregen_f      : in  std_ulogic;                       -- FPU Regfile Write Enable
   wcsren        : in  std_ulogic;                       -- CSR Write Enable
   wcsrdata      : in  std_logic_vector;                 -- CSR Write Data
   prv           : in  std_logic_vector(1 downto 0);     -- Privileged Level
+  v             : in  std_ulogic;                       -- Virtualization mode
   trap          : in  std_ulogic;                       -- Exception
-  trap_taken    : in  std_ulogic;
   cause         : in  std_logic_vector;                 -- Exception Cause
   tval          : in  std_logic_vector;                 -- Exception Value
   cycle         : in  std_logic_vector(63 downto 0);    -- Cycle Counter
   instret       : in  std_logic_vector(63 downto 0);    -- Inst Committed
   dual          : in  std_logic_vector(63 downto 0);    -- Dual Instruction Counter
-  disas         : in  std_ulogic);                      -- Disassembly Enabled
+  disas         : in  std_ulogic                        -- Disassembly Enabled
+  );
 end;
 
 architecture behav of cpu_disas is
@@ -77,8 +81,8 @@ begin
   dummy <= '1';
 
   trc : process(clk)
-    variable rd         : std_logic_vector(4 downto 0);
-    variable csr        : std_logic_vector(11 downto 0);
+    variable rd         : reg_t;
+    variable csr        : csratype;
     variable iindex     : integer;
     variable iway       : integer;
   begin
@@ -105,6 +109,8 @@ begin
           rd,                     -- Destination Register
           csr,                    -- CSR Register
           wregdata,               -- Regfile Write Data
+          fsd,                    -- RV32 and fsd?
+          fsd_hi,                 -- High half of fsd on RV32
           wregen,                 -- Regfile Write Enable
           wregen_f,               -- FPU Regfile Write Enable
           wcsrdata,               -- CSR Write Data
@@ -126,22 +132,23 @@ begin
     if disasg = 2 then
       if rising_edge(clk) and (rstn = '1') then
         print_spike_special(
-          valid => ivalid,
-          pc => pc,
-          csr => csr,
+          valid  => ivalid,
+          pc     => pc,
+          csr    => csr,
           wrdata => wregdata,
-          wren => wregen,
+          fsd    => fsd,
+          fsd_hi => fsd_hi,
+          wren   => wregen,
           wren_f => wregen_f,
-          wcen => wcsren,
+          wcen   => wcsren,
           wcdata => wcsrdata,
-          inst => inst,
-          cinst => cinst,
-          comp => comp,
-          prv => prv,
-          trap => trap,
-          trap_taken => trap_taken,
-          cause => cause,
-          tval => tval);
+          inst   => inst,
+          cinst  => cinst,
+          comp   => comp,
+          prv    => prv,
+          trap   => trap,
+          cause  => cause,
+          tval   => tval);
       end if;
     end if;
 
@@ -159,6 +166,8 @@ begin
             rd      => rd,                     -- Destination Register
             csr     => csr,                    -- CSR Register
             wrdata  => wregdata,               -- Regfile Write Data
+            fsd     => fsd,                    -- RV32 and fsd?
+            fsd_hi  => fsd_hi,                 -- High half of fsd on RV32
             wren    => wregen,                 -- Regfile Write Enable
             wren_f  => wregen_f,               -- FPU Regfile Write Enable
             wcdata  => wcsrdata,               -- CSR Write Data
@@ -167,6 +176,7 @@ begin
             cinst   => cinst,                  -- Compressed Instruction
             comp    => comp,                   -- Compressed Flag
             prv     => prv,                    -- Privileged Level
+            v       => v,                      -- Virtualization mode
             trap    => trap,                   -- Exception
             cause   => cause,                  -- Exception Cuase
             tval    => tval                    -- Exception Value
@@ -174,7 +184,6 @@ begin
         end if;
       end if;
     end if;
-
   end process;
 
 end;

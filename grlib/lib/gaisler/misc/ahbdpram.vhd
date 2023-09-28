@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -66,7 +66,7 @@ constant kbytes : integer := 2**(abits - 8);
 
 constant cache : std_ulogic := conv_std_logic(cacheable/=0);
 constant prefetch : std_ulogic := conv_std_logic(cacheable/=0);
-
+--AHBRAM-like cores use the version Plug&Play field to indicate memory size.
 constant hconfig : ahb_config_type := (
   0 => ahb_device_reg ( VENDOR_GAISLER, GAISLER_AHBDPRAM, 0, abits+2, 0),
   4 => ahb_membar(haddr, prefetch, cache, hmask),

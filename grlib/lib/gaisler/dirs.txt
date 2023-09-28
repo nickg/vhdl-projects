@@ -31,7 +31,7 @@ jtag
 b1553 
 greth
 spacewire 
-spacefibre
+hssl
 usb 
 ddr 
 crypto 
@@ -53,9 +53,13 @@ grrm
 subsys
 ftaddr
 grscrub
-noelv
 plic
-noelv/subsys
+aplic
 leon5
 leon5v0
 grfpc5
+socbridge
+l2c_lite
+bch
+nandfctrl2
+griommu2

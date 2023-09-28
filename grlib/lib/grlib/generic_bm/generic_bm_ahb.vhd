@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -352,6 +352,7 @@ begin  -- rtl
   bm_me_wc_in.burst_done    <= ahb_be_out.wr_done;
   bm_me_rc_in.burst_done_comb <= ahb_be_out.rd_done_comb;
   bm_me_wc_in.error         <= ahb_be_out.wr_error;
+  bm_me_wc_in.excl_error    <= '0';
 
   bm_me_rc_in.start         <= bmfre_out.rc_start;
   bm_me_rc_in.grant         <= ahb_be_out.rd_gnt;

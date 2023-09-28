@@ -2,12 +2,12 @@
 --  This file is a part of the GRLIB VHDL IP LIBRARY
 --  Copyright (C) 2003 - 2008, Gaisler Research
 --  Copyright (C) 2008 - 2014, Aeroflex Gaisler
---  Copyright (C) 2015 - 2021, Cobham Gaisler
+--  Copyright (C) 2015 - 2023, Cobham Gaisler
+--  Copyright (C) 2023,        Frontgrade Gaisler
 --
 --  This program is free software; you can redistribute it and/or modify
 --  it under the terms of the GNU General Public License as published by
---  the Free Software Foundation; either version 2 of the License, or
---  (at your option) any later version.
+--  the Free Software Foundation; version 2.
 --
 --  This program is distributed in the hope that it will be useful,
 --  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -270,31 +270,33 @@ package allmem is
     );
   end component;
 
-  component dare65t_syncram_2p
-  generic ( abits : integer := 8; dbits : integer := 32; sepclk : integer := 0);
-  port (
-    rclk  : in std_ulogic;
-    rena  : in std_ulogic;
-    raddr : in std_logic_vector (abits -1 downto 0);
-    dout  : out std_logic_vector (dbits -1 downto 0);
-    wclk  : in std_ulogic;
-    waddr : in std_logic_vector (abits -1 downto 0);
-    din   : in std_logic_vector (dbits -1 downto 0);
-    write : in std_ulogic;
-    scanen   : in std_ulogic;
-    bypass   : in std_ulogic;
-    mbtdi    : in std_ulogic;
-    mbtdo    : out std_ulogic;
-    mbshft   : in std_ulogic;
-    mbcapt   : in std_ulogic;
-    mbupd    : in std_ulogic;
-    mbclk    : in std_ulogic;
-    mbrstn   : in std_ulogic;
-    mbcgate  : in std_ulogic;
-    mbpres   : out std_ulogic;
-    mbmuxo   : out std_logic_vector(5 downto 0)
-   );
-  end component;
+  component dare65t_syncram_2p_mbist
+    generic ( abits : integer := 8; dbits : integer := 32; sepclk : integer := 0);
+    port (
+      rclk  : in std_ulogic;
+      rena  : in std_ulogic;
+      raddr : in std_logic_vector (abits -1 downto 0);
+      dout  : out std_logic_vector (dbits -1 downto 0);
+      wclk  : in std_ulogic;
+      waddr : in std_logic_vector (abits -1 downto 0);
+      din   : in std_logic_vector (dbits -1 downto 0);
+      write : in std_ulogic;
+      --
+      mbist    : in  std_ulogic;
+      fill0    : in  std_ulogic;
+      fill1    : in  std_ulogic;
+      mpresent : out std_ulogic;
+      menable  : out std_ulogic;
+      merror   : out std_ulogic;
+      bistrst  : in  std_ulogic;
+      testen   : in  std_ulogic;
+      testrst  :  in std_logic;
+      sysclk   : in  std_logic;
+      --
+      awtb     : in  std_ulogic;
+      memreset : in  std_ulogic
+     );
+    end component;
 
   component rhumc_syncram_2p
   generic ( abits : integer := 8; dbits : integer := 32; sepclk : integer := 0);
@@ -1014,29 +1016,30 @@ end component;
       );
   end component;
 
-  component dare65t_syncram
-  generic ( abits : integer := 10; dbits : integer := 8 );
-  port (
-    clk      : in std_ulogic;
-    address  : in std_logic_vector(abits -1 downto 0);
-    datain   : in std_logic_vector(dbits -1 downto 0);
-    dataout  : out std_logic_vector(dbits -1 downto 0);
-    enable   : in std_ulogic;
-    write    : in std_ulogic;
-    scanen   : in std_ulogic;
-    bypass   : in std_ulogic;
-    mbtdi    : in std_ulogic;
-    mbtdo    : out std_ulogic;
-    mbshft   : in std_ulogic;
-    mbcapt   : in std_ulogic;
-    mbupd    : in std_ulogic;
-    mbclk    : in std_ulogic;
-    mbrstn   : in std_ulogic;
-    mbcgate  : in std_ulogic;
-    mbpres   : out std_ulogic;
-    mbmuxo   : out std_logic_vector(5 downto 0)
-    );
-  end component;
+  component dare65t_syncram_mbist
+    generic ( abits : integer := 10; dbits : integer := 8 );
+    port (
+      clk      : in std_ulogic;
+      address  : in std_logic_vector(abits -1 downto 0);
+      datain   : in std_logic_vector(dbits -1 downto 0);
+      dataout  : out std_logic_vector(dbits -1 downto 0);
+      enable   : in std_ulogic;
+      write    : in std_ulogic;
+      --
+      mbist    : in  std_ulogic;
+      fill0    : in  std_ulogic;
+      fill1    : in  std_ulogic;
+      mpresent : out std_ulogic;
+      menable  : out std_ulogic;
+      merror   : out std_ulogic;
+      bistrst  : in  std_ulogic;
+      testen   : in  std_ulogic;
+      testrst  : in  std_logic;
+      sysclk   : in  std_logic;
+      --
+      awtb     : in  std_ulogic
+      );
+    end component;
 
   component dare_syncram_mbist
   generic ( abits : integer := 10; dbits : integer := 8 );
@@ -2193,5 +2196,93 @@ end component;
       );
   end component;
 
-end;
+  component syncram_rhs28 is
+    generic (
+      abits : integer;
+      dbits : integer;
+      pipeline : integer
+      );
+    port (
+      clk      : in std_ulogic;
+      address  : in std_logic_vector((abits -1) downto 0);
+      datain   : in std_logic_vector((dbits -1) downto 0);
+      dataout  : out std_logic_vector((dbits -1) downto 0);
+      enable   : in std_ulogic;
+      write    : in std_ulogic;
+      initn    : in std_ulogic;
+      testen   : in std_ulogic;
+      scanen   : in std_ulogic
+      );
+  end component;
 
+  component syncram_2p_rhs28 is
+    generic (
+      abits : integer;
+      dbits : integer
+      );
+    port (
+      rclk     : in std_ulogic;
+      renable  : in std_ulogic;
+      raddress : in std_logic_vector((abits -1) downto 0);
+      dataout  : out std_logic_vector((dbits -1) downto 0);
+      wclk     : in std_ulogic;
+      write    : in std_ulogic;
+      waddress : in std_logic_vector((abits -1) downto 0);
+      datain   : in std_logic_vector((dbits -1) downto 0);
+      initn    : in std_ulogic;
+      testen   : in std_ulogic;
+      scanen   : in std_ulogic
+      );
+  end component;
+
+  --NEXUS family
+  component nexus_syncram is
+    generic (abits : integer := 9;
+             dbits : integer := 32
+             );
+    port (
+      clk     : in std_ulogic;
+      address : in std_logic_vector((abits -1) downto 0);
+      datain  : in std_logic_vector((dbits -1) downto 0);
+      dataout : out std_logic_vector((dbits -1) downto 0);
+      enable  : in std_ulogic;
+      write   : in std_ulogic
+      );
+  end component;
+  
+  
+  component nexus_syncram_2p is
+    generic (abits : integer := 6;
+             dbits : integer := 8
+             );
+    port (
+      rclk     : in std_ulogic;
+      renable  : in std_ulogic;
+      raddress : in std_logic_vector((abits -1) downto 0);
+      dataout  : out std_logic_vector((dbits -1) downto 0);
+      wclk     : in std_ulogic;
+      write    : in std_ulogic;
+      waddress : in std_logic_vector((abits -1) downto 0);
+      datain   : in std_logic_vector((dbits -1) downto 0)
+      );
+  end component;
+
+  component nexus_syncram_dp is
+    generic (abits : integer := 4;
+             dbits : integer := 32
+             );
+    port (
+      clk1     : in std_ulogic;
+      address1 : in std_logic_vector((abits -1) downto 0);
+      datain1  : in std_logic_vector((dbits -1) downto 0);
+      dataout1 : out std_logic_vector((dbits -1) downto 0);
+      enable1  : in std_ulogic;
+      write1   : in std_ulogic;
+      clk2     : in std_ulogic;
+      address2 : in std_logic_vector((abits -1) downto 0);
+      datain2  : in std_logic_vector((dbits -1) downto 0);
+      dataout2 : out std_logic_vector((dbits -1) downto 0);
+      enable2  : in std_ulogic;
+      write2   : in std_ulogic);
+  end component;
+end;
