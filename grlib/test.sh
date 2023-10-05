@@ -7,7 +7,7 @@ STD=1993
 TOP=leon3mp
 STOP_TIME=
 
-A_OPTS=
+A_OPTS="--relaxed"
 E_OPTS=
 R_OPTS=
 

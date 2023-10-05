@@ -65,20 +65,21 @@ cat_dir () {
   cat_dir lib/gaisler/leon3v3
   cat_dir lib/gaisler/leon4
   cat_dir lib/gaisler/can
-  #cat_dir lib/gaisler/misc
+  cat_dir lib/gaisler/misc
   cat_dir lib/gaisler/irqmp
   cat_dir lib/gaisler/l2cache
   cat_dir lib/gaisler/net
   cat_dir lib/gaisler/pci
-  #cat_dir lib/gaisler/uart
+  cat_dir lib/gaisler/uart
   cat_dir lib/gaisler/sim
   cat_dir lib/gaisler/jtag
   cat_dir lib/gaisler/devices
-  #cat_dir lib/gaisler/greth
+  cat_dir lib/gaisler/greth
   cat_dir lib/gaisler/spacewire
   cat_dir lib/gaisler/spacefibre
   cat_dir lib/gaisler/usb
-  #cat_dir lib/gaisler/ddr
+  cat_dir lib/gaisler/axi
+  cat_dir lib/gaisler/ddr
   cat_dir lib/gaisler/gr1553b
   cat_dir lib/gaisler/i2c
   cat_dir lib/gaisler/spi
@@ -91,7 +92,7 @@ cat_dir () {
 } > gaisler.txt
 
 {
-#  cat_dir lib/esa/memoryctrl
+  cat_dir lib/esa/memoryctrl
   cat_dir lib/esa/pci
 } > esa.txt
 
