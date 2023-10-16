@@ -4,6 +4,8 @@ cd $(dirname $0)
 . ../functions.sh
 
 STD=1993
+TOP=cpu_test
+STOP_TIME=10us
 
 A_OPTS="--error-limit=1 --relaxed"
 E_OPTS=
@@ -14,7 +16,4 @@ NVC_OPTS="-M 128m" analyse src/vhdl/shadowram-a100t.vhdl src/vhdl/shadowram-a200
 
 analyse @files.txt
 
-for TOP in test_sprite; do
-  elaborate
-  run
-done
+run_jit

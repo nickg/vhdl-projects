@@ -123,6 +123,3 @@ src/vhdl/iomapper.vhdl
 src/vhdl/gs4510.vhdl
 src/vhdl/machine.vhdl
 src/vhdl/cpu_test.vhdl
-src/vhdl/test_sprite.vhdl
-src/vhdl/test_i2c.vhdl
-src/vhdl/test_ascii.vhdl
