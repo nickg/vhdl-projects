@@ -53,7 +53,7 @@ _ghdl () {
 
 _vcom () {
   local _work=${WORK:-work}
-  local _opts="-quiet -nologo -work .questa/$_work"
+  local _opts="-quiet -nologo -$STD -work .questa/$_work"
   if [ ! -d .questa/$_work ]; then
     mkdir -p .questa
     vlib .questa/$_work
