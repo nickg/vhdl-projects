@@ -10,7 +10,7 @@ E_OPTS=
 R_OPTS=
 
 GHDL_OPTS=
-NVC_OPTS="-H 64m"
+NVC_OPTS="-H 128m"
 
 mkdir -p results
 mkdir -p reports
