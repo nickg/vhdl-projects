@@ -6,8 +6,8 @@ package ring_bus_pack is
 
 -- A ring bus for connecting multiple devices. Words of data are sent one step
 -- along the bus in only one direction each clock cycle. Messages on the bus
--- are comprised of one or more words and each message has command type. 
-  
+-- are comprised of one or more words and each message has command type.
+
 -- Here are the possible command types
 type rbus_cmd is (
   -- bus commands
@@ -121,11 +121,11 @@ type rbus_node_mode is (
   TRANSMIT -- stall bus commands and send from device
 );
 
-constant IDLE_8B : rbus_word_8b := cmd_word_8b(IDLE, 0);
-constant IDLE_9B : rbus_word_9b := cmd_word_9b(IDLE, 0);
+constant IDLE_8B : rbus_word_8b;
+constant IDLE_9B : rbus_word_9b;
 
-constant RBUS_IDLE_8B : rbus_8b := (IDLE_8B, '0');
-constant RBUS_IDLE_9B : rbus_9b := (IDLE_9B, '0');
+constant RBUS_IDLE_8B : rbus_8b;
+constant RBUS_IDLE_9B : rbus_9b;
 
 type rbus_dev_i_8b is record
   -- en and d are a bus word coming from the bus
@@ -220,12 +220,7 @@ type rbus_node_reg_8b is record
   dev_o   : rbus_dev_i_8b;
 end record;
 
-constant RBUS_NODE_RESET_8B : rbus_node_reg_8b := (
-  stalled => IDLE_8B,
-  bus_o   => (IDLE_8B, '0'),
-  mode    => FORWARD,
-  dev_o   => (word => IDLE_8B, en => '0', ack => '0')
-);
+constant RBUS_NODE_RESET_8B : rbus_node_reg_8b;
 
 type rbus_node_reg_9b is record
   stalled : rbus_word_9b;
@@ -236,12 +231,7 @@ type rbus_node_reg_9b is record
   dev_o   : rbus_dev_i_9b;
 end record;
 
-constant RBUS_NODE_RESET_9B : rbus_node_reg_9b := (
-  stalled => IDLE_9B,
-  bus_o   => (IDLE_9B, '0'),
-  mode    => FORWARD,
-  dev_o   => (word => IDLE_9B, en => '0', ack => '0')
-);
+constant RBUS_NODE_RESET_9B : rbus_node_reg_9b;
 
 -- scratch storage set by rbus_node_inputs to share state with rbus_node_outputs
 type rbus_scratch_8b is record
@@ -279,8 +269,8 @@ type rbus_outputs_9b is record
   word : rbus_word_9b;
 end record;
 
-constant RBUS_OUTPUTS_FORWARD_8B : rbus_outputs_8b := (FORWARD, IDLE_8B);
-constant RBUS_OUTPUTS_FORWARD_9B : rbus_outputs_9b := (FORWARD, IDLE_9B);
+constant RBUS_OUTPUTS_FORWARD_8B : rbus_outputs_8b;
+constant RBUS_OUTPUTS_FORWARD_9B : rbus_outputs_9b;
 
 -- These are procedures for the logic common to all ring bus nodes
 procedure rbus_node_inputs(

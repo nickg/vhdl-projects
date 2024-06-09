@@ -48,6 +48,30 @@ function data_word_9b(d : integer)
 begin
   return data_word_9b(std_logic_vector(to_unsigned(d, 9)));
 end function;
+
+constant IDLE_8B : rbus_word_8b := cmd_word_8b(IDLE, 0);
+constant IDLE_9B : rbus_word_9b := cmd_word_9b(IDLE, 0);
+
+constant RBUS_IDLE_8B : rbus_8b := (IDLE_8B, '0');
+constant RBUS_IDLE_9B : rbus_9b := (IDLE_9B, '0');
+
+constant RBUS_NODE_RESET_8B : rbus_node_reg_8b := (
+  stalled => IDLE_8B,
+  bus_o   => (IDLE_8B, '0'),
+  mode    => FORWARD,
+  dev_o   => (word => IDLE_8B, en => '0', ack => '0')
+);
+
+constant RBUS_NODE_RESET_9B : rbus_node_reg_9b := (
+  stalled => IDLE_9B,
+  bus_o   => (IDLE_9B, '0'),
+  mode    => FORWARD,
+  dev_o   => (word => IDLE_9B, en => '0', ack => '0')
+);
+
+constant RBUS_OUTPUTS_FORWARD_8B : rbus_outputs_8b := (FORWARD, IDLE_8B);
+constant RBUS_OUTPUTS_FORWARD_9B : rbus_outputs_9b := (FORWARD, IDLE_9B);
+
 function to_cmd(d : std_logic_vector)
   return rbus_cmd is
   alias da : std_logic_vector(d'length-1 downto 0) is d;
