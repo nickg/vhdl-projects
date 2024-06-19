@@ -19,11 +19,13 @@ analyse decode_types.vhdl \
         foreign_random.vhdl \
         fetch1.vhdl \
         plru.vhdl \
+        plrufn.vhdl \
         cache_ram.vhdl \
-        icache.vhdl \
-        decode1.vhdl \
         helpers.vhdl \
         insn_helpers.vhdl \
+        predecode.vhdl \
+        icache.vhdl \
+        decode1.vhdl \
         control.vhdl \
         decode2.vhdl \
         register_file.vhdl \
@@ -34,8 +36,10 @@ analyse decode_types.vhdl \
         logical.vhdl \
         countzero.vhdl \
         multiply.vhdl \
+        multiply-32s.vhdl \
         divider.vhdl \
         pmu.vhdl \
+        countbits.vhdl \
         execute1.vhdl \
         loadstore1.vhdl \
         mmu.vhdl \
@@ -51,6 +55,7 @@ analyse decode_types.vhdl \
         sync_fifo.vhdl \
         wishbone_debug_master.vhdl \
         xics.vhdl \
+        git.vhdl \
         syscon.vhdl \
         gpio.vhdl \
         spi_rxtx.vhdl \

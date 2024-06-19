@@ -36,12 +36,14 @@ begin
     divider_0: process(clk)
     begin
         if rising_edge(clk) then
-            if rst = '1' then
+            if rst = '1' or d_in.flush = '1' then
                 dend <= (others => '0');
                 div <= (others => '0');
                 quot <= (others => '0');
                 running <= '0';
                 count <= "0000000";
+                is_32bit <= '0';
+                overflow <= '0';
             elsif d_in.valid = '1' then
                 if d_in.is_extended = '1'  then
                     dend <= '0' & d_in.dividend & x"0000000000000000";

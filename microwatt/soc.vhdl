@@ -51,6 +51,16 @@ use work.wishbone_types.all;
 --   3  : SD card
 --   4  : GPIO
 
+-- Resets:
+-- The soc can be reset externally by its parent top- entity (via rst port),
+-- or can be reset by software via syscon. In the software reset case
+-- the reset signal will also be exposed via sw_soc_reset port - toplevels
+-- can use that to reset other peripherals if required.
+--
+-- When using DRAM the alt_reset signal will be high after soc reset, to
+-- run sdram init routines. After startup software will switch alt_reset to
+-- low, so a core reset will use the non-alt reset address.
+
 entity soc is
     generic (
 	MEMORY_SIZE        : natural;
@@ -59,8 +69,8 @@ entity soc is
 	SIM                : boolean;
         HAS_FPU            : boolean := true;
         HAS_BTC            : boolean := true;
-        HAS_SHORT_MULT     : boolean := false;
 	DISABLE_FLATTEN_CORE : boolean := false;
+        ALT_RESET_ADDRESS  : std_logic_vector(63 downto 0) := (23 downto 0 => '0', others => '1');
 	HAS_DRAM           : boolean  := false;
 	DRAM_SIZE          : integer := 0;
         DRAM_INIT_SIZE     : integer := 0;
@@ -129,12 +139,15 @@ entity soc is
         gpio_dir : out std_ulogic_vector(NGPIO - 1 downto 0);
         gpio_in  : in  std_ulogic_vector(NGPIO - 1 downto 0) := (others => '0');
 
-	-- DRAM controller signals
-	alt_reset    : in std_ulogic := '0'
+        -- SOC reset trigger from syscon
+        sw_soc_reset : out std_ulogic
 	);
 end entity soc;
 
 architecture behaviour of soc is
+
+    -- internal reset
+    signal soc_reset : std_ulogic;
 
     -- Wishbone master signals:
     signal wishbone_dcore_in  : wishbone_slave_out;
@@ -166,6 +179,7 @@ architecture behaviour of soc is
     -- Syscon signals
     signal dram_at_0     : std_ulogic;
     signal do_core_reset    : std_ulogic;
+    signal alt_reset     : std_ulogic;
     signal wb_syscon_in  : wb_io_master_out;
     signal wb_syscon_out : wb_io_slave_out;
 
@@ -222,15 +236,15 @@ architecture behaviour of soc is
     signal dmi_core_ack   : std_ulogic;
 
     -- Delayed/latched resets and alt_reset
-    signal rst_core    : std_ulogic := '1';
-    signal rst_uart    : std_ulogic := '1';
-    signal rst_xics    : std_ulogic := '1';
-    signal rst_spi     : std_ulogic := '1';
-    signal rst_gpio    : std_ulogic := '1';
-    signal rst_bram    : std_ulogic := '1';
-    signal rst_dtm     : std_ulogic := '1';
-    signal rst_wbar    : std_ulogic := '1';
-    signal rst_wbdb    : std_ulogic := '1';
+    signal rst_core    : std_ulogic;
+    signal rst_uart    : std_ulogic;
+    signal rst_xics    : std_ulogic;
+    signal rst_spi     : std_ulogic;
+    signal rst_gpio    : std_ulogic;
+    signal rst_bram    : std_ulogic;
+    signal rst_dtm     : std_ulogic;
+    signal rst_wbar    : std_ulogic;
+    signal rst_wbdb    : std_ulogic;
     signal alt_reset_d : std_ulogic;
 
     -- IO branch split:
@@ -239,12 +253,20 @@ architecture behaviour of soc is
                            SLAVE_IO_ICP,
                            SLAVE_IO_ICS,
                            SLAVE_IO_UART1,
-                           SLAVE_IO_SPI_FLASH_REG,
-                           SLAVE_IO_SPI_FLASH_MAP,
+                           SLAVE_IO_SPI_FLASH,
                            SLAVE_IO_GPIO,
-                           SLAVE_IO_EXTERNAL,
-                           SLAVE_IO_NONE);
-    signal slave_io_dbg : slave_io_type;
+                           SLAVE_IO_EXTERNAL);
+    signal current_io_decode : slave_io_type;
+
+    signal io_cycle_none      : std_ulogic;
+    signal io_cycle_syscon    : std_ulogic;
+    signal io_cycle_uart      : std_ulogic;
+    signal io_cycle_uart1     : std_ulogic;
+    signal io_cycle_icp       : std_ulogic;
+    signal io_cycle_ics       : std_ulogic;
+    signal io_cycle_spi_flash : std_ulogic;
+    signal io_cycle_gpio      : std_ulogic;
+    signal io_cycle_external  : std_ulogic;
 
     function wishbone_widen_data(wb : wb_io_master_out) return wishbone_master_out is
         variable wwb : wishbone_master_out;
@@ -304,18 +326,21 @@ architecture behaviour of soc is
 
 begin
 
+    -- either external reset, or from syscon
+    soc_reset <= rst or sw_soc_reset;
+
     resets: process(system_clk)
     begin
         if rising_edge(system_clk) then
-            rst_core    <= rst or do_core_reset;
-            rst_uart    <= rst;
-            rst_spi     <= rst;
-            rst_xics    <= rst;
-            rst_gpio    <= rst;
-            rst_bram    <= rst;
-            rst_dtm     <= rst;
-            rst_wbar    <= rst;
-            rst_wbdb    <= rst;
+            rst_core    <= soc_reset or do_core_reset;
+            rst_uart    <= soc_reset;
+            rst_spi     <= soc_reset;
+            rst_xics    <= soc_reset;
+            rst_gpio    <= soc_reset;
+            rst_bram    <= soc_reset;
+            rst_dtm     <= soc_reset;
+            rst_wbar    <= soc_reset;
+            rst_wbdb    <= soc_reset;
             alt_reset_d <= alt_reset;
         end if;
     end process;
@@ -326,9 +351,8 @@ begin
 	    SIM => SIM,
             HAS_FPU => HAS_FPU,
             HAS_BTC => HAS_BTC,
-            HAS_SHORT_MULT => HAS_SHORT_MULT,
 	    DISABLE_FLATTEN => DISABLE_FLATTEN_CORE,
-	    ALT_RESET_ADDRESS => (23 downto 0 => '0', others => '1'),
+	    ALT_RESET_ADDRESS => ALT_RESET_ADDRESS,
             LOG_LENGTH => LOG_LENGTH,
             ICACHE_NUM_LINES => ICACHE_NUM_LINES,
             ICACHE_NUM_WAYS => ICACHE_NUM_WAYS,
@@ -465,16 +489,26 @@ begin
         -- Misc
         variable has_top : boolean;
         variable has_bot : boolean;
+        variable do_cyc  : std_ulogic;
+        variable end_cyc : std_ulogic;
+        variable slave_io : slave_io_type;
+        variable match   : std_ulogic_vector(31 downto 12);
+        variable dat_latch : std_ulogic_vector(31 downto 0);
+        variable sel_latch : std_ulogic_vector(3 downto 0);
     begin
         if rising_edge(system_clk) then
-            if (rst) then
+            do_cyc := '0';
+            end_cyc := '0';
+            if (soc_reset) then
                 state := IDLE;
                 wb_io_out.ack <= '0';
                 wb_io_out.stall <= '0';
-                wb_sio_out.cyc <= '0';
                 wb_sio_out.stb <= '0';
+                end_cyc := '1';
                 has_top := false;
                 has_bot := false;
+                dat_latch := (others => '0');
+                sel_latch := (others => '0');
             else
                 case state is
                 when IDLE =>
@@ -484,11 +518,15 @@ begin
                     -- Do we have a cycle ?
                     if wb_io_in.cyc = '1' and wb_io_in.stb = '1' then
                         -- Stall master until we are done, we are't (yet) pipelining
-                        -- this, it's all slow IOs.
+                        -- this, it's all slow IOs. Note: The current cycle has
+                        -- already been accepted as "stall" was 0, this only blocks
+                        -- the next one. This means that we must latch
+                        -- everything we need from wb_io_in in *this* cycle.
+                        --
                         wb_io_out.stall <= '1';
 
                         -- Start cycle downstream
-                        wb_sio_out.cyc <= '1';
+                        do_cyc := '1';
                         wb_sio_out.stb <= '1';
 
                         -- Copy write enable to IO out, copy address as well
@@ -499,21 +537,22 @@ begin
                         has_top := wb_io_in.sel(7 downto 4) /= "0000";
                         has_bot := wb_io_in.sel(3 downto 0) /= "0000";
 
+                        -- Remember the top word as it might be needed later
+                        dat_latch := wb_io_in.dat(63 downto 32);
+                        sel_latch := wb_io_in.sel(7 downto 4);
+
                         -- If we have a bottom word, handle it first, otherwise
-                        -- send the top word down. XXX Split the actual mux out
-                        -- and only generate a control signal.
+                        -- send the top word down.
                         if has_bot then
-                            if wb_io_in.we = '1' then
-                                wb_sio_out.dat <= wb_io_in.dat(31 downto 0);
-                            end if;
+                            -- Always update out.dat, it doesn't matter if we
+                            -- update it on reads and it saves  mux
+                            wb_sio_out.dat <= wb_io_in.dat(31 downto 0);
                             wb_sio_out.sel <= wb_io_in.sel(3 downto 0);
 
                             -- Wait for ack
                             state := WAIT_ACK_BOT;
                         else
-                            if wb_io_in.we = '1' then
-                                wb_sio_out.dat <= wb_io_in.dat(63 downto 32);
-                            end if;
+                            wb_sio_out.dat <= wb_io_in.dat(63 downto 32);
                             wb_sio_out.sel <= wb_io_in.sel(7 downto 4);
 
                             -- Bump address
@@ -531,18 +570,14 @@ begin
 
                     -- Handle ack
                     if wb_sio_in.ack = '1' then
-                        -- If it's a read, latch the data
-                        if wb_sio_out.we = '0' then
-                            wb_io_out.dat(31 downto 0) <= wb_sio_in.dat;
-                        end if;
+                         -- Always latch the data, it doesn't matter if it was
+                         -- a write and it saves a mux
+                        wb_io_out.dat(31 downto 0) <= wb_sio_in.dat;
 
                         -- Do we have a "top" part as well ?
                         if has_top then
-                            -- Latch data & sel
-                            if wb_io_in.we = '1' then
-                                wb_sio_out.dat <= wb_io_in.dat(63 downto 32);
-                            end if;
-                            wb_sio_out.sel <= wb_io_in.sel(7 downto 4);
+                            wb_sio_out.dat <= dat_latch;
+                            wb_sio_out.sel <= sel_latch;
 
                             -- Bump address and set STB
                             wb_sio_out.adr(0) <= '1';
@@ -551,8 +586,8 @@ begin
                             -- Wait for new ack
                             state := WAIT_ACK_TOP;
                         else
-                            -- We are done, ack up, clear cyc downstram
-                            wb_sio_out.cyc <= '0';
+                            -- We are done, ack up, clear cyc downstream
+                            end_cyc := '1';
 
                             -- And ack & unstall upstream
                             wb_io_out.ack <= '1';
@@ -570,13 +605,12 @@ begin
 
                     -- Handle ack
                     if wb_sio_in.ack = '1' then
-                        -- If it's a read, latch the data
-                        if wb_sio_out.we = '0' then
-                            wb_io_out.dat(63 downto 32) <= wb_sio_in.dat;
-                        end if;
+                         -- Always latch the data, it doesn't matter if it was
+                         -- a write and it saves a mux
+                        wb_io_out.dat(63 downto 32) <= wb_sio_in.dat;
 
                         -- We are done, ack up, clear cyc downstram
-                        wb_sio_out.cyc <= '0';
+                        end_cyc := '1';
 
                         -- And ack & unstall upstream
                         wb_io_out.ack <= '1';
@@ -587,143 +621,155 @@ begin
                     end if;
                 end case;
             end if;
+
+            -- Create individual registered cycle signals for the wishbones
+            -- going to the various peripherals
+            --
+            -- Note: This needs to happen on the cycle matching state = IDLE,
+            -- as wb_io_in content can only be relied upon on that one cycle.
+            -- This works here because do_cyc is a variable, not a signal, and
+            -- thus here we observe the value set above in the state machine
+            -- on the same cycle rather than the next one.
+            --
+            if do_cyc = '1' or end_cyc = '1' then
+                io_cycle_none      <= '0';
+                io_cycle_syscon    <= '0';
+                io_cycle_uart      <= '0';
+                io_cycle_uart1     <= '0';
+                io_cycle_icp       <= '0';
+                io_cycle_ics       <= '0';
+                io_cycle_spi_flash <= '0';
+                io_cycle_gpio      <= '0';
+                io_cycle_external  <= '0';
+                wb_sio_out.cyc     <= '0';
+                wb_ext_is_dram_init <= '0';
+                wb_spiflash_is_map <= '0';
+                wb_spiflash_is_reg <= '0';
+                wb_ext_is_dram_csr <= '0';
+                wb_ext_is_eth      <= '0';
+                wb_ext_is_sdcard   <= '0';
+            end if;
+            if do_cyc = '1' then
+                -- Decode I/O address
+                -- This is real address bits 29 downto 12
+                match := "11" & wb_io_in.adr(26 downto 9);
+                slave_io := SLAVE_IO_SYSCON;
+                if    std_match(match, x"FF---") and HAS_DRAM then
+                    slave_io := SLAVE_IO_EXTERNAL;
+                    io_cycle_external <= '1';
+                    wb_ext_is_dram_init <= '1';
+                elsif std_match(match, x"F----") then
+                    slave_io := SLAVE_IO_SPI_FLASH;
+                    io_cycle_spi_flash <= '1';
+                    wb_spiflash_is_map <= '1';
+                elsif std_match(match, x"C8---") then
+                    -- Ext IO "chip selects"
+                    if    std_match(match, x"--00-") and HAS_DRAM then
+                        slave_io := SLAVE_IO_EXTERNAL;
+                        io_cycle_external <= '1';
+                        wb_ext_is_dram_csr <= '1';
+                    elsif (std_match(match, x"--02-") or std_match(match, x"--03-")) and
+                           HAS_LITEETH then
+                        slave_io := SLAVE_IO_EXTERNAL;
+                        io_cycle_external <= '1';
+                        wb_ext_is_eth <= '1';
+                    elsif std_match(match, x"--04-") and HAS_SD_CARD then
+                        slave_io := SLAVE_IO_EXTERNAL;
+                        io_cycle_external <= '1';
+                        wb_ext_is_sdcard <= '1';
+                    else
+                        io_cycle_none <= '1';
+                    end if;
+                elsif std_match(match, x"C0000") then
+                    slave_io := SLAVE_IO_SYSCON;
+                    io_cycle_syscon <= '1';
+                elsif std_match(match, x"C0002") then
+                    slave_io := SLAVE_IO_UART;
+                    io_cycle_uart <= '1';
+                elsif std_match(match, x"C0003") then
+                    slave_io := SLAVE_IO_UART1;
+                    io_cycle_uart1 <= '1';
+                elsif std_match(match, x"C0004") then
+                    slave_io := SLAVE_IO_ICP;
+                    io_cycle_icp <= '1';
+                elsif std_match(match, x"C0005") then
+                    slave_io := SLAVE_IO_ICS;
+                    io_cycle_ics <= '1';
+                elsif std_match(match, x"C0006") then
+                    slave_io := SLAVE_IO_SPI_FLASH;
+                    io_cycle_spi_flash <= '1';
+                    wb_spiflash_is_reg <= '1';
+                elsif std_match(match, x"C0007") then
+                    slave_io := SLAVE_IO_GPIO;
+                    io_cycle_gpio <= '1';
+                else
+                    io_cycle_none <= '1';
+                end if;
+                current_io_decode <= slave_io;
+                wb_sio_out.cyc <= '1';
+            end if;
         end if;
     end process;
             
-    -- IO wishbone slave intercon.
+    -- IO wishbone slave interconnect.
     --
-    slave_io_intercon: process(wb_sio_out, wb_syscon_out, wb_uart0_out, wb_uart1_out,
-                               wb_ext_io_out, wb_xics_icp_out, wb_xics_ics_out,
-                               wb_spiflash_out)
-	variable slave_io : slave_io_type;
-
-        variable match : std_ulogic_vector(31 downto 12);
-        variable ext_valid : boolean;
+    slave_io_intercon: process(all)
     begin
-
-	-- Simple address decoder.
-	slave_io := SLAVE_IO_NONE;
-        match := "11" & wb_sio_out.adr(27 downto 10);
-        if    std_match(match, x"FF---") and HAS_DRAM then
-	    slave_io := SLAVE_IO_EXTERNAL;
-        elsif std_match(match, x"F----") then
-	    slave_io := SLAVE_IO_SPI_FLASH_MAP;
-	elsif std_match(match, x"C0000") then
-	    slave_io := SLAVE_IO_SYSCON;
-	elsif std_match(match, x"C0002") then
-	    slave_io := SLAVE_IO_UART;
-	elsif std_match(match, x"C0003") then
-	    slave_io := SLAVE_IO_UART1;
-	elsif std_match(match, x"C8---") then
-	    slave_io := SLAVE_IO_EXTERNAL;
-	elsif std_match(match, x"C0004") then
-	    slave_io := SLAVE_IO_ICP;
-	elsif std_match(match, x"C0005") then
-	    slave_io := SLAVE_IO_ICS;
-	elsif std_match(match, x"C0006") then
-	    slave_io := SLAVE_IO_SPI_FLASH_REG;
-        elsif std_match(match, x"C0007") then
-            slave_io := SLAVE_IO_GPIO;
-	end if;
-        slave_io_dbg <= slave_io;
 	wb_uart0_in <= wb_sio_out;
-	wb_uart0_in.cyc <= '0';
+	wb_uart0_in.cyc <= io_cycle_uart;
 	wb_uart1_in <= wb_sio_out;
-	wb_uart1_in.cyc <= '0';
+	wb_uart1_in.cyc <= io_cycle_uart1;
+
 	wb_spiflash_in <= wb_sio_out;
-	wb_spiflash_in.cyc <= '0';
-        wb_spiflash_is_reg <= '0';
-        wb_spiflash_is_map <= '0';
+	wb_spiflash_in.cyc <= io_cycle_spi_flash;
+        -- Clear top bits so they don't make their way to the
+        -- flash chip.
+        wb_spiflash_in.adr(27 downto 26) <= "00";
+
         wb_gpio_in <= wb_sio_out;
-        wb_gpio_in.cyc <= '0';
+        wb_gpio_in.cyc <= io_cycle_gpio;
 
 	 -- Only give xics 8 bits of wb addr (for now...)
 	wb_xics_icp_in <= wb_sio_out;
 	wb_xics_icp_in.adr <= (others => '0');
 	wb_xics_icp_in.adr(5 downto 0) <= wb_sio_out.adr(5 downto 0);
-	wb_xics_icp_in.cyc  <= '0';
+	wb_xics_icp_in.cyc  <= io_cycle_icp;
 	wb_xics_ics_in <= wb_sio_out;
 	wb_xics_ics_in.adr <= (others => '0');
 	wb_xics_ics_in.adr(9 downto 0) <= wb_sio_out.adr(9 downto 0);
-	wb_xics_ics_in.cyc  <= '0';
+	wb_xics_ics_in.cyc  <= io_cycle_ics;
 
 	wb_ext_io_in <= wb_sio_out;
-	wb_ext_io_in.cyc <= '0';
+	wb_ext_io_in.cyc <= io_cycle_external;
 
 	wb_syscon_in <= wb_sio_out;
-	wb_syscon_in.cyc <= '0';
+	wb_syscon_in.cyc <= io_cycle_syscon;
 
-	wb_ext_is_dram_csr   <= '0';
-	wb_ext_is_dram_init  <= '0';
-	wb_ext_is_eth        <= '0';
-        wb_ext_is_sdcard     <= '0';
-
-        -- Default response, ack & return all 1's
-        wb_sio_in.dat <= (others => '1');
-        wb_sio_in.ack <= wb_sio_out.stb and wb_sio_out.cyc;
-        wb_sio_in.stall <= '0';
-
-	case slave_io is
+	case current_io_decode is
 	when SLAVE_IO_EXTERNAL =>
-            -- Ext IO "chip selects"
-            --
-            -- DRAM init is special at 0xFF* so we just test the top
-            -- bit. Everything else is at 0xC8* so we test only bits
-            -- 23 downto 16 (21 downto 14 in the wishbone addr).
-            --
-            ext_valid := false;
-            if wb_sio_out.adr(27) = '1' and HAS_DRAM then  -- DRAM init is special
-                wb_ext_is_dram_init <= '1';
-                ext_valid := true;
-            elsif wb_sio_out.adr(21 downto 14) = x"00" and HAS_DRAM then
-                wb_ext_is_dram_csr  <= '1';
-                ext_valid := true;
-            elsif wb_sio_out.adr(21 downto 14) = x"02" and HAS_LITEETH then
-                wb_ext_is_eth       <= '1';
-                ext_valid := true;
-            elsif wb_sio_out.adr(21 downto 14) = x"03" and HAS_LITEETH then
-                wb_ext_is_eth       <= '1';
-                ext_valid := true;
-            elsif wb_sio_out.adr(21 downto 14) = x"04" and HAS_SD_CARD then
-                wb_ext_is_sdcard    <= '1';
-                ext_valid := true;
-            end if;
-            if ext_valid then
-                wb_ext_io_in.cyc <= wb_sio_out.cyc;
-                wb_sio_in <= wb_ext_io_out;
-            end if;
-
+            wb_sio_in <= wb_ext_io_out;
 	when SLAVE_IO_SYSCON =>
-	    wb_syscon_in.cyc <= wb_sio_out.cyc;
 	    wb_sio_in <= wb_syscon_out;
 	when SLAVE_IO_UART =>
-	    wb_uart0_in.cyc <= wb_sio_out.cyc;
 	    wb_sio_in <= wb_uart0_out;
 	when SLAVE_IO_ICP =>
-	    wb_xics_icp_in.cyc <= wb_sio_out.cyc;
 	    wb_sio_in <= wb_xics_icp_out;
 	when SLAVE_IO_ICS =>
-	    wb_xics_ics_in.cyc <= wb_sio_out.cyc;
 	    wb_sio_in <= wb_xics_ics_out;
 	when SLAVE_IO_UART1 =>
-	    wb_uart1_in.cyc <= wb_sio_out.cyc;
 	    wb_sio_in <= wb_uart1_out;
-	when SLAVE_IO_SPI_FLASH_MAP =>
-            -- Clear top bits so they don't make their way to the
-            -- fash chip.
-            wb_spiflash_in.adr(27 downto 26) <= "00";
-	    wb_spiflash_in.cyc <= wb_sio_out.cyc;
+	when SLAVE_IO_SPI_FLASH =>
 	    wb_sio_in <= wb_spiflash_out;
-            wb_spiflash_is_map <= '1';
-	when SLAVE_IO_SPI_FLASH_REG =>
-	    wb_spiflash_in.cyc <= wb_sio_out.cyc;
-	    wb_sio_in <= wb_spiflash_out;
-            wb_spiflash_is_reg <= '1';
         when SLAVE_IO_GPIO =>
-            wb_gpio_in.cyc <= wb_sio_out.cyc;
             wb_sio_in <= wb_gpio_out;
-	when others =>
 	end case;
+
+        -- Default response, ack & return all 1's
+        if io_cycle_none = '1' then
+            wb_sio_in.dat <= (others => '1');
+            wb_sio_in.ack <= wb_sio_out.stb and wb_sio_out.cyc;
+            wb_sio_in.stall <= '0';
+        end if;
 
     end process;
 
@@ -745,12 +791,13 @@ begin
 	)
 	port map(
 	    clk => system_clk,
-	    rst => rst,
+	    rst => soc_reset,
 	    wishbone_in => wb_syscon_in,
 	    wishbone_out => wb_syscon_out,
 	    dram_at_0 => dram_at_0,
 	    core_reset => do_core_reset,
-	    soc_reset => open -- XXX TODO
+	    soc_reset => sw_soc_reset,
+	    alt_reset => alt_reset
 	    );
 
     --
@@ -821,7 +868,7 @@ begin
     --
     -- Always 16550 if it exists
     --
-    uart1: if HAS_UART1 generate
+    uart1_16550: if HAS_UART1 generate
         signal irq_l : std_ulogic;
     begin
 	uart1: uart_top
@@ -1046,7 +1093,7 @@ begin
     wb_x_state: process(system_clk)
     begin
         if rising_edge(system_clk) then
-            if not rst then
+            if not soc_reset then
                 -- Wishbone arbiter
                 assert not(is_x(wb_masters_out(0).cyc)) and not(is_x(wb_masters_out(0).stb)) severity failure;
                 assert not(is_x(wb_masters_out(1).cyc)) and not(is_x(wb_masters_out(1).stb)) severity failure;

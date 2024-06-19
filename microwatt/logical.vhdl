@@ -13,6 +13,7 @@ entity logical is
         op         : in insn_type_t;
         invert_in  : in std_ulogic;
         invert_out : in std_ulogic;
+        is_signed  : in std_ulogic;
         result     : out std_ulogic_vector(63 downto 0);
         datalen    : in std_logic_vector(3 downto 0)
         );
@@ -20,20 +21,7 @@ end entity logical;
 
 architecture behaviour of logical is
 
-    subtype twobit is unsigned(1 downto 0);
-    type twobit32 is array(0 to 31) of twobit;
-    signal pc2      : twobit32;
-    subtype threebit is unsigned(2 downto 0);
-    type threebit16 is array(0 to 15) of threebit;
-    signal pc4      : threebit16;
-    subtype fourbit is unsigned(3 downto 0);
-    type fourbit8 is array(0 to 7) of fourbit;
-    signal pc8      : fourbit8;
-    subtype sixbit is unsigned(5 downto 0);
-    type sixbit2 is array(0 to 1) of sixbit;
-    signal pc32     : sixbit2;
     signal par0, par1 : std_ulogic;
-    signal popcnt   : std_ulogic_vector(63 downto 0);
     signal parity   : std_ulogic_vector(63 downto 0);
     signal permute  : std_ulogic_vector(7 downto 0);
 
@@ -105,39 +93,11 @@ architecture behaviour of logical is
 
 begin
     logical_0: process(all)
-        variable rb_adj, tmp : std_ulogic_vector(63 downto 0);
+        variable rb_adj, rs_adj : std_ulogic_vector(63 downto 0);
+        variable tmp : std_ulogic_vector(63 downto 0);
         variable negative : std_ulogic;
         variable j : integer;
     begin
-        -- population counts
-        for i in 0 to 31 loop
-            pc2(i) <= unsigned("0" & rs(i * 2 downto i * 2)) + unsigned("0" & rs(i * 2 + 1 downto i * 2 + 1));
-        end loop;
-        for i in 0 to 15 loop
-            pc4(i) <= ('0' & pc2(i * 2)) + ('0' & pc2(i * 2 + 1));
-        end loop;
-        for i in 0 to 7 loop
-            pc8(i) <= ('0' & pc4(i * 2)) + ('0' & pc4(i * 2 + 1));
-        end loop;
-        for i in 0 to 1 loop
-            pc32(i) <= ("00" & pc8(i * 4)) + ("00" & pc8(i * 4 + 1)) +
-                       ("00" & pc8(i * 4 + 2)) + ("00" & pc8(i * 4 + 3));
-        end loop;
-        popcnt <= (others => '0');
-        if datalen(3 downto 2) = "00" then
-            -- popcntb
-            for i in 0 to 7 loop
-                popcnt(i * 8 + 3 downto i * 8) <= std_ulogic_vector(pc8(i));
-            end loop;
-        elsif datalen(3) = '0' then
-            -- popcntw
-            for i in 0 to 1 loop
-                popcnt(i * 32 + 5 downto i * 32) <= std_ulogic_vector(pc32(i));
-            end loop;
-        else
-            popcnt(6 downto 0) <= std_ulogic_vector(('0' & pc32(0)) + ('0' & pc32(1)));
-        end if;
-
         -- parity calculations
         par0 <= rs(0) xor rs(8) xor rs(16) xor rs(24);
         par1 <= rs(32) xor rs(40) xor rs(48) xor rs(56);
@@ -165,21 +125,34 @@ begin
         end if;
 
         case op is
-            when OP_AND | OP_OR | OP_XOR =>
-                case op is
-                    when OP_AND =>
-                        tmp := rs and rb_adj;
-                    when OP_OR =>
-                        tmp := rs or rb_adj;
-                    when others =>
-                        tmp := rs xor rb_adj;
-                end case;
+            when OP_LOGIC =>
+                -- for now, abuse the 'is_signed' field to indicate inversion of RS
+                rs_adj := rs;
+                if is_signed = '1' then
+                    rs_adj := not rs;
+                end if;
+                tmp := rs_adj and rb_adj;
+                if invert_out = '1' then
+                    tmp := not tmp;
+                end if;
+            when OP_XOR =>
+                tmp := rs xor rb;
                 if invert_out = '1' then
                     tmp := not tmp;
                 end if;
 
-            when OP_POPCNT =>
-                tmp := popcnt;
+            when OP_BREV =>
+                if datalen(3) = '1' then
+                    tmp := rs( 7 downto  0) & rs(15 downto  8) & rs(23 downto 16) & rs(31 downto 24) & 
+                           rs(39 downto 32) & rs(47 downto 40) & rs(55 downto 48) & rs(63 downto 56);
+                elsif datalen(2) = '1' then
+                    tmp := rs(39 downto 32) & rs(47 downto 40) & rs(55 downto 48) & rs(63 downto 56) &
+                           rs( 7 downto  0) & rs(15 downto  8) & rs(23 downto 16) & rs(31 downto 24);
+                else
+                    tmp := rs(55 downto 48) & rs(63 downto 56) & rs(39 downto 32) & rs(47 downto 40) &
+                           rs(23 downto 16) & rs(31 downto 24) & rs( 7 downto  0) & rs(15 downto  8);
+                end if;
+
             when OP_PRTY =>
                 tmp := parity;
             when OP_CMPB =>
@@ -211,7 +184,7 @@ begin
 		end if;
 		tmp(7 downto 0) := rs(7 downto 0);
             when others =>
-                -- e.g. OP_MTSPR
+                -- e.g. OP_MFSPR
                 tmp := rs;
         end case;
 

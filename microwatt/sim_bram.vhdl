@@ -36,13 +36,12 @@ architecture sim of main_bram is
         := (others => '0');
 
     signal identifier : integer := behavioural_initialize(filename => RAM_INIT_FILE,
-                                                          strlen => RAM_INIT_FILE'length,
                                                           size => MEMORY_SIZE);
     -- Others
     signal obuf : std_logic_vector(WIDTH-1 downto 0);
 begin
 
-    -- Actual RAM template
+    -- Actual RAM template    
     memory_0: process(clk)
         variable ret_dat_v : std_ulogic_vector(63 downto 0);
         variable addr64    : std_ulogic_vector(63 downto 0);

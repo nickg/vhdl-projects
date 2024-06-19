@@ -9,7 +9,9 @@ use work.wishbone_types.all;
 entity dram_tb is
     generic (
         DRAM_INIT_FILE : string  := "";
-        DRAM_INIT_SIZE : natural := 0
+        DRAM_INIT_SIZE : natural := 0;
+        L2_TRACE : boolean := false;
+        LITEDRAM_TRACE : boolean := false
         );
 end dram_tb;
 
@@ -44,16 +46,18 @@ begin
             DRAM_ABITS => 24,
             DRAM_ALINES => 1,
             DRAM_DLINES => 16,
+            DRAM_CKLINES => 1,
             DRAM_PORT_WIDTH => 128,
             PAYLOAD_FILE => DRAM_INIT_FILE,
-            PAYLOAD_SIZE => DRAM_INIT_SIZE
+            PAYLOAD_SIZE => DRAM_INIT_SIZE,
+            TRACE => L2_TRACE,
+            LITEDRAM_TRACE => LITEDRAM_TRACE
             )
         port map(
             clk_in              => clk_in,
             rst                 => rst,
             system_clk          => clk,
             system_reset        => soc_rst,
-            core_alt_reset      => open,
             pll_locked          => open,
 
             wb_in               => wb_in,

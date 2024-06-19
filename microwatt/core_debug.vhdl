@@ -5,6 +5,7 @@ use ieee.numeric_std.all;
 library work;
 use work.utils.all;
 use work.common.all;
+use work.wishbone_types.all;
 
 entity core_debug is
     generic (
@@ -32,12 +33,25 @@ entity core_debug is
         core_stopped    : in std_ulogic;
         nia             : in std_ulogic_vector(63 downto 0);
         msr             : in std_ulogic_vector(63 downto 0);
+        wb_snoop_in     : in wishbone_master_out := wishbone_master_out_init;
 
-        -- GSPR register read port
+        -- GPR/FPR register read port
         dbg_gpr_req     : out std_ulogic;
         dbg_gpr_ack     : in std_ulogic;
         dbg_gpr_addr    : out gspr_index_t;
         dbg_gpr_data    : in std_ulogic_vector(63 downto 0);
+
+        -- SPR register read port for SPRs in execute1
+        dbg_spr_req     : out std_ulogic;
+        dbg_spr_ack     : in std_ulogic;
+        dbg_spr_addr    : out std_ulogic_vector(7 downto 0);
+        dbg_spr_data    : in std_ulogic_vector(63 downto 0);
+
+        -- SPR register read port for SPRs in loadstore1 and mmu
+        dbg_ls_spr_req  : out std_ulogic;
+        dbg_ls_spr_ack  : in std_ulogic;
+        dbg_ls_spr_addr : out std_ulogic_vector(1 downto 0);
+        dbg_ls_spr_data : in std_ulogic_vector(63 downto 0);
 
         -- Core logging data
         log_data        : in std_ulogic_vector(255 downto 0);
@@ -92,6 +106,7 @@ architecture behave of core_debug is
     constant DBG_CORE_LOG_ADDR       : std_ulogic_vector(3 downto 0) := "0110";
     constant DBG_CORE_LOG_DATA       : std_ulogic_vector(3 downto 0) := "0111";
     constant DBG_CORE_LOG_TRIGGER    : std_ulogic_vector(3 downto 0) := "1000";
+    constant DBG_CORE_LOG_MTRIGGER   : std_ulogic_vector(3 downto 0) := "1001";
 
     constant LOG_INDEX_BITS : natural := log2(LOG_LENGTH);
 
@@ -105,12 +120,19 @@ architecture behave of core_debug is
     signal do_icreset   : std_ulogic;
     signal terminated   : std_ulogic;
     signal do_gspr_rd   : std_ulogic;
-    signal gspr_index   : gspr_index_t;
+    signal gspr_index   : std_ulogic_vector(7 downto 0);
+    signal gspr_data    : std_ulogic_vector(63 downto 0);
+
+    signal spr_index_valid : std_ulogic;
 
     signal log_dmi_addr        : std_ulogic_vector(31 downto 0) := (others => '0');
     signal log_dmi_data        : std_ulogic_vector(63 downto 0) := (others => '0');
     signal log_dmi_trigger     : std_ulogic_vector(63 downto 0) := (others => '0');
+    signal log_mem_trigger     : std_ulogic_vector(63 downto 0) := (others => '0');
     signal do_log_trigger      : std_ulogic := '0';
+    signal do_log_mtrigger     : std_ulogic := '0';
+    signal trigger_was_log     : std_ulogic := '0';
+    signal trigger_was_mem     : std_ulogic := '0';
     signal do_dmi_log_rd       : std_ulogic;
     signal dmi_read_log_data   : std_ulogic;
     signal dmi_read_log_data_1 : std_ulogic;
@@ -119,9 +141,7 @@ architecture behave of core_debug is
 begin
        -- Single cycle register accesses on DMI except for GSPR data
     dmi_ack <= dmi_req when dmi_addr /= DBG_CORE_GSPR_DATA
-               else dbg_gpr_ack;
-    dbg_gpr_req <= dmi_req when dmi_addr = DBG_CORE_GSPR_DATA
-                   else '0';
+               else dbg_gpr_ack or dbg_spr_ack or dbg_ls_spr_ack;
 
     -- Status register read composition
     stat_reg <= (2 => terminated,
@@ -129,15 +149,21 @@ begin
                  0 => stopping,
                  others => '0');
 
+    gspr_data <= dbg_gpr_data when gspr_index(5) = '0' else
+                 dbg_ls_spr_data when dbg_ls_spr_req = '1' else
+                 dbg_spr_data when spr_index_valid = '1' else
+                 (others => '0');
+
     -- DMI read data mux
     with dmi_addr select dmi_dout <=
         stat_reg        when DBG_CORE_STAT,
         nia             when DBG_CORE_NIA,
         msr             when DBG_CORE_MSR,
-        dbg_gpr_data    when DBG_CORE_GSPR_DATA,
+        gspr_data       when DBG_CORE_GSPR_DATA,
         log_write_addr & log_dmi_addr when DBG_CORE_LOG_ADDR,
         log_dmi_data    when DBG_CORE_LOG_DATA,
         log_dmi_trigger when DBG_CORE_LOG_TRIGGER,
+        log_mem_trigger when DBG_CORE_LOG_MTRIGGER,
         (others => '0') when others;
 
     -- DMI writes
@@ -154,14 +180,28 @@ begin
                 stopping <= '0';
                 terminated <= '0';
                 log_trigger_delay <= 0;
+                gspr_index <= (others => '0');
+                log_dmi_addr <= (others => '0');
+                trigger_was_log <= '0';
+                trigger_was_mem <= '0';
             else
-                if do_log_trigger = '1' or log_trigger_delay /= 0 then
-                    if log_trigger_delay = 255 then
-                        log_dmi_trigger(1) <= '1';
+                if do_log_trigger = '1' or do_log_mtrigger = '1' or log_trigger_delay /= 0 then
+                    if log_trigger_delay = 255 or
+                        (LOG_LENGTH < 1024 and log_trigger_delay = LOG_LENGTH / 4) then
+                        log_dmi_trigger(1) <= trigger_was_log;
+                        log_mem_trigger(1) <= trigger_was_mem;
                         log_trigger_delay <= 0;
+                        trigger_was_log <= '0';
+                        trigger_was_mem <= '0';
                     else
                         log_trigger_delay <= log_trigger_delay + 1;
                     end if;
+                end if;
+                if do_log_trigger = '1' then
+                    trigger_was_log <= '1';
+                end if;
+                if do_log_mtrigger = '1' then
+                    trigger_was_mem <= '1';
                 end if;
                 -- Edge detect on dmi_req for 1-shot pulses
                 dmi_req_1 <= dmi_req;
@@ -190,12 +230,14 @@ begin
                                 terminated <= '0';
                             end if;
                         elsif dmi_addr = DBG_CORE_GSPR_INDEX then
-                            gspr_index <= dmi_din(gspr_index_t'left downto 0);
+                            gspr_index <= dmi_din(7 downto 0);
                         elsif dmi_addr = DBG_CORE_LOG_ADDR then
                             log_dmi_addr <= dmi_din(31 downto 0);
                             do_dmi_log_rd <= '1';
                         elsif dmi_addr = DBG_CORE_LOG_TRIGGER then
                             log_dmi_trigger <= dmi_din;
+                        elsif dmi_addr = DBG_CORE_LOG_MTRIGGER then
+                            log_mem_trigger <= dmi_din;
                         end if;
                     else
                         report("DMI read from " & to_string(dmi_addr));
@@ -225,7 +267,70 @@ begin
         end if;
     end process;
 
-    dbg_gpr_addr <= gspr_index;
+    gspr_access: process(clk)
+        variable valid : std_ulogic;
+        variable sel : spr_selector;
+        variable isram : std_ulogic;
+        variable raddr : ramspr_index;
+        variable odd : std_ulogic;
+    begin
+        if rising_edge(clk) then
+            dbg_gpr_req <= '0';
+            dbg_spr_req <= '0';
+            dbg_ls_spr_req <= '0';
+            if rst = '0' and dmi_req = '1' and dmi_addr = DBG_CORE_GSPR_DATA then
+                if gspr_index(5) = '0' then
+                    dbg_gpr_req <= '1';
+                elsif gspr_index(4 downto 2) = "111" then
+                    dbg_ls_spr_req <= '1';
+                else
+                    dbg_spr_req <= '1';
+                end if;
+            end if;
+
+            -- Map 0 - 0x1f to GPRs, 0x20 - 0x3f to SPRs, and 0x40 - 0x5f to FPRs
+            dbg_gpr_addr <= gspr_index(6) & gspr_index(4 downto 0);
+            dbg_ls_spr_addr <= gspr_index(1 downto 0);
+
+            -- For SPRs, use the same mapping as when the fast SPRs were in the GPR file
+            valid := '1';
+            sel := "000";
+            isram := '1';
+            raddr := (others => '0');
+            odd := '0';
+            case gspr_index(4 downto 0) is
+                when 5x"00" =>
+                    raddr := RAMSPR_LR;
+                when 5x"01" =>
+                    odd := '1';
+                    raddr := RAMSPR_CTR;
+                when 5x"02" | 5x"03" =>
+                    odd := gspr_index(0);
+                    raddr := RAMSPR_SRR0;
+                when 5x"04" | 5x"05" =>
+                    odd := gspr_index(0);
+                    raddr := RAMSPR_HSRR0;
+                when 5x"06" | 5x"07" =>
+                    odd := gspr_index(0);
+                    raddr := RAMSPR_SPRG0;
+                when 5x"08" | 5x"09" =>
+                    odd := gspr_index(0);
+                    raddr := RAMSPR_SPRG2;
+                when 5x"0a" | 5x"0b" =>
+                    odd := gspr_index(0);
+                    raddr := RAMSPR_HSPRG0;
+                when 5x"0c" =>
+                    isram := '0';
+                    sel := SPRSEL_XER;
+                when 5x"0d" =>
+                    raddr := RAMSPR_TAR;
+                when others =>
+                    valid := '0';
+            end case;
+            dbg_spr_addr <= isram & sel & std_ulogic_vector(raddr) & odd;
+            spr_index_valid <= valid;
+        end if;
+    end process;
 
     -- Core control signals generated by the debug module
     core_stop <= stopping and not do_step;
@@ -251,6 +356,7 @@ begin
                               addr : std_ulogic_vector(31 downto 0)) return std_ulogic_vector is
             variable firstbit : integer;
         begin
+            assert not is_X(addr);
             firstbit := to_integer(unsigned(addr(1 downto 0))) * 64;
             return data(firstbit + 63 downto firstbit);
         end;
@@ -262,15 +368,20 @@ begin
 
     begin
         -- Use MSB of read addresses to stop the logging
-        log_wr_enable <= not (log_read_addr(31) or log_dmi_addr(31) or log_dmi_trigger(1));
+        log_wr_enable <= not (log_read_addr(31) or log_dmi_addr(31) or log_dmi_trigger(1) or log_mem_trigger(1));
 
         log_ram: process(clk)
         begin
             if rising_edge(clk) then
                 if log_wr_enable = '1' then
+                    assert not is_X(log_wr_ptr);
                     log_array(to_integer(log_wr_ptr)) <= log_data;
                 end if;
-                log_rd <= log_array(to_integer(log_rd_ptr_latched));
+                if is_X(log_rd_ptr_latched) then
+                    log_rd <= (others => 'X');
+                else
+                    log_rd <= log_array(to_integer(log_rd_ptr_latched));
+                end if;
             end if;
         end process;
 
@@ -283,6 +394,7 @@ begin
                 if rst = '1' then
                     log_wr_ptr <= (others => '0');
                     log_toggle <= '0';
+                    log_rd_ptr_latched <= (others => '0');
                 elsif log_wr_enable = '1' then
                     if log_wr_ptr = to_unsigned(LOG_LENGTH - 1, LOG_INDEX_BITS) then
                         log_toggle <= not log_toggle;
@@ -306,6 +418,13 @@ begin
                     log_data(41 downto 0) = log_dmi_trigger(43 downto 2) and
                     log_dmi_trigger(0) = '1' then
                     do_log_trigger <= '1';
+                end if;
+                do_log_mtrigger <= '0';
+                if (wb_snoop_in.cyc and wb_snoop_in.stb and wb_snoop_in.we) = '1' and
+                    wb_snoop_in.adr = log_mem_trigger(wishbone_addr_bits + wishbone_log2_width - 1
+                                                      downto wishbone_log2_width) and
+                    log_mem_trigger(0) = '1' then
+                    do_log_mtrigger <= '1';
                 end if;
             end if;
         end process;
