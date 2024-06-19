@@ -361,7 +361,7 @@ package body timing_ops is
      (1 ms, 1.0e-3),   (10 ms, 1.0e-2),   (100 ms, 1.0e-1),
      (1 sec, 1.0),     (10 sec, 1.0e1),   (100 sec, 1.0e2),
      (1 min, 60.0),    (10 min, 60.0e1),  (100 min, 60.0e2),
-     (1 hr, 3600.0),   (10 hr, 3600.0e1), (100 hr, 3600.0e2)
+     (1 hr, 3600.0) --,   (10 hr, 3600.0e1), (100 hr, 3600.0e2)
   );
 
   --// Determine the resolution for time
