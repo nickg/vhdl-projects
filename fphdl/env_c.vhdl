@@ -30,7 +30,7 @@ package body ENV is
       1 ms, 10 ms, 100 ms,
       1 sec, 10 sec, 100 sec,
       1 min, 10 min, 100 min,
-      1 hr, 10 hr, 100 hr
+      1 hr --, 10 hr, 100 hr
       ) ;
 
   function RESOLUTION_LIMIT return DELAY_LENGTH is
