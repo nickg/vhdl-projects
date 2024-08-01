@@ -50,7 +50,7 @@ architecture Options2 of TestCtrl is
   signal SetParmBarrier  : integer_barrier := 1 ;
   
   use osvvm_uart.ScoreboardPkg_Uart.all ; 
-  shared variable UartScoreboard : osvvm_uart.ScoreboardPkg_Uart.ScoreboardPType ; 
+  signal UartScoreboard : osvvm_uart.ScoreboardPkg_Uart.ScoreboardIdType ; 
   
   signal TbID : AlertLogIDType ;
 
@@ -63,9 +63,9 @@ begin
   ControlProc : process
   begin
     -- Initialization of test
-    SetAlertLogName("TbUart_Options2") ;
+    SetTestName("TbUart_Options2") ;
     SetLogEnable(PASSED, TRUE) ;    -- Enable PASSED logs
-    UartScoreboard.SetAlertLogID("UART_SB1") ; 
+    UartScoreboard <= NewID("UART_SB1") ; 
     TbID <= GetAlertLogID("TB") ; 
 
     -- Wait for testbench initialization 
@@ -85,8 +85,9 @@ begin
     TranscriptClose ; 
 --    AlertIfDiff("./results/TbUart_Options2.txt", "../Uart/testbench/validated_results/TbUart_Options2.txt", "") ; 
     
+    osvvm_uart.ScoreboardPkg_Uart.WriteScoreboardYaml(FileName => "Uart") ;
     EndOfTestReports(ExternalErrors => (FAILURE => 0, ERROR => -16, WARNING => 0)) ; 
-    std.env.stop(SumAlertCount(GetAlertCount + (FAILURE => 0, ERROR => -16, WARNING => 0))) ;
+    std.env.stop ;
     wait ; 
   end process ControlProc ; 
 

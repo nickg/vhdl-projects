@@ -50,7 +50,7 @@ architecture Checkers2 of TestCtrl is
   signal TestDone    : integer_barrier := 1 ;
   
   use osvvm_uart.ScoreboardPkg_Uart.all ; 
-  shared variable UartScoreboard : osvvm_uart.ScoreboardPkg_Uart.ScoreboardPType ; 
+  signal UartScoreboard : osvvm_uart.ScoreboardPkg_Uart.ScoreboardIdType ; 
 
 begin
 
@@ -61,9 +61,9 @@ begin
   ControlProc : process
   begin
     -- Initialization of test
-    SetAlertLogName("TbUart_Checkers2") ;
+    SetTestName("TbUart_Checkers2") ;
     SetLogEnable(PASSED, TRUE) ;    -- Enable PASSED logs
-    UartScoreboard.SetAlertLogID("UART_SB1") ; 
+    UartScoreboard <= NewID("UART_SB1") ; 
 
     -- Wait for testbench initialization 
     wait for 0 ns ;  wait for 0 ns ;
@@ -82,8 +82,9 @@ begin
     TranscriptClose ; 
 --    AlertIfDiff("./results/TbUart_Checkers2.txt", "../Uart/testbench/validated_results/TbUart_Checkers2.txt", "") ; 
     
+    osvvm_uart.ScoreboardPkg_Uart.WriteScoreboardYaml(FileName => "Uart") ;
     EndOfTestReports(ExternalErrors => (FAILURE => 0, ERROR => -15, WARNING => 0)) ; 
-    std.env.stop(SumAlertCount(GetAlertCount + (FAILURE => 0, ERROR => -15, WARNING => 0))) ;
+    std.env.stop ;
     wait ; 
   end process ControlProc ; 
 
