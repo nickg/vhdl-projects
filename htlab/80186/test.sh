@@ -1,7 +1,10 @@
 #!/bin/bash
+#
+# https://github.com/htminuslab/HTL80186
+#
 
 cd $(dirname $0)
-. ../functions.sh
+. ../../functions.sh
 
 STD=1993
 TOP=demo188_tb
