@@ -49,5 +49,12 @@ analyse testbench/utils.vhd \
         demo188.vhd \
         demo188_tb.vhd
 
+download_files loadflash0.dat \
+               loadfnamed.dat \
+               loadpromh.dat \
+               loadproml.dat \
+               loadsramh.dat \
+               loadsraml.dat
+
 #elaborate
 run_jit

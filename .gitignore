@@ -7,6 +7,10 @@ perf.data.old
 *.o
 *.out
 *.fst
+*.fst.hier
+*.ghw
+*.ll
+*.exe
 .gdb_history
 
 pipework/src/test/scenarios/axi4_lite/*.snr

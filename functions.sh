@@ -134,3 +134,9 @@ run_jit () {
       ;;
   esac
 }
+
+download_files () {
+  for f in $*; do
+    [ -f $f ] || wget https://github.com/nickg/vhdl-projects/releases/download/binaries/$f
+  done
+}

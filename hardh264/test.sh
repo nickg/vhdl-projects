@@ -38,8 +38,7 @@ if [ "$SIM" != ghdl ]; then
           tests/test_transform2.vhd
 fi
 
-[ -f sample_int.yuv ] \
-  || wget https://github.com/QUSIR/x264_demo/raw/master/test/sample_int.yuv
+download_files sample_int.yuv
 
 elaborate
 run
