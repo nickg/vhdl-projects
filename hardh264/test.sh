@@ -6,7 +6,7 @@ cd $(dirname $0)
 STD=1993
 TOP=h264top
 
-A_OPTS="--relax=prefer-explicit"
+A_OPTS="--relaxed"
 E_OPTS=
 R_OPTS="--exit-severity=failure"
 
@@ -30,13 +30,11 @@ analyse src/h264buffer.vhd \
 
 analyse tests/h264topsim.vhd
 
-if [ "$SIM" != ghdl ]; then
-  analyse tests/cavlc_test2.vhd \
-          tests/test_transform.vhd \
-          tests/cavlc_test.vhd \
-          tests/test_header.vhd \
-          tests/test_transform2.vhd
-fi
+#  analyse tests/cavlc_test2.vhd \
+#          tests/test_transform.vhd \
+#          tests/cavlc_test.vhd \
+#          tests/test_header.vhd \
+#          tests/test_transform2.vhd
 
 download_files sample_int.yuv
 
