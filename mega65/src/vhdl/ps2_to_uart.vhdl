@@ -97,7 +97,8 @@ begin
   uart_tx1: entity work.UART_TX_CTRL
     port map (
       send    => tx_trigger,
-      bit_tmr_max => bit_rate_divisor,
+      bit_tmr_max(23 downto 14) => (others => '0'),
+      bit_tmr_max(13 downto 0) => bit_rate_divisor,
       clk     => clk,
       data    => tx_data,
       ready   => tx_ready,
