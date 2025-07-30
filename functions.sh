@@ -53,21 +53,27 @@ _ghdl () {
 
 _vcom () {
   local _work=${WORK:-work}
-  local _opts="-quiet -nologo -$STD -work .questa/$_work"
+  local _opts="-quiet -nologo -work .questa/$_work"
   if [ ! -d .questa/$_work ]; then
     mkdir -p .questa
     vlib .questa/$_work
     vmap $_work .questa/$_work
   fi
-  echo vcom $_opts $*
-  vcom $_opts $*
+  if [[ "$*" == *.v ]]; then
+    echo vlog $_opts $*
+    vlog $_opts $*
+  else
+    _opts="$_opts -$STD"
+    echo vcom $_opts $*
+    vcom $_opts $*
+  fi
   [ $? = 0 ] || exit 1
 }
 
 _vsim () {
   local _opts="-quiet -batch -work .questa/${WORK:-work}"
   echo vsim $_opts $*
-  vsim $_opts $* <<EOF
+  _wrapper vsim $_opts $* <<EOF
 set StdArithNoWarnings 1
 set NumericStdNoWarnings 1
 run ${STOP_TIME:--all}
