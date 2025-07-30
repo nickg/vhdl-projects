@@ -6,7 +6,7 @@
 -- Author     : aylons  <aylons@LNLS190>
 -- Company    :
 -- Created    : 2014-03-10
--- Last update: 2016-05-06
+-- Last update: 2025-07-30
 -- Platform   :
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -26,9 +26,6 @@ use ieee.math_real.all;
 
 library std;
 use std.textio.all;
-
-library UNISIM;
-use UNISIM.vcomponents.all;
 
 library work;
 use work.swap_pkg.all;
@@ -321,4 +318,3 @@ begin  -- architecture str
 end architecture str;
 
 -------------------------------------------------------------------------------
-

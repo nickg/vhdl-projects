@@ -6,7 +6,7 @@
 -- Author     : aylons  <aylons@LNLS190>
 -- Company    :
 -- Created    : 2014-03-11
--- Last update: 2016-05-02
+-- Last update: 2025-07-30
 -- Platform   :
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -23,9 +23,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
-
-library UNISIM;
-use UNISIM.vcomponents.all;
 
 library work;
 use work.dsp_cores_pkg.all;

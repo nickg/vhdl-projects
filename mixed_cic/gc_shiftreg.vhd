@@ -1,6 +1,3 @@
-Library UNISIM;
-use UNISIM.vcomponents.all;
-
 library ieee;
 
 use ieee.STD_LOGIC_1164.all;
@@ -9,7 +6,7 @@ use ieee.NUMERIC_STD.all;
 use work.genram_pkg.all;
 
 entity gc_shiftreg is
-  
+
   generic (
     g_size : integer);
 
@@ -36,7 +33,7 @@ architecture wrapper of gc_shiftreg is
 
   signal a  : std_logic_vector(4 downto 0);
   signal sr : std_logic_vector(g_size-1 downto 0);
-  
+
 begin  -- wrapper
 
   assert (g_size <= 32) report "gc_shiftreg[xilinx]: forced SRL32 implementation can be done only for 32-bit or smaller shift registers" severity warning;
@@ -44,14 +41,16 @@ begin  -- wrapper
   a <= std_logic_vector(resize(unsigned(a_i), 5));
 
   gen_srl32 : if(g_size <= 32) generate
-    U_SRLC32 : SRLC32E
-      port map (
-        Q   => q_o,
-        A   => a,
-        CE  => en_i,
-        CLK => clk_i,
-        D   => d_i);
+  --   U_SRLC32 : SRLC32E
+  --     port map (
+  --       Q   => q_o,
+  --       A   => a,
+  --       CE  => en_i,
+  --       CLK => clk_i,
+  --       D   => d_i);
+      assert false report "not supported";
   end generate gen_srl32;
+
 
   gen_inferred : if(g_size > 32) generate
 
@@ -66,6 +65,6 @@ begin  -- wrapper
 
     q_o <= sr(TO_INTEGER(unsigned(a_i)));
   end generate gen_inferred;
-  
+
 
 end wrapper;
