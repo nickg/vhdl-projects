@@ -3,7 +3,7 @@
 cd $(dirname $0)
 . ../functions.sh
 
-STD=1993
+STD=2002
 TOP=cpu_test
 STOP_TIME=10us
 
