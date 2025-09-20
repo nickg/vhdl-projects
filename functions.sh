@@ -73,7 +73,7 @@ _vcom () {
 _vsim () {
   local _opts="-quiet -batch -work .questa/${WORK:-work}"
   echo vsim $_opts $*
-  _wrapper vsim $_opts $* <<EOF
+  _wrapper vsim -t fs $_opts $* <<EOF
 set StdArithNoWarnings 1
 set NumericStdNoWarnings 1
 run ${STOP_TIME:--all}
