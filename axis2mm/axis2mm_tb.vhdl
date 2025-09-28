@@ -281,27 +281,27 @@ architecture behavioral of axis2mm_tb is
     report "AXI4 Burst Address/Length OK" severity note;
     m_axi_awready <= '0';
 
-    wait until falling_edge(clk);
-    wait until falling_edge(clk);
-    wait until falling_edge(clk);
-    wait until falling_edge(clk);
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
+    wait until rising_edge(clk);
 
     -- Check data
     for i in 0 to DATA_SIZE-1 loop
-      while (m_axi_wvalid /= '1') loop
-          wait until falling_edge(clk);
-      end loop;
       m_axi_wready <= '1';
+      if (m_axi_wvalid /= '1') then
+        wait until (m_axi_wvalid = '1');
+      end if;
+      wait for 1 ps;
       report "Received data word " & integer'image(i) & " at AXI4: " & slv2bstr(m_axi_wdata) severity note;
       assert m_axi_wdata = test_data(i) report "Data word " & integer'image(i) & " mismatch" severity error;
+      wait until rising_edge(clk);
       if i = DATA_SIZE-1 then
         assert m_axi_wlast = '1' report "tlast signal not asserted" severity error;
         report "AXI4 tlast signal OK" severity note;
       else
         assert m_axi_wlast = '0' report "tlast signal asserted early" severity error;
       end if;
-
-      wait until falling_edge(clk);
     end loop;
 
 
