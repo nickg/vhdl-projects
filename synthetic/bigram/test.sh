@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd $(dirname $0)
-. ../functions.sh
+. ../../functions.sh
 
 STD=1993
 TOP=bigram
