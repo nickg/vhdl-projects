@@ -50,7 +50,7 @@ begin
             wait until falling_edge(i_clk);
             if o_sync = '1' then
                 report to_hstring(o_result);
-                assert o_result = "00" & X"0C7557E7A8E" severity warning;
+                assert o_result = "00" & X"0C7557E7A8E";
                 exit;
             end if;
             phase := phase + 0.01;
