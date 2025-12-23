@@ -62,7 +62,7 @@ analyse components/gps_if2/rbus_pkg.vhd \
 
 analyse components/uartlite/uart_pkg.vhd \
         components/uartlite/uart.vhd
-        
+
 analyse components/misc/gpio_pkg.vhd \
         components/misc/gpio.vhd \
         components/misc/bus_mux_pkg.vhd \
@@ -88,7 +88,11 @@ analyse components/cpu/core/components_pkg.vhd \
         components/cpu/core/datapath.vhd \
         components/cpu/core/cpu.vhd \
         components/cpu/core/cpu_config.vhd
-        
+
+if [ -n "$TIME" ]; then
+  TEST=cpu_pure_tb   # Not interested in perf of others
+fi
+
 ################################################################################
 # lib/hwutils/tests
 
@@ -119,7 +123,7 @@ done
 # analyse lib/reg_file_struct/tests/bist_tb_pkg.vhd \
 #         lib/reg_file_struct/tests/bist_rf_tb.vhd \
 #         lib/reg_file_struct/tests/rf_tb.vhd \
-        
+
 # for TOP in bist_rf_tb rf_tb; do
 #   elaborate
 #   run
