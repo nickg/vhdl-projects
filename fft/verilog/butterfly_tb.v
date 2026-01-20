@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module butterfly_tb;
 
     // Parameters (match DUT)
