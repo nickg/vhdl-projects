@@ -103,7 +103,7 @@ elaborate () {
   _filter_test $_top || return
   case ${SIM:-nvc} in
     ghdl) TIME= _ghdl -e -P.ghdl/ $GHDL_OPTS $_top ;;
-    nvc)  TIME= _nvc -e -V $E_OPTS $_top ;;
+    nvc)  TIME= _nvc -e -V $E_OPTS ${COVER+--cover} $_top ;;
   esac
 }
 
@@ -135,8 +135,8 @@ run_jit () {
       run
       ;;
     nvc)
-      _nvc -e -V $E_OPTS $_top --no-save --jit -r --stats $R_OPTS \
-	   ${STOP_TIME+--stop-time=$STOP_TIME}
+      _nvc -e -V $E_OPTS $_top --no-save ${COVER+--cover} \
+	   -r --stats $R_OPTS ${STOP_TIME+--stop-time=$STOP_TIME}
       ;;
   esac
 }
