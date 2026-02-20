@@ -143,6 +143,6 @@ run_jit () {
 
 download_files () {
   for f in $*; do
-    [ -f $f ] || wget https://github.com/nickg/vhdl-projects/releases/download/binaries/$f
+    [ -f $f ] || curl -L -O https://github.com/nickg/vhdl-projects/releases/download/binaries/$f
   done
 }
