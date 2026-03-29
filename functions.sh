@@ -9,6 +9,10 @@ _wrapper () {
     hyperfine)
       hyperfine -N -w 1 -m 5 -u millisecond -- "$*"
       ;;
+    json)
+      local _json_file=${JSON_FILE:-results.json}
+      hyperfine -N -w 1 -m 5 -u millisecond --export-json "$_json_file" -- "$*"
+      ;;
     perf)
       perf stat -- $*
       ;;
@@ -27,7 +31,7 @@ _wrapper () {
       $*
       ;;
     *)
-      echo "invalid timer: $_time"
+      echo "invalid timer: $TIME"
       exit 1
       ;;
   esac
