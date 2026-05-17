@@ -55,6 +55,11 @@ _ghdl () {
   _wrapper ${GHDL:-ghdl} $_cmd $_opts $*
 }
 
+_iverilog () {
+  local _opts=""
+  _wrapper iverilog $_opts $*
+}
+
 _vcom () {
   local _work=${WORK:-work}
   local _opts="-quiet -nologo -work .questa/$_work"
@@ -99,6 +104,7 @@ analyse () {
     ghdl) TIME= _ghdl -a -P.ghdl/ $GHDL_OPTS $_files ;;
     nvc)  TIME= _nvc -a $A_OPTS $_files ;;
     questa) _vcom $_files ;;
+    iverilog) _iverilog $_files ;;
   esac
 }
 
@@ -126,6 +132,9 @@ run () {
     nvc)
       _nvc -r $_top --stats $R_OPTS \
 	   ${STOP_TIME+--stop-time=$STOP_TIME}
+      ;;
+    iverilog)
+      _wrapper ./a.out
       ;;
   esac
 }

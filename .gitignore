@@ -13,6 +13,8 @@ perf.data.old
 *.ll
 *.exe
 .gdb_history
+a.out
+picorv32/out
 
 pipework/src/test/scenarios/axi4_lite/*.snr
 pipework/src/test/scenarios/axi4_adapter/*.snr
