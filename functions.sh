@@ -104,7 +104,7 @@ analyse () {
     ghdl) TIME= _ghdl -a -P.ghdl/ $GHDL_OPTS $_files ;;
     nvc)  TIME= _nvc -a $A_OPTS $_files ;;
     questa) _vcom $_files ;;
-    iverilog) _iverilog $_files ;;
+    iverilog) _iverilog $IVERILOG_OPTS $_files ;;
   esac
 }
 
